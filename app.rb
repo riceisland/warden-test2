@@ -15,7 +15,6 @@ require 'open-uri'
 require 'nokogiri'
 require 'will_paginate'
 require 'will_paginate/sequel'
-require 'uuidtools'
 require "sinatra/reloader" if development?
 
 #evernote用
@@ -251,9 +250,11 @@ def shorten(long_url)
 end
 
 before do
-	@title = "まとめてらんだむ"
-	#prefix決めとくと移行した時便利だよー
+  @title = "まとめてらんだむ"
+  @prefix = "/mat_rnd"
+
 end
+
 
 
 def base_url

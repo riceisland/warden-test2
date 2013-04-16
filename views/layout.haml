@@ -4,17 +4,17 @@
 	%head
 		%title= @title
 		%meta{:"http-equiv"=>"Content-Type", :content=>"text/html", :charset=>"utf-8"}
-		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"http://localhost:4567/css/bootstrap.css"}  
-		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"http://localhost:4567/css/jquery.mobile.flatui.min.css"} 
-		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"http://localhost:4567/css/base.css"}  
-		%script{:type => 'text/javascript', :src => "http://localhost:4567/js/jquery-1.8.3.min.js"}
-		%script{:type => 'text/javascript', :src => "http://localhost:4567/js/jquery.easing.1.3.js"}
-		%script{:type => 'text/javascript', :src => "http://localhost:4567/js/base.js"}
+		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/bootstrap.css"}  
+		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/jquery.mobile.flatui.min.css"} 
+		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/base.css"}  
+		%script{:type => 'text/javascript', :src => "/js/jquery-1.8.3.min.js"}
+		%script{:type => 'text/javascript', :src => "/js/jquery.easing.1.3.js"}
+		%script{:type => 'text/javascript', :src => "/js/base.js"}
 	%body
 		%div{:class => "container-fluid"}
 			%div{:class => "span2"}
 				= haml :menu
 			%div{:class => "span10"}
 				!= yield
-		%script{:type => "text/javascript", :src =>"http://localhost:4567/js/bootstrap/bootstrap-alert.js"}
-		%script{:type => "text/javascript", :src =>"http://localhost:4567/js/bootstrap/bootstrap-modal.js"}
+		%script{:type => "text/javascript", :src =>"/js/bootstrap/bootstrap-alert.js"}
+		%script{:type => "text/javascript", :src =>"/js/bootstrap/bootstrap-modal.js"}
