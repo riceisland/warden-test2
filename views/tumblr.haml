@@ -1,0 +1,66 @@
+%div{:id => @content[:rand_post_id], :class =>"pin tumblr"}
+	%form{:class => "individual", :method => "post", :action => "/individual"}
+		%input{:type => "hidden", :name => "tumblr_data_id", :value => @content[:rand_post_id]}
+	-case @content[:type]
+		-when "text"
+			%p= @content[:post_title]
+			%p= @content[:body]
+		-when "photo"
+			-if @content[:layouts]
+				%div{:id => "photoset"}
+					-i = 0
+					-@content[:layout].each do |num|
+						%div{:class => "row"+num}
+							-j = 0
+							-while j < num.to_i
+								- j = j + 1
+								%img{:src => @content[:imgarr][i].alt_sizes[0].url, :class => "photo"+num+" line"+num+j.to_s}
+								- i = i + 1
+			-else
+				%div{:id => "photo"}
+					%img{:src => @content[:imgarr][0].alt_sizes[1].url, :class => "photo"}
+			%p= @content[:caption]
+		-when "quote"
+			%p= @content[:text]
+			%p= @content[:source]
+		-when "link"
+			%p= @content[:post_title]
+			%p= @content[:url]
+			%p= @content[:description]
+		-when "chat"
+			%p= @content[:post_title]
+			%div{:id => "chat"}
+				%table
+					%tbody
+						-@content[:dialogue].each do |post|
+							%tr
+								%td= post.phrase
+		-when "audio"
+			%div{:id => "code"}= @content[:code]
+			%div{:id => "caption"}= @content[:caption]
+		-when "video"
+			%div{:id => "title"}= @content[:blogtitle]
+			%div{:id => "code"}= @content[:code]
+			%div{:id => "caption"}= @content[:caption]
+	%div{:class => "tumblr_tags"}
+		%div{:class => "view"}
+			%div{:class => "tubmlr_tags_view"}
+				-@content[:tumblr_tag_array].each do |elem|
+					%a{:href => "/" + elem + "/1", :class => "tag"}= elem
+			%span{:id => "tumblr_edit_open", :class => "tumblr_edit_toggle edit_toggle"}
+				%i{:class => "icon-edit"}
+		%div{:class => "edit", :id => "tumblr_edit"}
+			%p Tag Edit
+			%form{:class => "tumblr_edit_form"}
+				%input{:type => "text", :name => "tumblr_tag_edit", :value => @content[:tumblr_tag_concat]}
+				%input{:type => "hidden", :name => "data_id", :value => @content[:rand_post_id]}
+				%button{:type => "submit", :class => "btn"}
+					%i{:class => "icon-share-alt"}
+				%span{:id => "tumblr_edit_close", :class => "btn tumblr_edit_toggle"}
+					%i{:class => "icon-remove"}
+	%form{:class => "tumblr_ref_form"}
+		%input{:type => "hidden", :name => "tumblr_data_id", :value => @content[:rand_post_id]}
+		%input{:type => "hidden", :name => "ref_count", :value => @content[:tumblr_ref_count]}
+		%button{:type => "submit", :class => "btn"}
+			%i{:class => "icon-star"}
+		%span{:class => "tumblr_ref_count"}= @content[:tumblr_ref_count]

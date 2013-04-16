@@ -1,0 +1,27 @@
+%div{:id => @content[:rand_bkm_id], :class =>"pin hatena"}
+	%form{:class => "individual", :method => "post", :action => "/individual"}
+		%input{:type => "hidden", :name => "hatena_data_id", :value => @content[:rand_bkm_id]}
+	%a{:href => @content[:hatena_url], :target => "_blank"}= @content[:hatena_title]
+	%p= @content[:hatena_issued]
+	%div{:class => "hatena_tags"}
+		%div{:class => "view"}
+			%div{:class => "hatena_tags_view"}
+				-@content[:hatena_tag_array].each do |elem|
+					%a{:href => "/" + elem + "/1", :class => "tag"}= elem
+			%span{:id => "hatena_edit_open", :class => "hatena_edit_toggle edit_toggle"}
+				%i{:class => "icon-edit"}
+		%div{:class => "edit", :id => "hatena_edit"}
+			%p Tag Edit
+			%form{:class => "hatena_edit_form"}
+				%input{:type => "text", :name => "hatena_tag_edit", :value => @content[:hatena_tag_concat]}
+				%input{:type => "hidden", :name => "data_id", :value => @content[:rand_bkm_id]}
+				%button{:type => "submit", :class => "btn"}
+					%i{:class => "icon-share-alt"}
+				%span{:id => "hatena_edit_close", :class => "btn hatena_edit_toggle"}
+					%i{:class => "icon-remove"}
+	%form{:class => "hatena_ref_form"}
+		%input{:type => "hidden", :name => "hatena_data_id", :value => @content[:rand_bkm_id]}
+		%input{:type => "hidden", :name => "ref_count", :value => @content[:hatena_ref_count]}
+		%button{:type => "submit", :class => "btn"}
+			%i{:class => "icon-star"}
+		%span{:class => "hatena_ref_count"}= @content[:hatena_ref_count]

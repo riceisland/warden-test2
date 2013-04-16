@@ -1,0 +1,15 @@
+%div{:id => "wrapper"}
+	%div{:id => "columns"}
+		-@contents_array.each do |elem|
+			-@content = elem
+			-case elem[:app]
+				-when "twitter"
+					= haml :twitter
+				-when "tumblr"
+					= haml :tumblr
+				-when "instagram"
+					= haml :instagram
+				-when "hatena"
+					= haml :hatena
+				-when "evernote"
+					= haml :evernote

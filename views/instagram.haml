@@ -1,0 +1,26 @@
+%div{:id => @content[:rand_photo_id], :class =>"pin instagram"}
+	%form{:class => "individual", :method => "post", :action => "/individual"}
+		%input{:type => "hidden", :name => "instagram_data_id", :value => @content[:rand_photo_id]}
+	%img{:src => @content[:instagram_img_url], :id => "instagram_img"}
+	%div{:class => "instagram_tags"}
+		%div{:class => "view"}
+			%div{:class => "instagram_tags_view"}
+				-@content[:instagram_tag_array].each do |elem|
+					%a{:href => "/" + elem + "/1", :class => "tag"}= elem
+			%span{:id => "instagram_edit_open", :class => "instagram_edit_toggle edit_toggle"}
+				%i{:class => "icon-edit"}
+		%div{:class => "edit", :id => "instagram_edit"}
+			%p Tag Edit
+			%form{:class => "instagram_edit_form"}
+				%input{:type => "text", :name => "instagram_tag_edit", :value => @content[:instagram_tag_concat]}
+				%input{:type => "hidden", :name => "data_id", :value => @content[:rand_photo_id]}
+				%button{:type => "submit", :class => "btn"}
+					%i{:class => "icon-share-alt"}
+				%span{:id => "instagram_edit_close", :class => "btn instagram_edit_toggle"}
+					%i{:class => "icon-remove"}
+	%form{:class => "instagram_ref_form"}
+		%input{:type => "hidden", :name => "instagram_data_id", :value => @content[:rand_photo_id]}
+		%input{:type => "hidden", :name => "ref_count", :value => @content[:instagram_ref_count]}
+		%button{:type => "submit", :class => "btn"}
+			%i{:class => "icon-star"}
+		%span{:class => "instagram_ref_count"}= @content[:instagram_ref_count]

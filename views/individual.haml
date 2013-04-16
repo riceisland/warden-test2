@@ -1,0 +1,17 @@
+%div{:id => "main"}
+	-case @content[:app]
+		-when "twitter"
+			= haml :twitter
+		-when "tumblr"
+			= haml :tumblr
+		-when "instagram"
+			= haml :instagram
+		-when "hatena"
+			= haml :hatena
+		-when "evernote"
+			= haml :evernote
+%hr
+%div{:id => "relate"}
+	%div{:id => "wrapper"}
+		%div{:id => "columns"}
+			%p= "HELLO"

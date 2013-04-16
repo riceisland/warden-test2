@@ -1,0 +1,11 @@
+%div{:id => "wrapper"}
+	%h3 設定ページ
+	-@settings_array.each do |elem|
+		%hr
+		%img{:src => "/img/"+ elem[0] +".png", :class => "icon"}
+		%h4= elem[0]
+		%a{:href => elem[1] ,:class => "ui-btn-set ui-btn ui-shadow ui-btn-corner-all ui-btn-up-" + elem[3],:id => elem[0] + "_connect" }
+			%span{:class => "ui-btn-inner"}
+				%span{:class => "ui-btn-text"}= elem[2]
+
+					

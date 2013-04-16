@@ -1,0 +1,38 @@
+%div{:id => "wrapper"}
+	%h4= "Keyword：" + @tagname + " 　Page "+ @paginated.current_page.to_s + "/" + @paginated.page_count.to_s
+	%div{:id => "columns"}
+		-@contents_array.each do |elem|
+			-@content = elem
+			-case elem[:app]
+				-when "twitter"
+					= haml :twitter
+				-when "tumblr"
+					= haml :tumblr
+				-when "instagram"
+					= haml :instagram
+				-when "hatena"
+					= haml :hatena
+				-when "evernote"
+					= haml :evernote
+	%div{:class => "pagination"}
+		-if @paginated.prev_page
+			%ul
+				%li{:class => "active"}
+					%a{:href => "http://localhost:4567/" + @tagname + "/" + @paginated.prev_page.to_s}
+						%i{:class => "icon-backward"}
+		-else
+			%ul
+				%li{:class => "disabled"}
+					%span
+						%i{:class => "icon-backward"}	
+		-if @paginated.next_page
+			%ul
+				%li{:class => "active"}
+					%a{:href => "http://localhost:4567/" + @tagname + "/" + @paginated.next_page.to_s}
+						%i{:class => "icon-forward"}
+		-else
+			%ul
+				%li{:class => "disabled"}
+					%span
+						%i{:class => "icon-forward"}	
+		

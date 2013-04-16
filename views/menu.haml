@@ -1,0 +1,20 @@
+%fieldset{:class => "ui-grid-a"}
+	%div{:class => "ui-block-a"}
+		%button{:class => "ui-btn ui-shadow ui-btn-up-c ui-btn-corner-all", :id => "about_open"}
+			%span{:class => "ui-btn-inner"}
+				%span{:class => "ui-btn-text", :id => "ui-about-text"}ABOUT
+		%div{:class => "modal hide fade",:id => "modal_about", :tabindex => "-1", :role => "dialog", :'aria-labelledby' => "ModalLabel", :'aria-hidden' => "true"}
+			%div{:class => "modal-header"}
+				%button{:type =>"button", :class =>"close", :'data-dismiss' => "modal", :'aria-hidden' => "true"}x
+				%h3{:id => "ModalLabel"}= "ABOUT"
+			%div{:class => "modal-body"}
+				%div= "this is test"
+			%div{:class => "modal-footer"}
+				%button{:class =>"btn", :'data-dismiss' => "modal", :'aria-hidden' => "true"}Close
+	-@menu.each do |elem|
+		%div{:class => "ui-block-a"}
+			%a{:href => "/" + elem[0] ,:class => "ui-btn ui-shadow ui-btn-corner-all ui-btn-up-" + elem[1] }
+				%span{:class => "ui-btn-inner"}
+					%span{:class => "ui-btn-text"}= elem[0]
+
+			
