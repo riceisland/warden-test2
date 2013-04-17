@@ -1,16 +1,7 @@
-%div{:id => "content"}
-	%form{:action => "/register", :method => "POST"}
-		%fieldset
-			%label Name
-			%input{:type => "text", :name =>"name"}
-		%fieldset
-			%label Password
-			%input{:type => "password", :name =>"password"}
-		%fieldset
-			%label Confirm Password
-			%input{:type => "password", :name =>"re_password"}
-		%fieldset
-			%label E-mail
-			%input{:type => "text", :name =>"mail"}
-		%input{:type => "submit", :value => "Register", :class => "btn"}
-	%a{:href => "/login"} Login
+%div{:id => "main"}
+	%form{:action => "/register", :method => "POST", :class => "userform"}
+		%input{:type => "text", :name =>"name", :placeholder => "UserName", :class => "span3"}
+		%input{:type => "text", :name =>"mail", :placeholder => "Email Address", :class => "span3"}
+		%input{:type => "password", :name =>"password", :placeholder => "Password",:class => "span3"}
+		%input{:type => "password", :name =>"re_password", :placeholder => "Confirm Password", :class => "span3"}
+		%input{:type => "submit", :value => "Create your accout!", :class => "ui-btn ui-shadow ui-btn-up-f ui-shadow ui-btn-corner-all ui-register"}

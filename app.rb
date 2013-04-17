@@ -689,12 +689,13 @@ get "/" do
     #erb :login
     haml :top
   else
-	@menu = Array.new
-    @menu.push(["main", "c"])
-    @menu.push(["settings", "c"])
-    @menu.push(["logout", "c"])
+	#@menu = Array.new
+    #@menu.push(["main", "c"])
+    #@menu.push(["settings", "c"])
+    #@menu.push(["logout", "c"])
     #erb :success_login
-    haml :success_login
+    #haml :success_login
+    redirect '/main'
   end
 end
 

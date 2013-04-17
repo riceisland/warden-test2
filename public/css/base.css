@@ -151,6 +151,18 @@ form.individual {
   margin: 0;
 }
 
+form.userform input {
+  display: block
+}
+
+.ui-register {
+  padding: 7px 48px;
+}
+
+.ui-login {
+  padding: 7px 90px;
+}
+
 /* div css */
 
 div.twitter {
