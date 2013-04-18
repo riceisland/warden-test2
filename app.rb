@@ -23,6 +23,9 @@ require "./evernote_config"
 # Sinatra のセッションを有効にする
 enable :sessions
 
+set :public_folder, File.join(File.dirname(__FILE__) , %w{ . public })
+
+
 #sequel使えるようにする
 Sequel::Model.plugin(:schema)
 Sequel.extension :pagination
@@ -265,7 +268,7 @@ end
 
 
 def twitter_oauth_consumer
-  return OAuth::Consumer.new(TWITTER_KEY, TWITTER_SECRET, :site => "http://twitter.com")
+  return OAuth::Consumer.new(TWITTER_KEY, TWITTER_SECRET, :site => "https://twitter.com")
 end
 
 def tumblr_oauth_consumer
