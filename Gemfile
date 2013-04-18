@@ -5,7 +5,7 @@ gem 'sinatra', '1.3.0'
 gem 'warden'
 gem 'sequel'
 gem 'haml'
-gem 'oauth'
+gem 'oauth', '0.4.7'
 gem 'twitter'
 gem 'tumblife'
 gem 'multi_json'
@@ -14,6 +14,6 @@ gem 'nokogiri'
 gem 'sqlite3'
 gem 'will_paginate'
 
-group :development do
-  gem 'sinatra-contrib', gem: 'sinatra/reloader'
-end
+#group :development do
+#  gem 'sinatra-contrib', gem: 'sinatra/reloader'
+#end

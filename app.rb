@@ -202,8 +202,8 @@ CALLBACK_URL = "http://localhost:4567/instagram_callback"
 configure do
 
   #use Rack::Session::Cookie, :secret => Digest::SHA1.hexdigest(rand.to_s)
-  TWITTER_KEY = "xKSC19g8UyFOybKkMMOpCg"
-  TWITTER_SECRET = "0i5DkbEpgVLQbQOyDdKxsvXCwpsNG2WqsHElcbyYJc"
+  TWITTER_KEY = "kKw2qK1VOmPvycg6RVTiA"
+  TWITTER_SECRET = "LTSCjG2Fkj5TUbsFIaFeEcDDIjDQwuBzHem9BLlk"
   
   TUMBLR_KEY = "oJ2eYbl0jdzCB0PZY3oDgR2jkkfB3s1buxzIRCbTWuMqMjxYv0"
   TUMBLR_SECRET = "MFCzA1Db7utdAmj0S8ycmwzrTVcV5w1InYZNcy05Usrk3nkEMk"
@@ -706,8 +706,7 @@ end
 # 成功すれば設定ページに移動。
 post "/login" do
   request.env["warden"].authenticate!
-  #redirect "/settings"
-  redirect "/data_refresh"
+  redirect "/settings"
 end
 
 #get-login（URL直打ちパターン）
@@ -1091,29 +1090,33 @@ end
 
 #twitter OAuth認証
 get '/twitter_request_token' do
-  callback_url = "#{base_url}/access_token"
+  #callback_url = "#{base_url}/access_token"
+  callback_url = "#{base_url}/oauth/twitter/callback"
   request_token = twitter_oauth_consumer.get_request_token(:oauth_callback => callback_url)
+  #p request_token
   session[:twitter_request_token] = request_token.token
   session[:twitter_request_token_secret] = request_token.secret
+  p session[:twitter_request_token]
   redirect request_token.authorize_url
 end
 
-get '/access_token' do
-  p session.to_hash
+get '/oauth/twitter/callback' do
+  #p session.to_hash
   request_token = OAuth::RequestToken.new(
     twitter_oauth_consumer, session[:twitter_request_token], session[:twitter_request_token_secret])
+  #p request_token
   begin
     @access_token = request_token.get_access_token(
       {},
-      :oauth_token => params[:twitter_oauth_token],
-      :oauth_verifier => params[:twitter_oauth_verifier])
+      :oauth_token => params[:oauth_token],
+      :oauth_verifier => params[:oauth_verifier])
   rescue OAuth::Unauthorized => @exception
     return erb %{ oauth failed: <%=h @exception.message %> }
   end
   session[:twitter_access_token] = @access_token.token
   session[:twitter_access_token_secret] = @access_token.secret
   
-   redirect '/twitter_set'
+  redirect '/twitter_set'
 end
 
 get "/twitter_set" do
@@ -1796,14 +1799,28 @@ get "/reject/:app" do
   case params[:app]
     when "twitter"
       Twitter_oauth.where(:uid => current_user.id).delete
+      Tweets.where(:user_id => current_user.id).delete
+      Tags.where(:user_id => current_user.id, :app => "twitter") 
+      
 	when "tumblr"
 	  Tumblr_oauth.where(:uid => current_user.id).delete
+	  Tumblr_posts.where(:user_id => current_user.id).delete
+	  Tags.where(:user_id => current_user.id, :app => "tumblr") 
+	  
 	when "instagram"
 	  Instagram_oauth.where(:uid => current_user.id).delete
+	  Instagram_photos.where(:user_id => current_user.id).delete
+	  Tags.where(:user_id => current_user.id, :app => "instagram")
+	   
 	when "hatena"
 	  Hatena_oauth.where(:uid => current_user.id).delete
+	  Hatena_bookmarks.where(:user_id => current_user.id).delete
+	  Tags.where(:user_id => current_user.id, :app => "hatena") 
+	  
 	when "evernote"
 	  Evernote_oauth.where(:uid => current_user.id).delete
+	  Evernote_notes.where(:user_id => current_user.id).delete
+	  Tags.where(:user_id => current_user.id, :app => "evernote") 
     else
   end
   
