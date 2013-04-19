@@ -3,8 +3,6 @@
 		%input{:type => "hidden", :name => "instagram_data_id", :value => @content[:rand_photo_id]}
 	%img{:src => @content[:instagram_img_url], :id => "instagram_img"}
 	%p= @content[:instagram_text]
-	- if @content[:instagram_tags]
-		%p= @content[:instagram_tags][0]
 	%div{:class => "instagram_tags"}
 		%div{:class => "view"}
 			%div{:class => "instagram_tags_view"}

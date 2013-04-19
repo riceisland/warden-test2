@@ -936,6 +936,21 @@ get "/data_refresh" do
           :data_id => photo.id,
           :refrection => 0,
         })
+        
+        if photo.tags #array
+        
+          photo.tags.each do |tag|            
+            Tags.create({
+              :user_id => current_user.id,
+              :data_id => photo.id,
+              :tag => tag,
+              :app => "instagram",
+            })              
+          end      
+      
+        end
+        
+        
       else
         break
       end
@@ -1306,6 +1321,21 @@ get "/instagram_set" do
         :data_id => photo.id,
         :refrection => 0,
       })
+      
+      if photo.tags #array
+        
+        photo.tags.each do |tag|            
+          Tags.create({
+            :user_id => current_user.id,
+            :data_id => photo.id,
+            :tag => tag,
+            :app => "instagram",
+          })              
+        end      
+      
+      end
+        
+      
     end
     
   end
