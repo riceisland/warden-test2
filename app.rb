@@ -22,7 +22,6 @@ require "./evernote_config"
 
 # Sinatra のセッションを有効にする
 enable :sessions
-
 set :public_folder, File.join(File.dirname(__FILE__) , %w{ . public })
 
 
@@ -201,7 +200,7 @@ CALLBACK_URL = "http://localhost:4567/instagram_callback"
 #twitter,tumblr,instagram key,secret
 configure do
 
-  #use Rack::Session::Cookie, :secret => Digest::SHA1.hexdigest(rand.to_s)
+  use Rack::Session::Cookie, :secret => Digest::SHA1.hexdigest(rand.to_s)
   TWITTER_KEY = "kKw2qK1VOmPvycg6RVTiA"
   TWITTER_SECRET = "LTSCjG2Fkj5TUbsFIaFeEcDDIjDQwuBzHem9BLlk"
   
@@ -355,7 +354,7 @@ end
 def tumblr_data_create(id)
 
   ref_count = ref_counter("tumblr", id)
-  p ref_count
+  #p ref_count
         
   blogurl = @tumblr.info.user.blogs[0].url
   blogurl.gsub!('http://', '')
@@ -366,6 +365,8 @@ def tumblr_data_create(id)
   tumblr_tag_concat = tag_concat(id)
     
   type = post.type
+  tags = post.tag
+  p tags
     
   content = {:app => "tumblr", :rand_post_id => id, :type => type, :tumblr_tag_concat => tumblr_tag_concat, :tumblr_tag_array => tumblr_tag_array, :tumblr_ref_count => ref_count}
     
@@ -823,7 +824,9 @@ get "/settings" do
       @settings_array.push(["evernote", "/evernote_request_token", "認証する","e"])
     end
     
-    p @settings_array
+    session[:test] = "test"
+    p session.to_hash
+    #p @settings_array
     
     haml :"settings"
   end
@@ -891,6 +894,18 @@ get "/data_refresh" do
               :data_id => post.id,
               :refrection => 0,
             })
+            
+            post.tags.each do |tag|
+            
+              Tags.create({
+                :user_id => current_user.id,
+                :data_id => post.id,
+                :tag => tag,
+                :app => "tumblr",
+              })
+              
+            end
+            
           else
             throw :tumblr_exit
           end
@@ -1167,23 +1182,28 @@ get "/twitter_set" do
   redirect "/settings" 
 end
 
-get '/tumblr_request_token' do 
+get '/tumblr_request_token' do
   @consumer = tumblr_oauth_consumer
   request_token = @consumer.get_request_token(
-    :oauth_callback => 'http://127.0.0.1:4567/callback')
-   
+    :oauth_callback => 'http://127.0.0.1:4567/t_callback')
+   #p @consumer
   session[:tumblr_request_token] = request_token.token
   session[:tumblr_request_token_secret] = request_token.secret
   p session.to_hash
+  #p session[:tumblr_request_token]
   redirect request_token.authorize_url
 end
 
-get '/callback' do
-
-  p session.to_hash
+get '/t_callback' do
+  #session.clear
+  #p session.to_hash
+  #p session.session_id
   request_token = OAuth::RequestToken.new(
   tumblr_oauth_consumer, session[:tumblr_request_token], session[:tumblr_request_token_secret])
   
+  session.delete(:tumblr_request_token)
+  session.delete(:tumblr_request_token_secret)  
+    
   begin
   @access_token = request_token.get_access_token(
     :oauth_token => params[:oauth_token],
@@ -1212,6 +1232,11 @@ get "/tumblr_set" do
     })
     
     configure_tumblr_token(session[:tumblr_access_token], session[:tumblr_access_token_secret])
+    
+    session.delete(:tumblr_access_token)
+    session.delete(:tumblr_access_token_secret)
+    
+    
     @tumblr = Tumblife.client
     
     info = @tumblr.info
@@ -1223,14 +1248,26 @@ get "/tumblr_set" do
     
     begin
       res = @tumblr.posts(blogurl, {:offset => offset, :limit => limit})
-      p res.total_posts
-      p offset
+      #p res.total_posts
+      #p offset
       res.posts.each do |post|
         Tumblr_posts.create({
           :user_id => current_user.id,
           :data_id => post.id,
           :refrection => 0,
         })
+        
+        post.tags.each do |tag|
+            
+          Tags.create({
+            :user_id => current_user.id,
+            :data_id => post.id,
+            :tag => tag,
+            :app => "tumblr",
+          })
+              
+        end
+      
       end
       offset += limit      
     end while offset < res.total_posts
@@ -1800,27 +1837,28 @@ get "/reject/:app" do
     when "twitter"
       Twitter_oauth.where(:uid => current_user.id).delete
       Tweets.where(:user_id => current_user.id).delete
-      Tags.where(:user_id => current_user.id, :app => "twitter") 
+      Tags.where(:user_id => current_user.id, :app => "twitter").delete
       
 	when "tumblr"
 	  Tumblr_oauth.where(:uid => current_user.id).delete
 	  Tumblr_posts.where(:user_id => current_user.id).delete
-	  Tags.where(:user_id => current_user.id, :app => "tumblr") 
-	  
+	  Tags.where(:user_id => current_user.id, :app => "tumblr").delete
+      
 	when "instagram"
 	  Instagram_oauth.where(:uid => current_user.id).delete
 	  Instagram_photos.where(:user_id => current_user.id).delete
-	  Tags.where(:user_id => current_user.id, :app => "instagram")
+	  Tags.where(:user_id => current_user.id, :app => "instagram").delete
 	   
 	when "hatena"
 	  Hatena_oauth.where(:uid => current_user.id).delete
 	  Hatena_bookmarks.where(:user_id => current_user.id).delete
-	  Tags.where(:user_id => current_user.id, :app => "hatena") 
+	  Tags.where(:user_id => current_user.id, :app => "hatena").delete
 	  
 	when "evernote"
 	  Evernote_oauth.where(:uid => current_user.id).delete
 	  Evernote_notes.where(:user_id => current_user.id).delete
-	  Tags.where(:user_id => current_user.id, :app => "evernote") 
+	  Tags.where(:user_id => current_user.id, :app => "evernote").delete
+   
     else
   end
   
