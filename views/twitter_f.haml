@@ -8,26 +8,26 @@
 	%div{:class => "tweet"}
 		%p{:class => "text"}= @content[:twitter_text]
 		%p{:class => "time"}= @content[:twitter_time]
-	%div{:class => "twitter_tags"}
+	%div{:class => "twitter_fav_tags"}
 		%div{:class => "view"}
-			%div{:class => "twitter_tags_view"}
+			%div{:class => "twitter_fav_tags_view"}
 				-@content[:twitter_tag_array].each do |elem|
 					%a{:href => "/" + elem + "/1", :class => "tag"}= elem
-			%span{:id => "twitter_edit_open", :class => "twitter_edit_toggle edit_toggle"}
+			%span{:id => "twitter_fav_edit_open", :class => "twitter_fav_edit_toggle edit_toggle"}
 				%i{:class => "icon-edit"}
-		%div{:class => "edit", :id => "twitter_edit"}
+		%div{:class => "edit", :id => "twitter_fav_edit"}
 			%p Tag Edit
-			%form{:class => "twitter_edit_form"}
-				%input{:type => "text", :name => "twitter_tag_edit", :value => @content[:twitter_tag_concat]}
+			%form{:class => "twitter_fav_edit_form"}
+				%input{:type => "text", :name => "twitter_fav_tag_edit", :value => @content[:twitter_tag_concat]}
 				%input{:type => "hidden", :name => "data_id", :value => @rand_fav_id}
 				%button{:type => "submit", :class => "btn"}
 					%i{:class => "icon-share-alt"}
-				%span{:id => "twitter_edit_close", :class => "btn twitter_edit_toggle"}
+				%span{:id => "twitter_fav_edit_close", :class => "btn twitter_fav_edit_toggle"}
 					%i{:class => "icon-remove"}
 	%div{:class => "refrection"}
-		%form{:class => "twitter_ref_form"}
-			%input{:type => "hidden", :name => "twitter_data_id", :value => @content[:rand_fav_id]}
+		%form{:class => "twitter_fav_ref_form"}
+			%input{:type => "hidden", :name => "twitter_fav_data_id", :value => @content[:rand_fav_id]}
 			%input{:type => "hidden", :name => "ref_count", :value => @content[:twitter_ref_count]}
 			%button{:type => "submit", :class => "btn"}
 				%i{:class => "icon-star"}
-			%span{:class => "twitter_ref_count"}= @content[:twitter_ref_count]
+			%span{:class => "twitter_fav_ref_count"}= @content[:twitter_ref_count]

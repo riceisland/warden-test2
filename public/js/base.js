@@ -115,9 +115,12 @@ jQuery(function($) {
 //Edit
 
 $(document).ready(function(){
-    
-  $(".twitter_edit_toggle").click(function(){
-    $(".twitter_tags div").toggle();
+  $(".twitter_fav_edit_toggle").click(function(){
+    $(".twitter_fav_tags div").toggle();
+  });
+      
+  $(".twitter_home_edit_toggle").click(function(){
+    $(".twitter_home_tags div").toggle();
   });
 
   $(".tumblr_edit_toggle").click(function(){
@@ -139,7 +142,39 @@ $(document).ready(function(){
 });
 
 $(document).ready(function(){
+
+  $("form.twitter_fav_edit_form").submit(function(){
+    $.ajax({
+      url: "/tagedit",
+      type: 'POST',
+      timeout: 1000,
+      data: $(this).serialize(),
+      error: function(){alert('ERROR');},
+      success: function(obj){
+      	alert(obj);
+        $(".twitter_fav_tags div").toggle();        
+        $("div.twitter_fav_tags_view").html(obj);
+      }
+    });
+    return false;
+  });
     
+  $("form.twitter_home_edit_form").submit(function(){
+    $.ajax({
+      url: "/tagedit",
+      type: 'POST',
+      timeout: 1000,
+      data: $(this).serialize(),
+      error: function(){alert('ERROR');},
+      success: function(obj){
+      	alert(obj);
+        $(".twitter_home_tags div").toggle();        
+        $("div.twitter_home_tags_view").html(obj);
+      }
+    });
+    return false;
+  });
+
   $("form.twitter_edit_form").submit(function(){
     $.ajax({
       url: "/tagedit",
@@ -155,7 +190,7 @@ $(document).ready(function(){
     });
     return false;
   });
-
+  
   $("form.tumblr_edit_form").submit(function(){
     $.ajax({
       url: "/tagedit",
@@ -216,7 +251,7 @@ $(document).ready(function(){
     return false;
   });
   
-  $("form.twitter_ref_form").submit(function(){
+  $("form.twitter_home_ref_form").submit(function(){
    //alert($(this).serialize());
     $.ajax({
       url: "/refrection",
@@ -226,12 +261,28 @@ $(document).ready(function(){
       error: function(){alert('ERROR');},
       success: function(obj){
         alert("Thank you!");
-        $("span.twitter_ref_count").html(obj);     
+        $("span.twitter_home_ref_count").html(obj);     
       }
     });
     return false;
   });
 
+  $("form.twitter_fav_ref_form").submit(function(){
+   //alert($(this).serialize());
+    $.ajax({
+      url: "/refrection",
+      type: 'POST',
+      timeout: 1000,
+      data: $(this).serialize(),
+      error: function(){alert('ERROR');},
+      success: function(obj){
+        alert("Thank you!");
+        $("span.twitter_fav_ref_count").html(obj);     
+      }
+    });
+    return false;
+  });
+  
   $("form.tumblr_ref_form").submit(function(){
    //alert($(this).serialize());
     $.ajax({

@@ -3,8 +3,10 @@
 		-@contents_array.each do |elem|
 			-@content = elem
 			-case elem[:app]
-				-when "twitter"
-					= haml :twitter
+				-when "twitter_f"
+					= haml :twitter_f
+				-when "twitter_h"
+					= haml :twitter_h
 				-when "tumblr"
 					= haml :tumblr
 				-when "instagram"

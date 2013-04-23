@@ -72,6 +72,18 @@ class Tweets < Sequel::Model
   end
 end
 
+class Twitter_favorites < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  primary_key :id
+	  integer :user_id
+	  integer :data_id
+	  integer :refrection
+	end
+	create_table
+  end
+end
+
 class Tumblr_oauth < Sequel::Model
   unless table_exists?
     set_schema do
@@ -299,7 +311,10 @@ def rand_id_sample(app)
   content_ids = Array.new()
     
   case app
-    when "twitter"
+    when "twitter_f"
+      ids = Twitter_favorites.select(:data_id).filter(:user_id => current_user.id)
+
+    when "twitter_h"
       ids = Tweets.select(:data_id).filter(:user_id => current_user.id)
     
     when "tumblr"
@@ -327,9 +342,34 @@ def rand_id_sample(app)
 
 end
 
-def twitter_data_create(id)
+def twitter_home_data_create(id)
   
-  ref_count = ref_counter("twitter", id)
+  ref_count = ref_counter("twitter_h", id)
+	 
+  @twitter.user_timeline(:count=> 1, :max_id => id).each do |fav|
+    
+    @twitter_img_url = fav.user.profile_image_url 
+    @twitter_user_name = fav.user.name
+    @twitter_screen_name = fav.user.screen_name
+    @twitter_text = fav.text
+    @twitter_time = fav.created_at
+	 # @twitter_long_url = 'https://twitter.com/_/status/' + @rand_fav_id.to_s
+	  #@short_url = shorten(@long_url)
+  end
+    
+  twitter_tag_concat = tag_concat(id)
+  twitter_tag_array = tag_array(id)
+    
+  data_hash = {:app => "twitter_h", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :twitter_tag_concat => twitter_tag_concat, :twitter_tag_array => twitter_tag_array, :rand_fav_id => id, :twitter_ref_count => ref_count }
+    
+  return data_hash
+
+end
+
+
+def twitter_favs_data_create(id)
+  
+  ref_count = ref_counter("twitter_f", id)
 	 
   @twitter.favorites(:count=> 1, :max_id => id).each do |fav|
     
@@ -345,7 +385,7 @@ def twitter_data_create(id)
   twitter_tag_concat = tag_concat(id)
   twitter_tag_array = tag_array(id)
     
-  data_hash = {:app => "twitter", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :twitter_tag_concat => twitter_tag_concat, :twitter_tag_array => twitter_tag_array, :rand_fav_id => id, :twitter_ref_count => ref_count }
+  data_hash = {:app => "twitter_f", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :twitter_tag_concat => twitter_tag_concat, :twitter_tag_array => twitter_tag_array, :rand_fav_id => id, :twitter_ref_count => ref_count }
     
   return data_hash
 
@@ -549,7 +589,10 @@ end
 def ref_counter(app, id)
 
   case app
-    when "twitter"
+    when "twitter_f"
+      ref_sql = Twitter_favorites.select(:refrection).filter(:data_id => id)
+    
+    when "twitter_h"
       ref_sql = Tweets.select(:refrection).filter(:data_id => id)
     
     when "tumblr"
@@ -734,8 +777,8 @@ end
 post "/unauthenticated" do
   
   @menu = Array.new
-  @menu.push(["login", "c"])
-  @menu.push(["register", "d"])
+  @menu.push(["login", "d"])
+  @menu.push(["register", "c"])
   #erb :fail_login
   haml :fail_login
 end
@@ -836,7 +879,7 @@ get "/data_refresh" do
 
 #twitter
   
-  favs = Tweets.select(:data_id).filter(:user_id => current_user.id).first
+  favs = Twitter_favorites.select(:data_id).filter(:user_id => current_user.id).first
   
   if favs
     twitter_oauth = Twitter_oauth.where(:uid => current_user.id).first
@@ -846,10 +889,10 @@ get "/data_refresh" do
     
     twitter.favorites(:count => 100).each do |twit|
  
-  	  past_fav = Tweets.select(:id).filter(:user_id => current_user.id, :data_id => twit.id)
+  	  past_fav = Twitter_favorites.select(:id).filter(:user_id => current_user.id, :data_id => twit.id)
 
       if past_fav.empty?
-        Tweets.create({
+        Twitter_favorites.create({
 	      :user_id => current_user.id,
 		  :data_id => twit.id,
 		  :refrection => 0,
@@ -1164,19 +1207,19 @@ get "/twitter_set" do
       :twitter_access_token_secret => session[:twitter_access_token_secret] ,
     })
 
-    #Tweets register
   
     configure_twitter_token(session[:twitter_access_token], session[:twitter_access_token_secret])
     @twitter = Twitter::Client.new
   
-    @total_fav = @twitter.verify_credentials.favorites_count
+    #Twitter_favorites register
+    @total_fav = @twitter.verify_credentials.favourites_count
     
     if @total_fav == 0
       session[:nofav] = "nofav"
       #redirect '/nofavorite'
     elsif @total_fav < 101
       @twitter.favorites(:count => @total_fav).each do |twit|
-        Tweets.create({
+        Twitter_favorites.create({
           :user_id => current_user.id,
           :data_id => twit.id,
           :refrection => 0,
@@ -1185,13 +1228,37 @@ get "/twitter_set" do
     else
     #ここをいじれば全件とれるかもしれない（evernoteを参考に）
       @twitter.favorites(:count => 100).each do |twit|
-        Tweets.create({
+        Twitter_favorites.create({
 	      :user_id => current_user.id,
           :data_id => twit.id,
           :refrection => 0,
 	    })
       end
     end #-- if total_fav
+    
+    #home_timeline register
+    @total_tweets = @twitter.verify_credentials.statuses_count
+    
+    if @total_tweets == 0
+    
+    elsif @total_tweets < 201
+      @twitter.user_timeline(:count => @total_tweets).each do |twit|
+        Tweets.create({
+          :user_id => current_user.id,
+          :data_id => twit.id,
+          :refrection => 0,
+	    })
+      end
+    else   
+      @twitter.user_timeline(:count => 200).each do |twit|
+        Tweets.create({
+	      :user_id => current_user.id,
+          :data_id => twit.id,
+          :refrection => 0,
+	    })    
+      end
+    end
+    
   end
   
   redirect "/settings" 
@@ -1573,13 +1640,18 @@ get '/main' do
     configure_twitter_token(twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
     @twitter = Twitter::Client.new
     
-    rand_fav_id = rand_id_sample("twitter")
-	data_hash = twitter_data_create(rand_fav_id)
-    @contents_array.push(data_hash)
+    rand_fav_id = rand_id_sample("twitter_f")
+	data_hash_f = twitter_favs_data_create(rand_fav_id)
+	@contents_array.push(data_hash_f)
     
 	rescue
 	
 	end
+	
+		
+	rand_id = rand_id_sample("twitter_h")
+	data_hash_h = twitter_home_data_create(rand_id)
+    @contents_array.push(data_hash_h)
 	
   else
 	@twitter = nil
@@ -1665,9 +1737,14 @@ end
 
 post "/tagedit" do
  id = params[:data_id]
- if params[:twitter_tag_edit] 
-   tags = params[:twitter_tag_edit]
-   app = "twitter"
+ if params[:twitter_fav_tag_edit] 
+   tags = params[:twitter_fav_tag_edit]
+   app = "twitter_f"
+   tag_recreate(id, tags, app)
+
+ elsif params[:twitter_home_tag_edit] 
+   tags = params[:twitter_home_tag_edit]
+   app = "twitter_h"
    tag_recreate(id, tags, app)
  
  elsif params[:tumblr_tag_edit] 
@@ -1752,9 +1829,13 @@ post "/refrection" do
   count = count + 1
   new_count = count.to_s
   
-  if params[:twitter_data_id]
-    id = params[:twitter_data_id]   
-    Tweets.filter(:twit_id => id).update(:refrection => count)
+  if params[:twitter_fav_data_id]
+    id = params[:twitter_fav_data_id]   
+    Twitter_favorites.filter(:twit_id => id).update(:refrection => count)
+    
+  elsif params[:twitter_home_data_id]
+    id = params[:twitter_home_data_id]   
+    Twitter_favorites.filter(:twit_id => id).update(:refrection => count)
   
   elsif params[:tumblr_data_id]
     id = params[:tumblr_data_id]   
@@ -1804,15 +1885,25 @@ post "/individual" do
 
   @relates_array = Array.new
 
-  if params[:twitter_data_id]
-    id = params[:twitter_data_id] 
+  if params[:twitter_fav_data_id]
+    id = params[:twitter_fav_data_id] 
     
     twitter_oauth = Twitter_oauth.where(:uid => current_user.id).first
  
     configure_twitter_token(twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
     @twitter = Twitter::Client.new
         
-    @content = twitter_data_create(id)
+    @content = twitter_favs_data_create(id)
+    
+  elsif params[:twitter_home_data_id]
+    id = params[:twitter_home_data_id] 
+    
+    twitter_oauth = Twitter_oauth.where(:uid => current_user.id).first
+ 
+    configure_twitter_token(twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
+    @twitter = Twitter::Client.new
+        
+    @content = twitter_home_data_create(id)
   
   elsif params[:tumblr_data_id]
     id = params[:tumblr_data_id]
@@ -1847,7 +1938,7 @@ post "/individual" do
     
   elsif params[:evernote_data_id]
     id = params[:evernote_data_id]    
-    evernote_oauth = Evernote_oauth.where(:uid => current_user.id).first
+    @evernote_oauth = Evernote_oauth.where(:uid => current_user.id).first
     @content = evernote_data_create(id)          
   
   else
@@ -1866,8 +1957,10 @@ get "/reject/:app" do
   case params[:app]
     when "twitter"
       Twitter_oauth.where(:uid => current_user.id).delete
+      Twitter_favorites.where(:user_id => current_user.id).delete
       Tweets.where(:user_id => current_user.id).delete
-      Tags.where(:user_id => current_user.id, :app => "twitter").delete
+      Tags.where(:user_id => current_user.id, :app => "twitter_f").delete
+      Tags.where(:user_id => current_user.id, :app => "twitter_h").delete
       
 	when "tumblr"
 	  Tumblr_oauth.where(:uid => current_user.id).delete
@@ -1919,14 +2012,24 @@ get "/:name/:page" do
   
     @paginated.each do |elem|
       case elem.app
-        when "twitter"
+        when "twitter_f"
       
           twitter_oauth = Twitter_oauth.where(:uid => current_user.id).first
  
           configure_twitter_token(twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
           @twitter = Twitter::Client.new
         
-          data_hash = twitter_data_create(elem.data_id)
+          data_hash = twitter_favs_data_create(elem.data_id)
+          @contents_array.push(data_hash)
+          
+        when "twitter_h"
+      
+          twitter_oauth = Twitter_oauth.where(:uid => current_user.id).first
+ 
+          configure_twitter_token(twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
+          @twitter = Twitter::Client.new
+        
+          data_hash = twitter_home_data_create(elem.data_id)
           @contents_array.push(data_hash)
       
         when "tumblr"

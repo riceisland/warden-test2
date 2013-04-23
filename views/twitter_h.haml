@@ -1,0 +1,33 @@
+%div{:id => @content[:rand_fav_id], :class =>"pin twitter"}
+	%form{:class => "individual", :method => "post", :action => "/individual"}
+		%input{:type => "hidden", :name => "twitter_data_id", :value => @content[:rand_fav_id]}
+	%div{:class => "twitter_user"}
+		%img{:src => @content[:twitter_img_url], :class => "icon"}
+		%p{:class => "username"}= @content[:twitter_user_name]
+		%p{:class => "screenname"}= "@" + @content[:twitter_screen_name]
+	%div{:class => "tweet"}
+		%p{:class => "text"}= @content[:twitter_text]
+		%p{:class => "time"}= @content[:twitter_time]
+	%div{:class => "twitter_home_tags"}
+		%div{:class => "view"}
+			%div{:class => "twitter_home_tags_view"}
+				-@content[:twitter_tag_array].each do |elem|
+					%a{:href => "/" + elem + "/1", :class => "tag"}= elem
+			%span{:id => "twitter_home_edit_open", :class => "twitter_home_edit_toggle edit_toggle"}
+				%i{:class => "icon-edit"}
+		%div{:class => "edit", :id => "twitter_home_edit"}
+			%p Tag Edit
+			%form{:class => "twitter_home_edit_form"}
+				%input{:type => "text", :name => "twitter_home_tag_edit", :value => @content[:twitter_tag_concat]}
+				%input{:type => "hidden", :name => "data_id", :value => @rand_fav_id}
+				%button{:type => "submit", :class => "btn"}
+					%i{:class => "icon-share-alt"}
+				%span{:id => "twitter_home_edit_close", :class => "btn twitter_home_edit_toggle"}
+					%i{:class => "icon-remove"}
+	%div{:class => "refrection"}
+		%form{:class => "twitter_home_ref_form"}
+			%input{:type => "hidden", :name => "twitter_home_data_id", :value => @content[:rand_fav_id]}
+			%input{:type => "hidden", :name => "ref_count", :value => @content[:twitter_ref_count]}
+			%button{:type => "submit", :class => "btn"}
+				%i{:class => "icon-star"}
+			%span{:class => "twitter_home_ref_count"}= @content[:twitter_ref_count]
