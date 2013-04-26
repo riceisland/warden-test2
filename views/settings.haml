@@ -1,11 +1,26 @@
 %div{:id => "wrapper"}
-	%h3 設定ページ
+	%div{:class => "alert alert-error settings-alert"}
+		%button{:class => "close", :'data-dismiss' => "alert"}x
+		"登録できませんでした"
 	-@settings_array.each do |elem|
 		%hr
-		%img{:src => "/img/"+ elem[0] +".png", :class => "icon"}
-		%h4= elem[0]
-		%a{:href => elem[1] ,:class => "ui-btn-set ui-btn ui-shadow ui-btn-corner-all ui-btn-up-" + elem[3],:id => elem[0] + "_connect" }
-			%span{:class => "ui-btn-inner"}
-				%span{:class => "ui-btn-text"}= elem[2]
-
+		%div{:id => elem[0]}
+			%img{:src => "/img/"+ elem[0] +".png", :class => "icon"}
+			%h4= elem[0]
+			%a{:href => elem[1], :class => "ui-btn-set ui-btn ui-shadow ui-btn-corner-all ui-btn-up-" + elem[3],:id => elem[0] + "_connect" }
+				%span{:class => "ui-btn-inner"}
+					%span{:class => "ui-btn-text"}= elem[2]
+	%hr
+	%div{:id => "rss"}
+		%img{:src => "/img/rss.png", :class => "icon"}
+		%h4= "RSS"
+		-@channel_list.each do |elem|
+			%div{:class => "rss_list"}
+				%span= elem[:title]
+				%a{:href => "/reject/rss/" + elem[:channel_id].to_s, :class => "ui-btn ui-btn-rss ui-shadow ui-btn-corner-all ui-btn-icon-left ui-btn-up-b"}
+					%span{:class => "ui-btn-text"}= "解除する"
+		%form{:class => "rss_register"}
+			%input{:type => "text", :name => "rss_url", :value => "URLを入力してください"}
+			%button{:type => "submit", :class => "btn"}
+				%span= "登録！"
 					

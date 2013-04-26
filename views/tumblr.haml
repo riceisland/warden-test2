@@ -1,6 +1,6 @@
-%div{:id => @content[:rand_post_id], :class =>"pin tumblr"}
-	%form{:class => "individual", :method => "post", :action => "/individual"}
-		%input{:type => "hidden", :name => "tumblr_data_id", :value => @content[:rand_post_id]}
+%div{:id => @content[:id], :class =>"pin tumblr"}
+	%form{:id => "individual_" + @content[:id].to_s,:class => "individual", :method => "post", :action => "/individual"}
+		%input{:type => "hidden", :name => "tumblr_data_id", :value => @content[:id]}
 	-case @content[:type]
 		-when "text"
 			%p= @content[:post_title]
@@ -42,6 +42,8 @@
 			%div{:id => "title"}= @content[:blogtitle]
 			%div{:id => "code"}= @content[:code]
 			%div{:id => "caption"}= @content[:caption]
+	%span{:class => "time"}= @content[:tumblr_time]
+	%span{:class => "submit_individual"}= "詳細を見る"
 	%div{:class => "tumblr_tags"}
 		%div{:class => "view"}
 			%div{:class => "tubmlr_tags_view"}
@@ -53,14 +55,16 @@
 			%p Tag Edit
 			%form{:class => "tumblr_edit_form"}
 				%input{:type => "text", :name => "tumblr_tag_edit", :value => @content[:tumblr_tag_concat]}
-				%input{:type => "hidden", :name => "data_id", :value => @content[:rand_post_id]}
+				%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
 				%button{:type => "submit", :class => "btn"}
 					%i{:class => "icon-share-alt"}
 				%span{:id => "tumblr_edit_close", :class => "btn tumblr_edit_toggle"}
 					%i{:class => "icon-remove"}
 	%form{:class => "tumblr_ref_form"}
-		%input{:type => "hidden", :name => "tumblr_data_id", :value => @content[:rand_post_id]}
+		%input{:type => "hidden", :name => "tumblr_data_id", :value => @content[:id]}
 		%input{:type => "hidden", :name => "ref_count", :value => @content[:tumblr_ref_count]}
-		%button{:type => "submit", :class => "btn"}
-			%i{:class => "icon-star"}
+		%button{:type => "submit", :class => "ref-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext"}
+			%span{:class => "ui-btn-inner"}
+				%span{:class => "ui-btn-text"}Heart
+				%span{:class => "ui-icon ui-icon-flat-heart ui-icon-shadow"}
 		%span{:class => "tumblr_ref_count"}= @content[:tumblr_ref_count]

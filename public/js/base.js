@@ -1,24 +1,3 @@
-//grid system
-
-//$(function(){
-
-//$('#frame').sly({
-//    scrollBar : "#scrollbar",
-//    pagesBar: ".pages",
-//	horizontal: 1,
-//	itemNav: "basic",
-//	dragHandle: 1,
-//	dynamicHandle: 1,
-//	dragging: 1,
-//	scrollBy: 1,
-//	speed: 300,
-//	cycleBy: 'pages',
-//	cycleInterval: 1000,
-//	startPaused: 1
-//});
-  
-//});
-
 jQuery(function($) {
 //スニペットを作ろう編, evernote関連 
     $('#plain').each(function() {
@@ -98,14 +77,24 @@ jQuery(function($) {
     
     
     
-    $('.pin').click(function(){
-      id = $(this).attr("id");
-      //alert(id);
-      $("form.individual", this).submit();
-      
-      
-    })
-    
+   // $('.pin').click(function(){
+   //   if ($(event.target).is("form")) {
+   //     alert("div");
+   //   }
+   //   else {
+   //     id = $(this).attr("id");
+   //     alert(id);
+   //     $("form.individual", this).submit();
+   //   }
+   //   alert(event.target.nodeName)
+   // })
+   
+   $('span.submit_individual').click(function(){
+     id = $(this).closest("div.pin").attr("id")
+     form_id = "form#individual_" + id
+     //alert(form_id);
+     $(form_id).submit(); 
+   })
 
 });
 
@@ -117,26 +106,37 @@ jQuery(function($) {
 $(document).ready(function(){
   $(".twitter_fav_edit_toggle").click(function(){
     $(".twitter_fav_tags div").toggle();
+    return false;
   });
       
   $(".twitter_home_edit_toggle").click(function(){
     $(".twitter_home_tags div").toggle();
+    return false;
   });
 
   $(".tumblr_edit_toggle").click(function(){
     $(".tumblr_tags div").toggle();
+    return false;
   });
 
   $(".instagram_edit_toggle").click(function(){
     $(".instagram_tags div").toggle();
+    return false;
   }); 
   
   $(".evernote_edit_toggle").click(function(){
     $(".evernote_tags div").toggle();
+    return false;
   });
   
   $(".hatena_edit_toggle").click(function(){
     $(".hatena_tags div").toggle();
+    return false;
+  });
+  
+  $(".rss_edit_toggle").click(function(){
+    $(".rss_tags div").toggle();
+    return false;
   });
    
 });
@@ -170,22 +170,6 @@ $(document).ready(function(){
       	alert(obj);
         $(".twitter_home_tags div").toggle();        
         $("div.twitter_home_tags_view").html(obj);
-      }
-    });
-    return false;
-  });
-
-  $("form.twitter_edit_form").submit(function(){
-    $.ajax({
-      url: "/tagedit",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-      	alert(obj);
-        $(".twitter_tags div").toggle();        
-        $("div.twitter_tags_view").html(obj);
       }
     });
     return false;
@@ -251,8 +235,23 @@ $(document).ready(function(){
     return false;
   });
   
+  $("form.rss_edit_form").submit(function(){
+    $.ajax({
+      url: "/tagedit",
+      type: 'POST',
+      timeout: 1000,
+      data: $(this).serialize(),
+      error: function(){alert('ERROR');},
+      success: function(obj){
+        $(".rss_tags div").toggle();   
+        $("div.rss_tags_view").html(obj);  
+      }
+    });
+    return false;
+  });
+  
   $("form.twitter_home_ref_form").submit(function(){
-   //alert($(this).serialize());
+    //alert($(this).serialize());
     $.ajax({
       url: "/refrection",
       type: 'POST',
@@ -268,6 +267,7 @@ $(document).ready(function(){
   });
 
   $("form.twitter_fav_ref_form").submit(function(){
+   return false;
    //alert($(this).serialize());
     $.ajax({
       url: "/refrection",
@@ -346,4 +346,47 @@ $(document).ready(function(){
     });
     return false;
   });  
+
+  $("form.rss_ref_form").submit(function(){
+   //alert($(this).serialize());
+    $.ajax({
+      url: "/refrection",
+      type: 'POST',
+      timeout: 1000,
+      data: $(this).serialize(),
+      error: function(){alert('ERROR');},
+      success: function(obj){
+        alert("Thank you!");
+        $("span.rss_ref_count").html(obj);     
+      }
+    });
+    return false;
+  });  
+
+});
+
+
+$(document).ready(function(){
+
+  $("form.rss_register").submit(function(){
+    $.ajax({
+      url: "/rss_register",
+      type: 'POST',
+      timeout: 1000,
+      data: $(this).serialize(),
+      error: function(){alert('ERROR');},
+      success: function(str){
+      	var dataset = JSON.parse(str);
+        if(dataset.status == "error"){
+          $(".settings-alert").show();
+        }
+        else{
+          obj = "<li>" + dataset.feed_title + "</li>";
+          $("ul.rss_list").append(obj);
+        }
+      }
+    });
+    return false;
+  });
+  
 });

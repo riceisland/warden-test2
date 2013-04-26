@@ -1,11 +1,13 @@
-%div{:id => @content[:rand_note_id], :class =>"pin evernote"}
-	%form{:class => "individual", :method => "post", :action => "/individual"}
-		%input{:type => "hidden", :name => "evernote_data_id", :value => @content[:rand_note_id]}
+%div{:id => @content[:id], :class =>"pin evernote"}
+	%form{:id => "individual_" + @content[:id].to_s,:class => "individual", :method => "post", :action => "/individual"}
+		%input{:type => "hidden", :name => "evernote_data_id", :value => @content[:id]}
 	%div{:id => "snippet"}
 		%div{:id => "title"}= @content[:note_title]
 		%div{:id => "body"}
 			= @content[:snippet]
-	%span{:id => "viewall"} ViewAll→
+	%p{:id => "viewall"} ViewAll→
+	%span{:class => "time"}= @content[:evernote_time]
+	%span{:class => "submit_individual"}= "詳細を見る"
 	%div{:class => "modal hide fade", :id => "allcontent" , :tabindex => "-1", :role => "dialog", :'aria-labelledby' => "ModalLabel", :'aria-hidden' => "true"}
 		%div{:class => "modal-header"}
 			%button{:type =>"button", :class =>"close", :'data-dismiss' => "modal", :'aria-hidden' => "true"}x
@@ -26,14 +28,16 @@
 			%p Tag Edit
 			%form{:class => "evernote_edit_form"}
 				%input{:type => "text", :name => "evernote_tag_edit", :value => @content[:evernote_tag_concat]}
-				%input{:type => "hidden", :name => "data_id", :value => @content[:rand_note_id]}
+				%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
 				%button{:type => "submit", :class => "btn"}
 					%i{:class => "icon-share-alt"}
 				%span{:id => "evernote_edit_close", :class => "btn evernote_edit_toggle"}
 					%i{:class => "icon-remove"}
 	%form{:class => "evernote_ref_form"}
-		%input{:type => "hidden", :name => "evernote_data_id", :value => @content[:rand_note_id]}
+		%input{:type => "hidden", :name => "evernote_data_id", :value => @content[:id]}
 		%input{:type => "hidden", :name => "ref_count", :value => @content[:evernote_ref_count]}
-		%button{:type => "submit", :class => "btn"}
-			%i{:class => "icon-star"}
+		%button{:type => "submit", :class => "ref-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext"}
+			%span{:class => "ui-btn-inner"}
+				%span{:class => "ui-btn-text"}Heart
+				%span{:class => "ui-icon ui-icon-flat-heart ui-icon-shadow"}
 		%span{:class => "evernote_ref_count"}= @content[:evernote_ref_count]

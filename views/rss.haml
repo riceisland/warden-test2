@@ -1,0 +1,31 @@
+%div{:id => @content[:id], :class =>"pin rss"}
+	%form{:id => "individual_" + @content[:id].to_s, :class => "individual", :method => "post", :action => "/individual"}
+		%input{:type => "hidden", :name => "rss_data_id", :value => @content[:id]}
+	%a{:href => @content[:rss_url], :target => "_blank"}= @content[:rss_title]
+	%p= @content[:rss_description]
+	%span{:class => "time"}= @content[:rss_date]
+	%span{:class => "submit_individual"}= "詳細を見る"
+	%div{:class => "rss_tags"}
+		%div{:class => "view"}
+			%div{:class => "rss_tags_view"}
+				-@content[:rss_tag_array].each do |elem|
+					%a{:href => "/" + elem + "/1", :class => "tag"}= elem
+			%span{:id => "rss_edit_open", :class => "rss_edit_toggle edit_toggle"}
+				%i{:class => "icon-edit"}
+		%div{:class => "edit", :id => "rss_edit"}
+			%p Tag Edit
+			%form{:class => "rss_edit_form"}
+				%input{:type => "text", :name => "rss_tag_edit", :value => @content[:rss_tag_concat]}
+				%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
+				%button{:type => "submit", :class => "btn"}
+					%i{:class => "icon-share-alt"}
+				%span{:id => "rss_edit_close", :class => "btn rss_edit_toggle"}
+					%i{:class => "icon-remove"}
+	%form{:class => "rss_ref_form"}
+		%input{:type => "hidden", :name => "rss_data_id", :value => @content[:id]}
+		%input{:type => "hidden", :name => "ref_count", :value => @content[:rss_ref_count]}
+		%button{:type => "submit", :class => "ref-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext"}
+			%span{:class => "ui-btn-inner"}
+				%span{:class => "ui-btn-text"}Heart
+				%span{:class => "ui-icon ui-icon-flat-heart ui-icon-shadow"}
+		%span{:class => "rss_ref_count"}= @content[:rss_ref_count]

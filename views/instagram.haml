@@ -1,8 +1,10 @@
-%div{:id => @content[:rand_photo_id], :class =>"pin instagram"}
-	%form{:class => "individual", :method => "post", :action => "/individual"}
-		%input{:type => "hidden", :name => "instagram_data_id", :value => @content[:rand_photo_id]}
+%div{:id => @content[:id], :class =>"pin instagram"}
+	%form{:id => "individual_" + @content[:id].to_s,:class => "individual", :method => "post", :action => "/individual"}
+		%input{:type => "hidden", :name => "instagram_data_id", :value => @content[:id]}
 	%img{:src => @content[:instagram_img_url], :id => "instagram_img"}
 	%p= @content[:instagram_text]
+	%span{:class => "time"}= @content[:instagram_time]
+	%span{:class => "submit_individual"}= "詳細を見る"
 	%div{:class => "instagram_tags"}
 		%div{:class => "view"}
 			%div{:class => "instagram_tags_view"}
@@ -14,14 +16,16 @@
 			%p Tag Edit
 			%form{:class => "instagram_edit_form"}
 				%input{:type => "text", :name => "instagram_tag_edit", :value => @content[:instagram_tag_concat]}
-				%input{:type => "hidden", :name => "data_id", :value => @content[:rand_photo_id]}
+				%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
 				%button{:type => "submit", :class => "btn"}
 					%i{:class => "icon-share-alt"}
 				%span{:id => "instagram_edit_close", :class => "btn instagram_edit_toggle"}
 					%i{:class => "icon-remove"}
 	%form{:class => "instagram_ref_form"}
-		%input{:type => "hidden", :name => "instagram_data_id", :value => @content[:rand_photo_id]}
+		%input{:type => "hidden", :name => "instagram_data_id", :value => @content[:id]}
 		%input{:type => "hidden", :name => "ref_count", :value => @content[:instagram_ref_count]}
-		%button{:type => "submit", :class => "btn"}
-			%i{:class => "icon-star"}
+		%button{:type => "submit", :class => "ref-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext"}
+			%span{:class => "ui-btn-inner"}
+				%span{:class => "ui-btn-text"}Heart
+				%span{:class => "ui-icon ui-icon-flat-heart ui-icon-shadow"}
 		%span{:class => "instagram_ref_count"}= @content[:instagram_ref_count]

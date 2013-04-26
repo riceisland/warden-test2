@@ -1,8 +1,10 @@
-%div{:id => @content[:rand_bkm_id], :class =>"pin hatena"}
-	%form{:class => "individual", :method => "post", :action => "/individual"}
-		%input{:type => "hidden", :name => "hatena_data_id", :value => @content[:rand_bkm_id]}
+%div{:id => @content[:id], :class =>"pin hatena"}
+	%form{:id => "individual_" + @content[:id].to_s, :class => "individual", :method => "post", :action => "/individual"}
+		%input{:type => "hidden", :name => "hatena_data_id", :value => @content[:id]}
 	%a{:href => @content[:hatena_url], :target => "_blank"}= @content[:hatena_title]
-	%p= @content[:hatena_issued]
+	%br
+	%span{:class => "time"}= @content[:hatena_issued]
+	%span{:class => "submit_individual"}= "詳細を見る"
 	%div{:class => "hatena_tags"}
 		%div{:class => "view"}
 			%div{:class => "hatena_tags_view"}
@@ -14,14 +16,16 @@
 			%p Tag Edit
 			%form{:class => "hatena_edit_form"}
 				%input{:type => "text", :name => "hatena_tag_edit", :value => @content[:hatena_tag_concat]}
-				%input{:type => "hidden", :name => "data_id", :value => @content[:rand_bkm_id]}
+				%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
 				%button{:type => "submit", :class => "btn"}
 					%i{:class => "icon-share-alt"}
 				%span{:id => "hatena_edit_close", :class => "btn hatena_edit_toggle"}
 					%i{:class => "icon-remove"}
 	%form{:class => "hatena_ref_form"}
-		%input{:type => "hidden", :name => "hatena_data_id", :value => @content[:rand_bkm_id]}
+		%input{:type => "hidden", :name => "hatena_data_id", :value => @content[:id]}
 		%input{:type => "hidden", :name => "ref_count", :value => @content[:hatena_ref_count]}
-		%button{:type => "submit", :class => "btn"}
-			%i{:class => "icon-star"}
+		%button{:type => "submit", :class => "ref-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext"}
+			%span{:class => "ui-btn-inner"}
+				%span{:class => "ui-btn-text"}Heart
+				%span{:class => "ui-icon ui-icon-flat-heart ui-icon-shadow"}
 		%span{:class => "hatena_ref_count"}= @content[:hatena_ref_count]

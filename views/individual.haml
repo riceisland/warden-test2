@@ -1,7 +1,9 @@
 %div{:id => "main"}
 	-case @content[:app]
-		-when "twitter"
-			= haml :twitter
+		-when "twitter_h"
+			= haml :twitter_h
+		-when "twitter_f"
+			= haml :twitter_f
 		-when "tumblr"
 			= haml :tumblr
 		-when "instagram"
@@ -10,6 +12,8 @@
 			= haml :hatena
 		-when "evernote"
 			= haml :evernote
+		-when "rss"
+			= haml :rss
 %hr
 %div{:id => "relate"}
 	%div{:id => "wrapper"}

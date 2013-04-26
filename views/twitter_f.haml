@@ -1,13 +1,14 @@
-%div{:id => @content[:rand_fav_id], :class =>"pin twitter"}
-	%form{:class => "individual", :method => "post", :action => "/individual"}
-		%input{:type => "hidden", :name => "twitter_data_id", :value => @content[:rand_fav_id]}
+%div{:id => @content[:id], :class =>"pin twitter"}
+	%form{:id => "individual_" + @content[:id].to_s, :class => "individual", :method => "post", :action => "/individual"}
+		%input{:type => "hidden", :name => "twitter_fav_data_id", :value => @content[:id]}
 	%div{:class => "twitter_user"}
 		%img{:src => @content[:twitter_img_url], :class => "icon"}
 		%p{:class => "username"}= @content[:twitter_user_name]
 		%p{:class => "screenname"}= "@" + @content[:twitter_screen_name]
 	%div{:class => "tweet"}
 		%p{:class => "text"}= @content[:twitter_text]
-		%p{:class => "time"}= @content[:twitter_time]
+		%span{:class => "time"}= @content[:twitter_time]
+		%span{:class => "submit_individual"}= "詳細を見る"
 	%div{:class => "twitter_fav_tags"}
 		%div{:class => "view"}
 			%div{:class => "twitter_fav_tags_view"}
@@ -19,15 +20,17 @@
 			%p Tag Edit
 			%form{:class => "twitter_fav_edit_form"}
 				%input{:type => "text", :name => "twitter_fav_tag_edit", :value => @content[:twitter_tag_concat]}
-				%input{:type => "hidden", :name => "data_id", :value => @rand_fav_id}
+				%input{:type => "hidden", :name => "data_id", :value => @id}
 				%button{:type => "submit", :class => "btn"}
 					%i{:class => "icon-share-alt"}
 				%span{:id => "twitter_fav_edit_close", :class => "btn twitter_fav_edit_toggle"}
 					%i{:class => "icon-remove"}
 	%div{:class => "refrection"}
 		%form{:class => "twitter_fav_ref_form"}
-			%input{:type => "hidden", :name => "twitter_fav_data_id", :value => @content[:rand_fav_id]}
-			%input{:type => "hidden", :name => "ref_count", :value => @content[:twitter_ref_count]}
-			%button{:type => "submit", :class => "btn"}
-				%i{:class => "icon-star"}
-			%span{:class => "twitter_fav_ref_count"}= @content[:twitter_ref_count]
+			%input{:type => "hidden", :name => "twitter_fav_data_id", :value => @content[:id]}
+			%input{:type => "hidden", :name => "ref_count", :value => @content[:twitter_fav_ref_count]}
+			%button{:type => "submit", :class => "ref-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext"}
+				%span{:class => "ui-btn-inner"}
+					%span{:class => "ui-btn-text"}Heart
+					%span{:class => "ui-icon ui-icon-flat-heart ui-icon-shadow"}
+			%span{:class => "twitter_fav_ref_count"}= @content[:twitter_fav_ref_count]

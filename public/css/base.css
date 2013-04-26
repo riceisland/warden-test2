@@ -90,6 +90,11 @@ img.ref_button {
   font-size: 12px;
 }
 
+.submit_individual {
+  color: #999999;
+  font-size: 12px;
+}
+
 .text {
   font-size: 18px;
   line-height: 26px;
@@ -188,6 +193,11 @@ div.evernote {
 
 div.hatena {
   border-color: #2C6EBD;
+  background-color: #FFFFFF;
+}
+
+div.rss {
+  border-color: #FF6633;
   background-color: #FFFFFF;
 }
 
@@ -423,6 +433,11 @@ fieldset {
   margin-left: 80px;
 }
 
+.ui-btn-rss {
+  width: 150px;
+  margin-bottom: 10px;
+}
+
 .ui-grid-a {
   text-transform: uppercase;
 }
@@ -431,11 +446,33 @@ img.icon {
   float: left;
 }
 
+/*settings page css*/
+
 h4 {
   margin-left: 80px;
 }
 
+.rss_list{
+  margin-left: 80px;
+}
+
+form.rss_register{
+  margin-left: 80px;
+}
+
+
 /* related css */
 div#main {
   margin-top: 50px;
+}
+
+/* refrection css */
+button.ref-btn {
+  padding: 0;
+}
+
+/* alert css */
+
+.settings-alert {
+  display: none;
 }

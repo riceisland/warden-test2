@@ -12,6 +12,7 @@ gem 'multi_json'
 gem 'instagram'
 gem 'nokogiri'
 gem 'sqlite3'
+gem 'feed-normalizer'
 gem 'will_paginate'
 
 #group :development do
