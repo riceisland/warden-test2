@@ -1,0 +1,8 @@
+%form{:class => @content[:app] + "_ref_form"}
+	%input{:type => "hidden", :name => @content[:app] + "_data_id", :value => @content[:id]}
+	%input{:type => "hidden", :name => "ref_count", :value => @content[:ref_count]}
+	%button{:type => "submit", :class => "ref-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext"}
+		%span{:class => "ui-btn-inner"}
+			%span{:class => "ui-btn-text"}Heart
+			%span{:class => "ui-icon ui-icon-flat-heart ui-icon-shadow"}
+	%span{:class => "evernote_ref_count"}= @content[:ref_count]

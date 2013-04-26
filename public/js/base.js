@@ -250,7 +250,7 @@ $(document).ready(function(){
     return false;
   });
   
-  $("form.twitter_home_ref_form").submit(function(){
+  $("form.twitter_h_ref_form").submit(function(){
     //alert($(this).serialize());
     $.ajax({
       url: "/refrection",
@@ -266,7 +266,7 @@ $(document).ready(function(){
     return false;
   });
 
-  $("form.twitter_fav_ref_form").submit(function(){
+  $("form.twitter_f_ref_form").submit(function(){
    return false;
    //alert($(this).serialize());
     $.ajax({

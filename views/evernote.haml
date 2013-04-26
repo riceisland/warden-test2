@@ -17,27 +17,5 @@
 		%div{:class => "modal-footer"}
 			%a{:href => @link, :class =>"btn", :target => "_blank"}Edit
 			%button{:class =>"btn", :'data-dismiss' => "modal", :'aria-hidden' => "true"}Close
-	%div{:class => "evernote_tags"}
-		%div{:class => "view"}
-			%div{:class => "evernote_tags_view"}
-				-@content[:evernote_tag_array].each do |elem|
-					%a{:href => "/" + elem + "/1", :class => "tag"}= elem
-			%span{:id => "evernote_edit_open", :class => "evernote_edit_toggle edit_toggle"}
-				%i{:class => "icon-edit"}
-		%div{:class => "edit", :id => "evernote_edit"}
-			%p Tag Edit
-			%form{:class => "evernote_edit_form"}
-				%input{:type => "text", :name => "evernote_tag_edit", :value => @content[:evernote_tag_concat]}
-				%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
-				%button{:type => "submit", :class => "btn"}
-					%i{:class => "icon-share-alt"}
-				%span{:id => "evernote_edit_close", :class => "btn evernote_edit_toggle"}
-					%i{:class => "icon-remove"}
-	%form{:class => "evernote_ref_form"}
-		%input{:type => "hidden", :name => "evernote_data_id", :value => @content[:id]}
-		%input{:type => "hidden", :name => "ref_count", :value => @content[:evernote_ref_count]}
-		%button{:type => "submit", :class => "ref-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext"}
-			%span{:class => "ui-btn-inner"}
-				%span{:class => "ui-btn-text"}Heart
-				%span{:class => "ui-icon ui-icon-flat-heart ui-icon-shadow"}
-		%span{:class => "evernote_ref_count"}= @content[:evernote_ref_count]
+	= haml :tag
+	= haml :ref_form

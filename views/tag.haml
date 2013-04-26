@@ -1,0 +1,16 @@
+%div{:class => @content[:app] + "_tags"}
+	%div{:class => "view"}
+		%div{:class => @content[:app] + "_tags_view"}
+			-@content[:tag_array].each do |elem|
+				%a{:href => "/" + elem + "/1", :class => "tag"}= elem
+		%span{:id => @content[:app] + "_edit_open", :class => @content[:app] + "_edit_toggle edit_toggle"}
+			%i{:class => "icon-edit"}
+	%div{:class => "edit", :id => @content[:app] + "_edit"}
+		%p Tag Edit
+		%form{:class => @content[:app] + "_edit_form"}
+			%input{:type => "text", :name => @content[:app] + "_tag_edit", :value => @content[:tag_concat]}
+			%input{:type => "hidden", :name => "data_id", :value => @id}
+			%button{:type => "submit", :class => "btn"}
+				%i{:class => "icon-share-alt"}
+			%span{:id => @content[:app] + "_edit_close", :class => @content[:app] + "_edit_toggle btn"}
+				%i{:class => "icon-remove"}
