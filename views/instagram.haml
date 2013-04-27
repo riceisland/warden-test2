@@ -1,6 +1,5 @@
 %div{:id => @content[:id], :class =>"pin instagram"}
-	%form{:id => "individual_" + @content[:id].to_s,:class => "individual", :method => "post", :action => "/individual"}
-		%input{:type => "hidden", :name => "instagram_data_id", :value => @content[:id]}
+	=haml :individual_form
 	%img{:src => @content[:instagram_img_url], :id => "instagram_img"}
 	%p= @content[:instagram_text]
 	%span{:class => "time"}= @content[:instagram_time]

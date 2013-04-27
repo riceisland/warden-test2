@@ -1,6 +1,5 @@
 %div{:id => @content[:id], :class =>"pin twitter"}
-	%form{:id => "individual_" + @content[:id].to_s, :class => "individual", :method => "post", :action => "/individual"}
-		%input{:type => "hidden", :name => "twitter_home_data_id", :value => @content[:id]}
+	=haml :individual_form
 	%div{:class => "twitter_user"}
 		%img{:src => @content[:twitter_img_url], :class => "icon"}
 		%p{:class => "username"}= @content[:twitter_user_name]

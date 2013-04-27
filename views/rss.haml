@@ -1,6 +1,5 @@
 %div{:id => @content[:id], :class =>"pin rss"}
-	%form{:id => "individual_" + @content[:id].to_s, :class => "individual", :method => "post", :action => "/individual"}
-		%input{:type => "hidden", :name => "rss_data_id", :value => @content[:id]}
+	=haml :individual_form
 	%a{:href => @content[:rss_url], :target => "_blank"}= @content[:rss_title]
 	%p= @content[:rss_description]
 	%span{:class => "time"}= @content[:rss_date]

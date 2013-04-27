@@ -1,6 +1,5 @@
 %div{:id => @content[:id], :class =>"pin evernote"}
-	%form{:id => "individual_" + @content[:id].to_s,:class => "individual", :method => "post", :action => "/individual"}
-		%input{:type => "hidden", :name => "evernote_data_id", :value => @content[:id]}
+	=haml :individual_form
 	%div{:id => "snippet"}
 		%div{:id => "title"}= @content[:note_title]
 		%div{:id => "body"}

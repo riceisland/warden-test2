@@ -1,6 +1,5 @@
 %div{:id => @content[:id], :class =>"pin hatena"}
-	%form{:id => "individual_" + @content[:id].to_s, :class => "individual", :method => "post", :action => "/individual"}
-		%input{:type => "hidden", :name => "hatena_data_id", :value => @content[:id]}
+	=haml :individual_form
 	%a{:href => @content[:hatena_url], :target => "_blank"}= @content[:hatena_title]
 	%br
 	%span{:class => "time"}= @content[:hatena_issued]

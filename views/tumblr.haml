@@ -1,6 +1,5 @@
 %div{:id => @content[:id], :class =>"pin tumblr"}
-	%form{:id => "individual_" + @content[:id].to_s,:class => "individual", :method => "post", :action => "/individual"}
-		%input{:type => "hidden", :name => "tumblr_data_id", :value => @content[:id]}
+	=haml :individual_form
 	-case @content[:type]
 		-when "text"
 			%p= @content[:post_title]
