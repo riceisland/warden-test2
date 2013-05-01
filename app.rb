@@ -275,7 +275,8 @@ end
 def instagram_data_create(id)
 
   ref_count = ref_counter("instagram", id)
-
+  
+  begin 
   photo = @instagram.media_item(id)
   instagram_img_url = photo.images.low_resolution
 
@@ -293,6 +294,11 @@ def instagram_data_create(id)
   data_hash = {:app => "instagram", :instagram_img_url => instagram_img_url, :instagram_tags => instagram_tags, :instagram_time => instagram_time, :instagram_text => instagram_text, :tag_concat => tag_concat(id), :tag_array => tag_array(id), :id => id, :ref_count => ref_count }
   
   return data_hash
+  
+  rescue
+  
+  end
+  
   
 end
 
@@ -433,7 +439,7 @@ def db_row_create(app, id)
 	when "twitter_h"
 	   Tweets.create({
 	     :user_id => current_user.id,
-		 :data_id => twit.id,
+		 :data_id => id,
 	     :refrection => 0,
 	   })
 	 when "tumblr"
@@ -477,7 +483,7 @@ def rss_db_create(e, channel_id)
   
   unless past_item       
     Rss_item.create({
-      :channel_id => this_channel.channel_id,
+      :channel_id => channel_id,
       :title => e.title.toutf8,
       :url => e.url,
       :date => e.date_published.to_s,
@@ -495,7 +501,7 @@ def rss_db_create(e, channel_id)
       :user_id => current_user.id,
       :data_id => this_data.data_id,
       :refrection => 0,
-      :channel_id => this_channel.channel_id,
+      :channel_id => channel_id,
     })
   end
 
@@ -579,6 +585,11 @@ def tag_recreate(id, tags, app)
 end
 
 def one_data_create(app, id)
+  
+  if id == ""
+    p app
+    id = rand_id_sample(app)
+  end
 
   case app
     when "twitter_f"
@@ -617,7 +628,7 @@ def one_data_create(app, id)
 	  data_hash = instagram_data_create(id)
       
     when "hatena"
-            
+
       data_hash = hatena_data_create(id)
       
     when "evernote"
@@ -779,7 +790,7 @@ def evernote_db_create(token, shard_id)
     
     catch(:evernote_exit){
       begin      
-      res = noteStore.findNotesMetadata(evernote_oauth.evernote_access_token, filter, offset, 10, spec)
+      res = noteStore.findNotesMetadata(token, filter, offset, 10, spec)
       
       i = res.notes.length
       while i > 0 
@@ -1283,10 +1294,11 @@ get "/twitter_set" do
       :twitter_access_token => session[:twitter_access_token],
       :twitter_access_token_secret => session[:twitter_access_token_secret] ,
     })
-
+  end
+  
     twitter_db_create(session[:twitter_access_token], session[:twitter_access_token_secret])
       
-  end
+ 
   
   session.delete(:twitter_access_token)
   session.delete(:twitter_access_token_secret)
@@ -1503,123 +1515,127 @@ get '/main' do
   if request.env["warden"].user.nil?
     redirect to ("/")
   else
-  @menu = Array.new
-  @menu.push(["main", "d"])
-  @menu.push(["settings", "c"])
-  @menu.push(["logout", "c"])
+    @menu = Array.new
+    @menu.push(["main", "d"])
+    @menu.push(["settings", "c"])
+    @menu.push(["logout", "c"])
 
 
-  @contents_array = Array.new 
+    @contents_array = Array.new 
 #twitter--------------
-  twitter_oauth = Twitter_oauth.where(:uid => current_user.id).first
+    twitter_oauth = Twitter_oauth.where(:uid => current_user.id).first
  
-  if twitter_oauth
-    begin
-      configure_twitter_token(twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
-      @twitter = Twitter::Client.new
+    if twitter_oauth
+      begin
     
-      rand_fav_id = rand_id_sample("twitter_f")
-	  data_hash_f = twitter_favs_data_create(rand_fav_id)
-	  @contents_array.push(data_hash_f)
-    
-      rand_id = rand_id_sample("twitter_h")
-	  data_hash_h = twitter_home_data_create(rand_id)
-      @contents_array.push(data_hash_h)
-    
-	rescue Twitter::Error::Unauthorized => error
+        data_hash_f = one_data_create("twitter_f", "")
+        data_hash_h = one_data_create("twitter_h", "")
+      
+        @contents_array.push(data_hash_f)
+        @contents_array.push(data_hash_h)
+
+	  rescue Twitter::Error::Unauthorized => error
 	  
-	  if error.to_s.index("Invalid or expired token")
-        reject("twitter")
+	    if error.to_s.index("Invalid or expired token")
+          reject("twitter")
+	    end
+	  
+	  rescue Twitter::Error::Forbidden => error
+	    	
 	  end
-	  
-	rescue Twitter::Error::Forbidden => error
-	    
 	
-	end
-	
-  end
+    end
   
 #tumblr--------------
 
-  tumblr_oauth = Tumblr_oauth.where(:uid => current_user.id).first
+    tumblr_oauth = Tumblr_oauth.where(:uid => current_user.id).first
   
-  if tumblr_oauth
-    configure_tumblr_token(tumblr_oauth.tumblr_access_token, tumblr_oauth.tumblr_access_token_secret)
-    @tumblr = Tumblife.client
+    if tumblr_oauth
+
+      data_hash = one_data_create("tumblr", "")
+      @contents_array.push(data_hash)
     
-    rand_post_id = rand_id_sample("tumblr")
-    data_hash = tumblr_data_create(rand_post_id)
-    @contents_array.push(data_hash)
-    
-  end
+    end
 
 #instagram--------------  
-  instagram_oauth = Instagram_oauth.where(:uid => current_user.id).first
+    instagram_oauth = Instagram_oauth.where(:uid => current_user.id).first
   
-  if instagram_oauth
-   @instagram = Instagram.client(:access_token => instagram_oauth.instagram_access_token)
-    
-    rand_photo_id = rand_id_sample("instagram")	
-	data_hash = instagram_data_create(rand_photo_id)
-	
-	if data_hash
+    if instagram_oauth
+
+	  data_hash = one_data_create("instagram", "")
       @contents_array.push(data_hash)
-    end  
-  end
+  
+    end
 
 #hatena--------------  
-  hatena_oauth = Hatena_oauth.where(:uid => current_user.id).first
+    hatena_oauth = Hatena_oauth.where(:uid => current_user.id).first
   
-  if hatena_oauth
+    if hatena_oauth
     
-    begin  
-      rand_bkm_id = rand_id_sample("hatena")
-      data_hash = hatena_data_create(rand_bkm_id)
-      @contents_array.push(data_hash)
+      begin  
     
-    rescue => e
+        data_hash = one_data_create("hatena", "")
+        @contents_array.push(data_hash)
+    
+      rescue => e
       #もし認証が切れた場合は強制reject操作しておく
-      if e.message == "token_rejected"
-        reject("hatena")      
-      end
+        if e.message == "token_rejected"
+          reject("hatena")      
+        end
     
-    end
+      end
    
-  end
+    end
 
 #evernote--------------
-  @evernote_oauth = Evernote_oauth.where(:uid => current_user.id).first
+    @evernote_oauth = Evernote_oauth.where(:uid => current_user.id).first
 
-  if @evernote_oauth
-    begin
-      rand_note_id = rand_id_sample("evernote")
-      data_hash = evernote_data_create(rand_note_id)
-      @contents_array.push(data_hash)
+    if @evernote_oauth
+    
+      begin
+
+        data_hash = one_data_create("evernote", "")
+        @contents_array.push(data_hash)
 	  
-	rescue NoMethodError => e
-	  p e
-	  retry
+	  rescue NoMethodError => e
+	    p e
+	    retry
 	
-	rescue Evernote::EDAM::Error::EDAMUserException => e
-		#再認証が必要
-      if e.errorCode == 9
-        reject("evernote")  
-	  end
+	  rescue Evernote::EDAM::Error::EDAMUserException => e
+	 	#再認証が必要
+        if e.errorCode == 9
+          reject("evernote")  
+	    end
 
-    end
+      end
      
-  end
+    end
   
 #rss-----------------
 
-  rss = Rss_user_relate.where(:user_id => current_user.id).first
-  if rss
-    rand_item_id = rand_id_sample("rss")
-    data_hash = rss_data_create(rand_item_id)
-    @contents_array.push(data_hash)
-  end
- 
- haml :main2
+    rss = Rss_user_relate.where(:user_id => current_user.id).first
+    if rss
+  
+      data_hash = one_data_create("rss", "")
+      @contents_array.push(data_hash)
+  
+    end
+    
+    ids = ""
+    @contents_array.each do |elem|
+      ids = elem[:id] + ","
+    end
+    
+    ids.chop
+    time = Time.now
+    
+    Main_log.create({
+      :user_id => current_user.id,
+      :data_id => ids,
+      :time => time,
+    })
+   
+   haml :main2
  end
 end
 
@@ -1707,11 +1723,11 @@ post "/refrection" do
   new_count = count.to_s
   
   if params[:twitter_f_data_id]
-    id = params[:twitter_fav_data_id]   
+    id = params[:twitter_f_data_id]   
     Twitter_favorites.filter(:data_id => id).update(:refrection => count)
     
   elsif params[:twitter_h_data_id]
-    id = params[:twitter_home_data_id]   
+    id = params[:twitter_h_data_id]   
     Tweets.filter(:data_id => id).update(:refrection => count)
   
   elsif params[:tumblr_data_id]
@@ -1760,8 +1776,23 @@ get "/individual" do
     @menu.push(["main", "c"])
     @menu.push(["settings", "c"])
     @menu.push(["logout", "c"])
+    
+    app_list = ["twitter_f", "twitter_h", "tumblr", "instagram", "hatena", "evernote"]
+    rand_app = app_list.sample     
+
+    @content = one_data_create(rand_app, "")     
+    
+    this_id =  @content[:id]
+    time = Time.now
   
-    "Hello get"
+    Individual_log.create({
+      :user_id => current_user.id,
+      :data_id => this_id,
+      :time => time,
+    })
+    
+    haml :individual
+
   end
 
 end

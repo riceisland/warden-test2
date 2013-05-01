@@ -212,6 +212,7 @@ class Main_log < Sequel::Model
     set_schema do
       primary_key :log_id
       varchar :user_id
+      varchar :data_id
       varchar :time
     end
     create_table
@@ -254,13 +255,3 @@ class Search_log < Sequel::Model
     create_table
   end
 end
-
-class Log_dataset < Sequel::Model
-  unless table_exists?
-    set_schema do
-      varchar :log_id
-      varchar :data_id
-    end
-    create_table
-  end
-end  
