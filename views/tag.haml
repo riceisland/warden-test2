@@ -1,16 +1,14 @@
-%div{:class => @content[:app] + "_tags"}
+%div{:id => "tags_" + @content[:id]}
 	%div{:class => "view"}
-		%div{:class => @content[:app] + "_tags_view"}
-			-@content[:tag_array].each do |elem|
-				%a{:href => "/" + elem + "/1", :class => "tag"}= elem
-		%span{:id => @content[:app] + "_edit_open", :class => @content[:app] + "_edit_toggle edit_toggle"}
+		%div{:id => "tags_view_" + @content[:id]}= @content[:tag_a_concat]
+		%span{:id => @content[:app] + "_edit_open", :class => "edit_toggle"}
 			%i{:class => "icon-edit"}
 	%div{:class => "edit", :id => @content[:app] + "_edit"}
 		%p Tag Edit
-		%form{:class => @content[:app] + "_edit_form"}
-			%input{:type => "text", :name => @content[:app] + "_tag_edit", :value => @content[:tag_concat]}
-			%input{:type => "hidden", :name => "data_id", :value => @id}
+		%form{:class => "edit_form"}
+			%input{:type => "text", :name => "tag_edit", :value => @content[:tag_concat]}
+			%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
 			%button{:type => "submit", :class => "btn"}
 				%i{:class => "icon-share-alt"}
-			%span{:id => @content[:app] + "_edit_close", :class => @content[:app] + "_edit_toggle btn"}
+			%span{:id => @content[:app] + "_edit_close", :class => "edit_toggle btn"}
 				%i{:class => "icon-remove"}

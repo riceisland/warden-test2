@@ -27,6 +27,7 @@ require "./model.rb"
 
 # Sinatra のセッションを有効にする
 set :public_folder, File.join(File.dirname(__FILE__) , %w{ . public })
+enable :sessions
 use Rack::Session::Cookie, :secret => Digest::SHA1.hexdigest(rand.to_s)
 #enable :static
 
@@ -143,30 +144,31 @@ def rand_id_sample(app)
     
   case app
     when "twitter_f"
-      ids = Twitter_favorites.select(:data_id).filter(:user_id => current_user.id)
+      ids = Twitter_favorites.select(:id).filter(:user_id => current_user.id)
 
     when "twitter_h"
-      ids = Tweets.select(:data_id).filter(:user_id => current_user.id)
+      ids = Tweets.select(:id).filter(:user_id => current_user.id)
     
     when "tumblr"
-      ids = Tumblr_posts.select(:data_id).filter(:user_id => current_user.id)
+      ids = Tumblr_posts.select(:id).filter(:user_id => current_user.id)
     
     when "instagram"
-      ids = Instagram_photos.select(:data_id).filter(:user_id => current_user.id)
+      ids = Instagram_photos.select(:id).filter(:user_id => current_user.id)
     
     when "hatena"
-      ids = Hatena_bookmarks.select(:data_id).filter(:user_id => current_user.id)    
+      ids = Hatena_bookmarks.select(:id).filter(:user_id => current_user.id)    
       
     when "evernote"
-      ids = Evernote_notes.select(:data_id).filter(:user_id => current_user.id)
+      ids = Evernote_notes.select(:id).filter(:user_id => current_user.id)
     
     when "rss"    
-      ids = Rss_user_relate.select(:data_id).filter(:user_id => current_user.id)
+      ids = Rss_user_relate.select(:id).filter(:user_id => current_user.id)
     else
   end
   		
   ids.each do |id|
-	content_ids.push(id.data_id)
+    #new_id = app + id.id.to_s
+	content_ids.push(id.id)
   end
 	
   rand_id = content_ids.sample
@@ -179,8 +181,10 @@ end
 def twitter_home_data_create(id)
   
   ref_count = ref_counter("twitter_h", id)
-	 
-  @twitter.user_timeline(:count=> 1, :max_id => id).each do |fav|
+  twit_id = Tweets.select(:data_id).filter(:id => id).first
+  new_id = "twitter_h-" + id.to_s
+
+  @twitter.user_timeline(:count=> 1, :max_id => twit_id.data_id).each do |fav|
     
     @twitter_img_url = fav.user.profile_image_url 
     @twitter_user_name = fav.user.name
@@ -191,7 +195,7 @@ def twitter_home_data_create(id)
 	  #@short_url = shorten(@long_url)
   end
     
-  data_hash = {:app => "twitter_h", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_concat(id), :tag_array => tag_array(id), :id => id, :ref_count => ref_count }
+  data_hash = {:app => "twitter_h", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
     
   return data_hash
 
@@ -201,8 +205,11 @@ end
 def twitter_favs_data_create(id)
   
   ref_count = ref_counter("twitter_f", id)
+  
+  twit_id = Twitter_favorites.select(:data_id).filter(:id => id).first
+  new_id = "twitter_f-" + id.to_s
 	 
-  @twitter.favorites(:count=> 1, :max_id => id).each do |fav|
+  @twitter.favorites(:count=> 1, :max_id => twit_id.data_id).each do |fav|
     
     @twitter_img_url = fav.user.profile_image_url 
     @twitter_user_name = fav.user.name
@@ -213,7 +220,7 @@ def twitter_favs_data_create(id)
 	  #@short_url = shorten(@long_url)
   end
     
-  data_hash = {:app => "twitter_f", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_concat(id), :tag_array => tag_array(id), :id => id, :ref_count => ref_count }
+  data_hash = {:app => "twitter_f", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
     
   return data_hash
 
@@ -225,14 +232,17 @@ def tumblr_data_create(id)
         
   blogurl = @tumblr.info.user.blogs[0].url
   blogurl.gsub!('http://', '')
-    
-  post = @tumblr.posts(blogurl, {:id => id}).posts[0]
+  
+  post_id = Tumblr_posts.select(:data_id).filter(:id => id).first
+  new_id = "tumblr-" + id.to_s    
+  
+  post = @tumblr.posts(blogurl, {:id => post_id.data_id}).posts[0]
   
   time = post.date    
   type = post.type
   tags = post.tag
     
-  content = {:app => "tumblr", :id => id, :type => type, :tumblr_time => time, :tag_concat => tag_concat(id), :tag_array => tag_array(id), :ref_count => ref_count}
+  content = {:app => "tumblr", :id => new_id, :type => type, :tumblr_time => time, :tag_concat => tag_concat(id),  :tag_a_concat => tag_a_concat(id), :ref_count => ref_count}
     
   case type
     when "text"
@@ -275,9 +285,11 @@ end
 def instagram_data_create(id)
 
   ref_count = ref_counter("instagram", id)
+  photo_id = Instagram_photos.select(:data_id).filter(:id => id).first
+  new_id = "instagram-" + id.to_s
   
   begin 
-  photo = @instagram.media_item(id)
+  photo = @instagram.media_item(photo_id.data_id)
   instagram_img_url = photo.images.low_resolution.url
   #p instagram_img_url.url
 
@@ -292,7 +304,7 @@ def instagram_data_create(id)
     instagram_text = nil
   end
 
-  data_hash = {:app => "instagram", :instagram_img_url => instagram_img_url, :instagram_tags => instagram_tags, :instagram_time => instagram_time, :instagram_text => instagram_text, :tag_concat => tag_concat(id), :tag_array => tag_array(id), :id => id, :ref_count => ref_count }
+  data_hash = {:app => "instagram", :instagram_img_url => instagram_img_url, :instagram_tags => instagram_tags, :instagram_time => instagram_time, :instagram_text => instagram_text, :tag_concat => tag_concat(id),  :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
   
   return data_hash
   
@@ -307,7 +319,8 @@ def hatena_data_create(id)
 
   ref_count = ref_counter("hatena", id)
     
-  bookmark = Hatena_bookmarks.filter(:data_id => id)
+  bookmark = Hatena_bookmarks.filter(:id => id)
+  new_id = "hatena-" + id.to_s
     
   bookmark.each do |elem|
     @hatena_title = elem.title
@@ -315,7 +328,7 @@ def hatena_data_create(id)
     @hatena_issued = elem.issued
   end 
 
-  data_hash = {:app => "hatena", :hatena_title => @hatena_title, :hatena_url => @hatena_url, :hatena_issued => @hatena_issued, :tag_concat => tag_concat(id), :tag_array => tag_array(id), :id => id, :ref_count => ref_count }
+  data_hash = {:app => "hatena", :hatena_title => @hatena_title, :hatena_url => @hatena_url, :hatena_issued => @hatena_issued, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
   
   return data_hash
 
@@ -328,9 +341,12 @@ def evernote_data_create(id)
   noteStoreUrl = NOTESTORE_URL_BASE + @evernote_oauth.evernote_shard_id
   noteStoreTransport = Thrift::HTTPClientTransport.new(noteStoreUrl)
   noteStoreProtocol = Thrift::BinaryProtocol.new(noteStoreTransport)
-  noteStore = Evernote::EDAM::NoteStore::NoteStore::Client.new(noteStoreProtocol)    
-	 
-  note = noteStore.getNote(@evernote_oauth.evernote_access_token, id ,true,true,true,true)
+  noteStore = Evernote::EDAM::NoteStore::NoteStore::Client.new(noteStoreProtocol)  
+  
+  guid = Evernote_notes.select(:data_id).filter(:id => id).first
+  new_id = "evernote-" + id.to_s
+  
+  note = noteStore.getNote(@evernote_oauth.evernote_access_token, guid.data_id ,true,true,true,true)
   @note_title = note.title.force_encoding("UTF-8")
   @content = note.content
   @content.force_encoding("UTF-8")
@@ -403,7 +419,7 @@ def evernote_data_create(id)
 	      
   @link = "https://sandbox.evernote.com/Home.action#n=" + note.guid.to_s 
 	  
-  data_hash = {:app => "evernote", :note_title => @note_title, :content => @content, :snippet => @snippet, :link => @link, :tag_concat => tag_concat(id), :tag_array => tag_array(id), :id => id, :ref_count => ref_count, :evernote_time => @create_time }
+  data_hash = {:app => "evernote", :note_title => @note_title, :content => @content, :snippet => @snippet, :link => @link, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :evernote_time => @create_time }
   
   return data_hash
 
@@ -414,6 +430,8 @@ def rss_data_create(id)
   ref_count = ref_counter("rss", id)
     
   item = Rss_item.filter(:data_id => id)
+  
+  new_id = "rss-" + id.to_s
     
   item.each do |elem|
     @rss_title = elem.title
@@ -422,7 +440,7 @@ def rss_data_create(id)
     @rss_description = elem.description
   end 
     
-  data_hash = {:app => "rss", :rss_title => @rss_title, :rss_url => @rss_url, :rss_date => @rss_date, :rss_description => @rss_description, :tag_concat => tag_concat(id), :tag_array => tag_array(id), :id => id, :ref_count => ref_count }
+  data_hash = {:app => "rss", :rss_title => @rss_title, :rss_url => @rss_url, :rss_date => @rss_date, :rss_description => @rss_description, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
   
   return data_hash
 
@@ -479,7 +497,7 @@ def db_tag_create(app, id, tag)
 end
 
 def rss_db_create(e, channel_id)
-  past_item = Rss_item.select(:data_id).filter(:url => e.url).first
+  past_item = Rss_item.select(:id).filter(:url => e.url).first
   #p past_item
   
   unless past_item       
@@ -492,15 +510,15 @@ def rss_db_create(e, channel_id)
     })          
   end
      
-  this_data = Rss_item.select(:data_id).filter(:url => e.url).first
+  this_data = Rss_item.select(:id).filter(:url => e.url).first
 
-  past_relate_id = Rss_user_relate.select(:data_id).filter(:user_id => current_user.id, :data_id => this_data.data_id).first
+  past_relate_id = Rss_user_relate.select(:id).filter(:user_id => current_user.id, :data_id => this_data.id).first
      
   unless past_relate_id
     #p this_data.data_id
     Rss_user_relate.create({
       :user_id => current_user.id,
-      :data_id => this_data.data_id,
+      :id => this_data.id,
       :refrection => 0,
       :channel_id => channel_id,
     })
@@ -512,25 +530,25 @@ def ref_counter(app, id)
 
   case app
     when "twitter_f"
-      ref_sql = Twitter_favorites.select(:refrection).filter(:data_id => id)
+      ref_sql = Twitter_favorites.select(:refrection).filter(:id => id)
     
     when "twitter_h"
-      ref_sql = Tweets.select(:refrection).filter(:data_id => id)
+      ref_sql = Tweets.select(:refrection).filter(:id => id)
     
     when "tumblr"
-      ref_sql = Tumblr_posts.select(:refrection).filter(:data_id => id)
+      ref_sql = Tumblr_posts.select(:refrection).filter(:id => id)
     
     when "instagram"
-      ref_sql = Instagram_photos.select(:refrection).filter(:data_id => id)
+      ref_sql = Instagram_photos.select(:refrection).filter(:id => id)
     
     when "hatena"
-      ref_sql = Hatena_bookmarks.select(:refrection).filter(:data_id => id)
+      ref_sql = Hatena_bookmarks.select(:refrection).filter(:id => id)
     
     when "evernote"
-      ref_sql = Evernote_notes.select(:refrection).filter(:data_id => id)
+      ref_sql = Evernote_notes.select(:refrection).filter(:id => id)
       
     when "rss"
-      ref_sql = Rss_user_relate.select(:refrection).filter(:data_id => id)
+      ref_sql = Rss_user_relate.select(:refrection).filter(:id => id)
     else
   end
   
@@ -541,19 +559,8 @@ def ref_counter(app, id)
   
 end
 
-def tag_array(data_id)
-  tags = Tags.select(:tag).filter(:user_id => current_user.id, :data_id => data_id) 
-  tag_array = Array.new
-  
-  tags.each do |tag|
-    tag_array.push(tag.tag)
-  end
-  
-  return tag_array
-end
-
-def tag_concat(data_id)
-  tags = Tags.select(:tag).filter(:user_id => current_user.id, :data_id => data_id) 
+def tag_concat(id)
+  tags = Tags.select(:tag).filter(:user_id => current_user.id, :data_id => id) 
   tag_concat = ""
   
   tags.each do |tag|
@@ -564,11 +571,11 @@ def tag_concat(data_id)
   return tag_concat
 end
 
-def tag_a_concat(data_id)
-  tags = Tags.select(:tag).filter(:user_id => current_user.id, :data_id => data_id) 
+def tag_a_concat(id)
+  tags = Tags.select(:tag).filter(:user_id => current_user.id, :data_id => id) 
   tag_a_concat = ""
   tags.each do |tag|
-    tag_html = "<a href= /" + tag.tag + ">" + tag.tag + "</a> "  
+    tag_html = "<a href= /" + tag.tag + "/1>" + tag.tag + "</a> "  
     tag_a_concat = tag_a_concat + tag_html
   end
   return tag_a_concat
@@ -995,7 +1002,8 @@ end
 # 成功すれば設定ページに移動。
 post "/login" do
   request.env["warden"].authenticate!
-  redirect to ("/data_refresh")
+  #redirect to ("/data_refresh")
+  redirect to ("/main")
 end
 
 #get-login（URL直打ちパターン）
@@ -1636,15 +1644,17 @@ get '/main' do
     
     ids = ""
     @contents_array.each do |elem|
-      ids = elem[:id].to_s + ","
+      ids = ids + elem[:id].to_s + ","
     end
     
     ids.chop
     time = Time.now
     
+    p ids
+    
     Main_log.create({
       :user_id => current_user.id,
-      :data_id => ids,
+      :dataset => ids,
       :time => time,
     })
    
@@ -1653,34 +1663,18 @@ get '/main' do
 end
 
 post "/tagedit" do
- id = params[:data_id]
- if params[:twitter_f_tag_edit] 
-   tag_recreate(id, params[:twitter_f_tag_edit], "twitter_f")
 
- elsif params[:twitter_h_tag_edit] 
-   tag_recreate(id, params[:twitter_h_tag_edit], "twitter_h")
- 
- elsif params[:tumblr_tag_edit] 
-   tag_recreate(id, params[:tumblr_tag_edit], "tumblr")
-   
- elsif params[:instagram_tag_edit] 
-   tag_recreate(id, params[:instagram_tag_edit], "instagram")
-   
- elsif params[:evernote_tag_edit] 
-   tag_recreate(id, params[:evernote_tag_edit], "evernote")
- 
- #本家のタグを合わせて更新するため分けてある
- elsif params[:hatena_tag_edit]
-   tags = params[:hatena_tag_edit]
-   tag_recreate(id, tags, "hatena")
-    
+  dataset = params[:data_id].split("-")
+
+  tag_recreate(dataset[1], params[:tag_edit], dataset[0])
+  
+  if dataset[0] == "hatena"    
+
     begin
       /([0-9]+)$/ =~ id
       eid = $1
     
     rescue
-    
-    #else
       
       #uri = URI.parse("http://localhost:4567")
       edituri = "http://b.hatena.ne.jp/atom/edit/" + $1
@@ -1721,13 +1715,9 @@ post "/tagedit" do
      # p response.body
          
     end
- elsif params[:rss_tag_edit]     
-   tag_recreate(id, params[:rss_tag_edit], "rss") 
+  end
  
- else
- 
- end
- return tag_a_concat(id) 
+  return tag_a_concat(dataset[1]) 
 end
 
 post "/refrection" do
@@ -1735,33 +1725,31 @@ post "/refrection" do
   count = count + 1
   new_count = count.to_s
   
-  if params[:twitter_f_data_id]
-    id = params[:twitter_f_data_id]   
-    Twitter_favorites.filter(:data_id => id).update(:refrection => count)
-    
-  elsif params[:twitter_h_data_id]
-    id = params[:twitter_h_data_id]   
-    Tweets.filter(:data_id => id).update(:refrection => count)
+  dataset = params[:data_id].split("-")
+  id = dataset[1]
   
-  elsif params[:tumblr_data_id]
-    id = params[:tumblr_data_id]   
-    Tumblr_posts.filter(:post_id => id).update(:refrection => count)    
+  case dataset[0]
+  
+  when "twitter_f"  
+    Twitter_favorites.filter(:id => id).update(:refrection => count)
+    
+  when "twitter_h" 
+    Tweets.filter(:id => id).update(:refrection => count)
+  
+  when "tumblr"  
+    Tumblr_posts.filter(:id => id).update(:refrection => count)    
 
-  elsif params[:instagram_data_id]
-    id = params[:instagram_data_id]   
-    Instagram_photos.filter(:photo_id => id).update(:refrection => count)    
+  when "instagram"  
+    Instagram_photos.filter(:id => id).update(:refrection => count)    
 
-  elsif params[:hatena_data_id]
-    id = params[:hatena_data_id]   
+  when "hatena"  
     Hatena_bookmarks.filter(:id => id).update(:refrection => count)
     
-  elsif params[:evernote_data_id]
-    id = params[:evernote_data_id]   
-    Evernote_notes.filter(:note_id => id).update(:refrection => count) 
+  when "evernote"  
+    Evernote_notes.filter(:id => id).update(:refrection => count) 
   
-  elsif params[:rss_data_id]
-    id = params[:rss_data_id]   
-    Rss_user_relate.filter(:data_id => id).update(:refrection => count)  
+  when "rss"
+    Rss_user_relate.filter(:id => id).update(:refrection => count)  
               
   else
   end
@@ -1770,7 +1758,7 @@ post "/refrection" do
   
   Reflection_log.create({
     :user_id => current_user.id,
-    :data_id => id,
+    :id => id,
     :time => time,
   })  
   
@@ -1795,12 +1783,12 @@ get "/individual" do
 
     @content = one_data_create(rand_app, "")     
     
-    this_id =  @content[:id]
+    this_id = @content[:id]
     time = Time.now
   
     Individual_log.create({
       :user_id => current_user.id,
-      :data_id => this_id,
+      :id => this_id,
       :time => time,
     })
     
@@ -1820,14 +1808,16 @@ post "/individual" do
 
   @relates_array = Array.new
   
-  @content = one_data_create(params[:app], params[:data_id])
+  id = params[:data_id].split("-")
+  p id[1]
+  @content = one_data_create(params[:app], id[1])
    
   this_id = @content[:id]
   time = Time.now
   
   Individual_log.create({
     :user_id => current_user.id,
-    :data_id => this_id,
+    :id => this_id,
     :time => time,
   })
         
@@ -1866,7 +1856,7 @@ get "/:name/:page" do
     @tagname = params[:name]
     page = params[:page].to_i
     #contents = Tags.select(:data_id, :app).filter(:tag => params[:name])
-    contents = Tags.select(:data_id, :app).filter(:tag => @tagname).order_by(:id.desc)
+    contents = Tags.select(:id, :data_id, :app).filter(:tag => @tagname).order_by(:id.desc)
   
     @paginated = contents.paginate(page, 4)
   
@@ -1874,30 +1864,27 @@ get "/:name/:page" do
   
     @paginated.each do |elem|
       
-      this_data = one_data_create(elem.app, elem.data_id)
+      data_hash = one_data_create(elem.app, elem.data_id)
       @contents_array.push(data_hash)
           
     end
     
     time = Time.now.to_s
+    
+    ids = ""
+    @contents_array.each do |elem|
+      ids = elem[:id].to_s + ","
+    end
+    
+    ids.chop
   
     Search_log.create({
       :user_id => current_user.id,
       :tag => @tagname,
       :time => time,
       :page => params[:page],
+      :dataset => ids,
     })
-    
-    search_log = Search_log.where(:tag => @tagname, :time => time, :page => params[:page]).first
-    
-    @contents_array.each do |elem|
-      this_id = elem[:id]
-      Log_dataset.create({
-        :log_id => search_log.log_id,
-        :data_id => this_id,
-      })          
-  
-    end 
     
     haml :tagsearch
   end

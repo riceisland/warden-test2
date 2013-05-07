@@ -170,7 +170,7 @@ class Rss_user_relate < Sequel::Model
   unless table_exists?
     set_schema do
       integer :user_id
-      foreign_key :data_id, :table => :Rss_items
+      foreign_key :id, :table => :Rss_items
       varchar :refrection
       foreign_key :channel_id, :table => :Rss_channels
     end
@@ -181,7 +181,7 @@ end
 class Rss_item < Sequel::Model
   unless table_exists?
     set_schema do
-      primary_key :data_id
+      primary_key :id
       foreign_key :channel_id, :table => :RSS_channels
       varchar :title
       varchar :url
@@ -224,7 +224,7 @@ class Individual_log < Sequel::Model
     set_schema do
       primary_key :log_id
       varchar :user_id
-      varchar :data_id
+      varchar :id
       varchar :time
     end
     create_table
@@ -236,7 +236,7 @@ class Reflection_log < Sequel::Model
     set_schema do
       primary_key :log_id
       varchar :user_id
-      varchar :data_id
+      varchar :id
       varchar :time
     end
     create_table
@@ -251,7 +251,9 @@ class Search_log < Sequel::Model
       varchar :time
       varchar :tag
       varchar :page
+      varchar :dataset
     end
     create_table
   end
 end
+

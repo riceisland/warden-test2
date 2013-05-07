@@ -60,7 +60,7 @@ jQuery(function($) {
       $('#ui-about-text').css('text-decoration', 'none');
     })
     
-                   $('.submit_individual').mouseover(function(){
+    $('.submit_individual').mouseover(function(){
       $(this).css('text-decoration', 'underline');
     })
     
@@ -82,21 +82,7 @@ jQuery(function($) {
     $('#about_open').click(function(){
       $('#modal_about').modal();
     })
-    
-    
-    
-   // $('.pin').click(function(){
-   //   if ($(event.target).is("form")) {
-   //     alert("div");
-   //   }
-   //   else {
-   //     id = $(this).attr("id");
-   //     alert(id);
-   //     $("form.individual", this).submit();
-   //   }
-   //   alert(event.target.nodeName)
-   // })
-   
+
    $('span.submit_individual').click(function(){
      id = $(this).closest("div.pin").attr("id")
      form_id = "form#individual_" + id
@@ -104,162 +90,42 @@ jQuery(function($) {
      $(form_id).submit(); 
    })
 
-});
-
-
-
-
 //Edit
 
-$(document).ready(function(){
-  $(".twitter_f_edit_toggle").click(function(){
-    $(".twitter_f_tags div").toggle();
+  $(".edit_toggle").click(function(){
+  	id = $(this).closest("div.pin").attr("id")
+  	tag_parent = "#tags_" + id + " div"
+  	//alert(tag_parent);
+    $(tag_parent).toggle();
+    return false;
+  });
+
+  $("form.edit_form").submit(function(){
+  	id = $(this).closest("div.pin").attr("id")
+  	tag_parent = "#tags_" + id + " div"
+  	tag_view = "div#tags_view_" + id
+  	
+    $.ajax({
+      url: "/tagedit",
+      type: 'POST',
+      timeout: 1000,
+      data: $(this).serialize(),
+      error: function(){alert('ERROR');},
+      success: function(obj){
+      	//alert(obj);
+        $(tag_parent).toggle();       
+        $(tag_view).html(obj);
+      }
+    });
     return false;
   });
       
-  $(".twitter_h_edit_toggle").click(function(){
-    $(".twitter_h_tags div").toggle();
-    return false;
-  });
-
-  $(".tumblr_edit_toggle").click(function(){
-    $(".tumblr_tags div").toggle();
-    return false;
-  });
-
-  $(".instagram_edit_toggle").click(function(){
-    $(".instagram_tags div").toggle();
-    return false;
-  }); 
-  
-  $(".evernote_edit_toggle").click(function(){
-    $(".evernote_tags div").toggle();
-    return false;
-  });
-  
-  $(".hatena_edit_toggle").click(function(){
-    $(".hatena_tags div").toggle();
-    return false;
-  });
-  
-  $(".rss_edit_toggle").click(function(){
-    $(".rss_tags div").toggle();
-    return false;
-  });
-   
-});
-
-$(document).ready(function(){
-
-  $("form.twitter_f_edit_form").submit(function(){
-    $.ajax({
-      url: "/tagedit",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-      	alert(obj);
-        $(".twitter_f_tags div").toggle();        
-        $("div.twitter_f_tags_view").html(obj);
-      }
-    });
-    return false;
-  });
-    
-  $("form.twitter_h_edit_form").submit(function(){
-    $.ajax({
-      url: "/tagedit",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-      	alert(obj);
-        $(".twitter_h_tags div").toggle();        
-        $("div.twitter_h_tags_view").html(obj);
-      }
-    });
-    return false;
-  });
-  
-  $("form.tumblr_edit_form").submit(function(){
-    $.ajax({
-      url: "/tagedit",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-        $(".tumblr_tags div").toggle();   
-        $("div.tumblr_tags_view").html(obj); 
-      }
-    });
-    return false;
-  });
-  
-  $("form.instagram_edit_form").submit(function(){
-    $.ajax({
-      url: "/tagedit",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-        $(".instagram_tags div").toggle();   
-        $("div.instagram_tags_view").html(obj);
-      }
-    });
-    return false;
-  });
-
-  $("form.hatena_edit_form").submit(function(){
-    $.ajax({
-      url: "/tagedit",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-        $(".hatena_tags div").toggle();   
-        $("div.hatena_tags_view").html(obj);  
-      }
-    });
-    return false;
-  });
-  
-  $("form.evernote_edit_form").submit(function(){
-    $.ajax({
-      url: "/tagedit",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-        $(".evernote_tags div").toggle();   
-        $("div.evernote_tags_view").html(obj); 
-      }
-    });
-    return false;
-  });
-  
-  $("form.rss_edit_form").submit(function(){
-    $.ajax({
-      url: "/tagedit",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-        $(".rss_tags div").toggle();   
-        $("div.rss_tags_view").html(obj);  
-      }
-    });
-    return false;
-  });
-  
-  $("form.twitter_h_ref_form").submit(function(){
-    alert($(this).serialize());
+  $("form.ref_form").submit(function(){
+  	id = $(this).closest("div.pin").attr("id")
+  	val_id = "#ref_val_" + id
+  	count_id = "#ref_count_" + id
+  	//alert(id);
+    //alert($(this).serialize());
     $.ajax({
       url: "/refrection",
       type: 'POST',
@@ -268,113 +134,12 @@ $(document).ready(function(){
       error: function(){alert('ERROR');},
       success: function(obj){
         alert("Thank you!");
-        $("span.twitter_h_ref_count").html(obj);     
+        $(val_id).val(obj)
+        $(count_id).html(obj);     
       }
     });
     return false;
   });
-
-  $("form.twitter_f_ref_form").submit(function(){
-   return false;
-   //alert($(this).serialize());
-    $.ajax({
-      url: "/refrection",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-        alert("Thank you!");
-        $("span.twitter_f_ref_count").html(obj);     
-      }
-    });
-    return false;
-  });
-  
-  $("form.tumblr_ref_form").submit(function(){
-   //alert($(this).serialize());
-    $.ajax({
-      url: "/refrection",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-        alert("Thank you!");
-        $("span.tumblr_ref_count").html(obj);     
-      }
-    });
-    return false;
-  });  
-
-  $("form.instagram_ref_form").submit(function(){
-   //alert($(this).serialize());
-    $.ajax({
-      url: "/refrection",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-        alert("Thank you!");
-        $("span.instagram_ref_count").html(obj);     
-      }
-    });
-    return false;
-  });  
-
-  $("form.hatena_ref_form").submit(function(){
-   //alert($(this).serialize());
-    $.ajax({
-      url: "/refrection",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-        alert("Thank you!");
-        $("span.hatena_ref_count").html(obj);     
-      }
-    });
-    return false;
-  });  
-
-  $("form.evernote_ref_form").submit(function(){
-   //alert($(this).serialize());
-    $.ajax({
-      url: "/refrection",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-        alert("Thank you!");
-        $("span.evernote_ref_count").html(obj);     
-      }
-    });
-    return false;
-  });  
-
-  $("form.rss_ref_form").submit(function(){
-   //alert($(this).serialize());
-    $.ajax({
-      url: "/refrection",
-      type: 'POST',
-      timeout: 1000,
-      data: $(this).serialize(),
-      error: function(){alert('ERROR');},
-      success: function(obj){
-        alert("Thank you!");
-        $("span.rss_ref_count").html(obj);     
-      }
-    });
-    return false;
-  });  
-
-});
-
-
-$(document).ready(function(){
 
   $("form.rss_register").submit(function(){
     $.ajax({
