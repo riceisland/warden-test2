@@ -212,7 +212,7 @@ class Main_log < Sequel::Model
     set_schema do
       primary_key :log_id
       varchar :user_id
-      varchar :data_id
+      varchar :dataset
       varchar :time
     end
     create_table

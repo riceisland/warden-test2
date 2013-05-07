@@ -5,4 +5,4 @@
 		%span{:class => "ui-btn-inner"}
 			%span{:class => "ui-btn-text"}Heart
 			%span{:class => "ui-icon ui-icon-flat-heart ui-icon-shadow"}
-	%span{:class => "evernote_ref_count"}= @content[:ref_count]
+	%span{:class => @content[:app] + "_ref_count"}= @content[:ref_count]

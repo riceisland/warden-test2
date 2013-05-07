@@ -58,7 +58,15 @@ jQuery(function($) {
     
     $('#ui-about-text').mouseout(function(){
       $('#ui-about-text').css('text-decoration', 'none');
-    })           
+    })
+    
+                   $('.submit_individual').mouseover(function(){
+      $(this).css('text-decoration', 'underline');
+    })
+    
+    $('.submit_individual').mouseout(function(){
+      $(this).css('text-decoration', 'none');
+    })                   
     
     
     
@@ -251,7 +259,7 @@ $(document).ready(function(){
   });
   
   $("form.twitter_h_ref_form").submit(function(){
-    //alert($(this).serialize());
+    alert($(this).serialize());
     $.ajax({
       url: "/refrection",
       type: 'POST',

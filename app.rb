@@ -278,7 +278,8 @@ def instagram_data_create(id)
   
   begin 
   photo = @instagram.media_item(id)
-  instagram_img_url = photo.images.low_resolution
+  instagram_img_url = photo.images.low_resolution.url
+  #p instagram_img_url.url
 
   instagram_time = photo.created_time
   instagram_time = Time.at(instagram_time.to_i).to_s
@@ -638,7 +639,7 @@ def one_data_create(app, id)
       
     when "rss"
             
-      data_hash = rss_data_create(elem.data_id)
+      data_hash = rss_data_create(id)
           
     else
           
@@ -1043,8 +1044,20 @@ get "/register" do
   end
 end
 
+get "/register/error" do
+  if request.env["warden"].user.nil?
+    @menu = Array.new
+    @menu.push(["login", "c"])
+    @menu.push(["register", "d"])
+
+    haml :fail_register
+  else
+    redirect to ("/main")
+  end
+end
+
 post "/register" do
-  if params[:name] && params[:password] && params[:re_password] && params[:mail]
+  if params[:name] != "" && params[:password] != "" && params[:re_password] != "" && params[:mail] != ""
     if params[:password] == params[:re_password]
       hexpass = OpenSSL::Digest::SHA1.hexdigest(params["password"])
       User.create({
@@ -1055,10 +1068,10 @@ post "/register" do
 	  request.env["warden"].authenticate!
       redirect to("/settings")
     else
-      redirect to ("/register")
+      redirect to ("/register/error")
     end
   else
-    redirect to ("/register")
+    redirect to ("/register/error")
   end
 end
 
@@ -1623,7 +1636,7 @@ get '/main' do
     
     ids = ""
     @contents_array.each do |elem|
-      ids = elem[:id] + ","
+      ids = elem[:id].to_s + ","
     end
     
     ids.chop
