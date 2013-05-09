@@ -262,7 +262,12 @@ a:hover {
 }
 
 .span3 {
+  /*
   width: 220px;
+  */
+  width: 200px;
+  margin-top: 50px;
+
 }
 
 .span2 {

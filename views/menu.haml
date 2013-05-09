@@ -1,8 +1,6 @@
 %fieldset{:class => "ui-grid-a"}
 	%div{:class => "ui-block-a"}
-		%button{:class => "ui-btn ui-shadow ui-btn-up-c ui-btn-corner-all", :id => "about_open"}
-			%span{:class => "ui-btn-inner"}
-				%span{:class => "ui-btn-text", :id => "ui-about-text"}ABOUT
+		%button{:'data-theme' => "c", :id => "about_open"}ABOUT				
 		%div{:class => "modal hide fade",:id => "modal_about", :tabindex => "-1", :role => "dialog", :'aria-labelledby' => "ModalLabel", :'aria-hidden' => "true"}
 			%div{:class => "modal-header"}
 				%button{:type =>"button", :class =>"close", :'data-dismiss' => "modal", :'aria-hidden' => "true"}x
@@ -13,8 +11,8 @@
 				%button{:class =>"btn", :'data-dismiss' => "modal", :'aria-hidden' => "true"}Close
 	-@menu.each do |elem|
 		%div{:class => "ui-block-a"}
-			%a{:href => "/" + elem[0] ,:class => "ui-btn ui-shadow ui-btn-corner-all ui-btn-up-" + elem[1] }
-				%span{:class => "ui-btn-inner"}
-					%span{:class => "ui-btn-text"}= elem[0]
-
-			
+			%a{:href => "/" + elem[0]}
+				%button{:'data-theme' => elem[1]}= elem[0]
+	-if @main
+		%input{:type => "checkbox", :name => "checkbox-a", :'data-theme' => "c", :id => "checkbox-a", :checked => "checked"}
+		%label{:for => "checkbox-a"}自動更新

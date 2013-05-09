@@ -18,6 +18,7 @@ require 'will_paginate/sequel'
 require 'feed-normalizer'
 require 'kconv'
 require 'json'
+require 'parallel'
 require "sinatra/reloader" if development?
 
 #evernote用
@@ -221,7 +222,7 @@ def twitter_favs_data_create(id)
   end
     
   data_hash = {:app => "twitter_f", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
-    
+   
   return data_hash
 
 end
@@ -512,7 +513,7 @@ def rss_db_create(e, channel_id)
      
   this_data = Rss_item.select(:id).filter(:url => e.url).first
 
-  past_relate_id = Rss_user_relate.select(:id).filter(:user_id => current_user.id, :data_id => this_data.id).first
+  past_relate_id = Rss_user_relate.select(:id).filter(:user_id => current_user.id, :id => this_data.id).first
      
   unless past_relate_id
     #p this_data.data_id
@@ -575,7 +576,7 @@ def tag_a_concat(id)
   tags = Tags.select(:tag).filter(:user_id => current_user.id, :data_id => id) 
   tag_a_concat = ""
   tags.each do |tag|
-    tag_html = "<a href= /" + tag.tag + "/1>" + tag.tag + "</a> "  
+    tag_html = "<a href= /tagsearch?tagname=" + tag.tag + "&page=1>" + tag.tag + "</a> "  
     tag_a_concat = tag_a_concat + tag_html
   end
   return tag_a_concat
@@ -595,7 +596,6 @@ end
 def one_data_create(app, id)
   
   if id == ""
-    p app
     id = rand_id_sample(app)
   end
 
@@ -1536,68 +1536,77 @@ get '/main' do
   if request.env["warden"].user.nil?
     redirect to ("/")
   else
+    @main = ""
+  
     @menu = Array.new
     @menu.push(["main", "d"])
     @menu.push(["settings", "c"])
     @menu.push(["logout", "c"])
 
+    @contents_array = Array.new
+    apps = Array.new
 
-    @contents_array = Array.new 
-#twitter--------------
+
     twitter_oauth = Twitter_oauth.where(:uid => current_user.id).first
- 
     if twitter_oauth
-      begin
+      apps.push("twitter_f")
+      apps.push("twitter_h")
+    end
     
-        data_hash_f = one_data_create("twitter_f", "")
-        data_hash_h = one_data_create("twitter_h", "")
-      
-        @contents_array.push(data_hash_f)
-        @contents_array.push(data_hash_h)
+    tumblr_oauth = Tumblr_oauth.where(:uid => current_user.id).first
+    if tumblr_oauth
+      apps.push("tumblr")
+    end
+  
+    instagram_oauth = Instagram_oauth.where(:uid => current_user.id).first
+    if instagram_oauth
+      apps.push("instagram")
+    end
+    
+    hatena_oauth = Hatena_oauth.where(:uid => current_user.id).first
+    if hatena_oauth
+      apps.push("hatena")
+    end
+    
+    @evernote_oauth = Evernote_oauth.where(:uid => current_user.id).first
+    if @evernote_oauth
+      apps.push("evernote")
+    end
 
-	  rescue Twitter::Error::Unauthorized => error
+    rss = Rss_user_relate.where(:user_id => current_user.id).first
+    if rss
+      apps.push("rss")
+    end
+    
+    Parallel.each(apps, in_threads:6){|app|
+     
+      begin
+        data_hash = one_data_create(app, "")
+        p data_hash 
+      rescue Twitter::Error::Unauthorized => error
 	  
 	    if error.to_s.index("Invalid or expired token")
           reject("twitter")
 	    end
 	  
+	  rescue Twitter::Error::BadRequest => error
+	    
+	    if error.to_s.index("Bad authentication data")
+          reject("twitter")
+	    end	    
+	  
 	  rescue Twitter::Error::Forbidden => error
-	    	
-	  end
+
+      rescue NoMethodError => e
+	    p e
+	    retry
 	
-    end
-  
-#tumblr--------------
-
-    tumblr_oauth = Tumblr_oauth.where(:uid => current_user.id).first
-  
-    if tumblr_oauth
-
-      data_hash = one_data_create("tumblr", "")
-      @contents_array.push(data_hash)
-    
-    end
-
-#instagram--------------  
-    instagram_oauth = Instagram_oauth.where(:uid => current_user.id).first
-  
-    if instagram_oauth
-
-	  data_hash = one_data_create("instagram", "")
-      @contents_array.push(data_hash)
-  
-    end
-
-#hatena--------------  
-    hatena_oauth = Hatena_oauth.where(:uid => current_user.id).first
-  
-    if hatena_oauth
-    
-      begin  
-    
-        data_hash = one_data_create("hatena", "")
-        @contents_array.push(data_hash)
-    
+	  rescue Evernote::EDAM::Error::EDAMUserException => e
+	 	#再認証が必要
+        if e.errorCode == 9
+          reject("evernote")            
+        end
+      
       rescue => e
       #もし認証が切れた場合は強制reject操作しておく
         if e.message == "token_rejected"
@@ -1605,46 +1614,18 @@ get '/main' do
         end
     
       end
-   
-    end
-
-#evernote--------------
-    @evernote_oauth = Evernote_oauth.where(:uid => current_user.id).first
-
-    if @evernote_oauth
-    
-      begin
-
-        data_hash = one_data_create("evernote", "")
-        @contents_array.push(data_hash)
-	  
-	  rescue NoMethodError => e
-	    p e
-	    retry
-	
-	  rescue Evernote::EDAM::Error::EDAMUserException => e
-	 	#再認証が必要
-        if e.errorCode == 9
-          reject("evernote")  
-	    end
-
-      end
-     
-    end
-  
-#rss-----------------
-
-    rss = Rss_user_relate.where(:user_id => current_user.id).first
-    if rss
-  
-      data_hash = one_data_create("rss", "")
+      
       @contents_array.push(data_hash)
-  
-    end
+      
+    }
     
     ids = ""
     @contents_array.each do |elem|
-      ids = ids + elem[:id].to_s + ","
+
+      if elem
+        
+        ids = ids + elem[:id].to_s + ","
+      end
     end
     
     ids.chop
@@ -1841,7 +1822,7 @@ get "/reject/rss/:id" do
   
 end
 
-get "/:name/:page" do
+get "/tagsearch" do
 #get "/:name" do
 
   if request.env["warden"].user.nil?
@@ -1853,7 +1834,7 @@ get "/:name/:page" do
     @menu.push(["logout", "c"])
 
   
-    @tagname = params[:name]
+    @tagname = params[:tagname]
     page = params[:page].to_i
     #contents = Tags.select(:data_id, :app).filter(:tag => params[:name])
     contents = Tags.select(:id, :data_id, :app).filter(:tag => @tagname).order_by(:id.desc)

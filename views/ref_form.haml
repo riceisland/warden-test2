@@ -1,8 +1,5 @@
 %form{:class => "ref_form"}
 	%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
 	%input{:type => "hidden", :id => "ref_val_"+@content[:id], :name => "ref_count", :value => @content[:ref_count]}
-	%button{:type => "submit", :class => "ref-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext"}
-		%span{:class => "ui-btn-inner"}
-			%span{:class => "ui-btn-text"}Heart
-			%span{:class => "ui-icon ui-icon-flat-heart ui-icon-shadow"}
+	%button{:type => "submit", :'data-role' => "button", :'data-icon' => "flat-heart", :'data-iconpos' => "notext", :'data-theme' => "e", :'data-inline' => "true"}Heart
 	%span{:class => "ref_count" + @content[:app], :id => "ref_count_"+ @content[:id]}= @content[:ref_count]

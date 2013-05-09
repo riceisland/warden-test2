@@ -162,4 +162,20 @@ jQuery(function($) {
     return false;
   });
   
+  timer = setTimeout(function(){ page_reload(); }, 15000);
+  
+  function page_reload(){
+  	location.reload();
+  }
+
+  $(".ui-checkbox :checkbox").change(function() {
+    var isChecked = $(this).attr("checked");
+    if(isChecked == "checked"){
+    	timer = setTimeout(function(){ page_reload(); }, 4000);
+    } else {
+    	clearTimeout(timer);
+    }
+  })	 
+      
+  
 });
