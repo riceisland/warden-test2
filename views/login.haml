@@ -2,5 +2,5 @@
 	%form{:action => "/login", :method => "POST", :class => "userform", :'data-ajax' => "false"}
 		%input{:type => "text", :name =>"name", :placeholder => "UserName", :class => "span3"}
 		%input{:type => "password", :name =>"password", :placeholder => "Password", :class => "span3"}
-		%input{:type => "submit", :value => "Login!", :class => "ui-btn ui-shadow ui-btn-up-f ui-shadow ui-btn-corner-all ui-login"}
+		%button{:type => "submit", :value => "Login!", :'data-theme' => "c"}
 	
