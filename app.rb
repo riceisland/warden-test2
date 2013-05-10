@@ -30,6 +30,8 @@ require "./model.rb"
 set :public_folder, File.join(File.dirname(__FILE__) , %w{ . public })
 enable :sessions
 use Rack::Session::Cookie, :secret => Digest::SHA1.hexdigest(rand.to_s)
+#use Rack::MethodOverride
+#enable :method_override 
 #enable :static
 
 helpers do
@@ -164,6 +166,9 @@ def rand_id_sample(app)
     
     when "rss"    
       ids = Rss_user_relate.select(:id).filter(:user_id => current_user.id)
+      
+    when "browser_bookmarks"    
+      ids = Browser_bookmarks.select(:id).filter(:user_id => current_user.id)
     else
   end
   		
@@ -447,6 +452,26 @@ def rss_data_create(id)
 
 end
 
+def browser_bookmarks_data_create(id)
+
+  ref_count = ref_counter("browser_bookmarks", id)
+    
+  bookmark = Browser_bookmarks.filter(:id => id)
+  new_id = "browser_bookmarks-" + id.to_s
+    
+  bookmark.each do |elem|
+    @bb_title = elem.title
+    @bb_url = elem.url
+    @bb_issued = elem.issued
+  end 
+
+  data_hash = {:app => "browser_bookmarks", :bb_title => @bb_title, :bb_url => @bb_url, :bb_issued => @bb_issued, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
+  
+  return data_hash
+
+end
+
+
 def db_row_create(app, id)
   
   case app
@@ -550,6 +575,9 @@ def ref_counter(app, id)
       
     when "rss"
       ref_sql = Rss_user_relate.select(:refrection).filter(:id => id)
+      
+    when "browser_bookmarks"
+      ref_sql = Browser_bookmarks.select(:refrection).filter(:id => id)
     else
   end
   
@@ -647,6 +675,10 @@ def one_data_create(app, id)
     when "rss"
             
       data_hash = rss_data_create(id)
+      
+    when "browser_bookmarks"
+    
+      data_hash = browser_bookmarks_data_create(id)
           
     else
           
@@ -941,6 +973,11 @@ def reject(app)
 	  Evernote_oauth.where(:uid => current_user.id).delete
 	  Evernote_notes.where(:user_id => current_user.id).delete
 	  Tags.where(:user_id => current_user.id, :app => "evernote").delete
+	  
+	when "browser_bookmarks"
+	  Browser_bookmakrs.where(:user_id => current_user.id).delete
+	  Tags.where(:user_id => current_user.id, :app => "browser_bookmarks").delete
+
 	else
   end  
 
@@ -1144,6 +1181,11 @@ get "/settings" do
       
     end
     
+    browser_bookmarks = Browser_bookmarks.where(:user_id => current_user.id).first
+    if browser_bookmarks
+      @browser_bookmarks = ""
+    end
+    
     haml :"settings"
   end
 end
@@ -1152,6 +1194,13 @@ post "/rss_register" do
 
   url = params[:rss_url]
   data_hash = Hash.new
+  
+  if url == ""
+    data_hash["status"] = "error"
+    data_json = JSON.generate(data_hash)  
+    return data_json
+    
+  else
   
   begin
     feed = FeedNormalizer::FeedNormalizer.parse(open(url))
@@ -1187,6 +1236,8 @@ post "/rss_register" do
     #p "Not Found..."
     data_json = JSON.generate(data_hash)  
     return data_json
+  end
+  
   end
   
 end
@@ -1578,7 +1629,13 @@ get '/main' do
       apps.push("rss")
     end
     
-    Parallel.each(apps, in_threads:6){|app|
+    browser_bookmarks = Browser_bookmarks.where(:user_id => current_user.id).first
+    
+    if browser_bookmarks
+      apps.push("browser_bookmarks")
+    end   
+    
+    Parallel.each(apps, in_threads:7){|app|
      
       begin
         data_hash = one_data_create(app, "")
@@ -1730,7 +1787,10 @@ post "/refrection" do
     Evernote_notes.filter(:id => id).update(:refrection => count) 
   
   when "rss"
-    Rss_user_relate.filter(:id => id).update(:refrection => count)  
+    Rss_user_relate.filter(:id => id).update(:refrection => count)
+
+  when "browser_bookmarks"
+    Browser_bookmarks.filter(:id => id).update(:refrection => count)  
               
   else
   end
@@ -1869,4 +1929,29 @@ get "/tagsearch" do
     
     haml :tagsearch
   end
+end
+
+put "/upload" do
+  
+  if params[:file]
+    f = params[:file][:tempfile]
+    file = f.read
+    doc = Nokogiri::HTML(file)
+    
+    doc.css("a").each do |elem|
+    
+      Browser_bookmarks.create({
+        :user_id => current_user.id,
+        :title => elem.content,
+        :url => elem["href"],
+        :issued => Time.at(elem["add_date"].to_i),
+        :refrection => 0,
+      })
+ #p elem["href"]
+#p elem.content
+#p Time.at(elem["add_date"].to_i)
+   end
+
+  end 
+
 end

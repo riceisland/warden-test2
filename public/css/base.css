@@ -453,7 +453,15 @@ h4 {
   margin-left: 80px;
 }
 
+h6 {
+  margin-left: 80px;
+}
+
 .rss_list{
+  margin-left: 80px;
+}
+
+.bb_msg{
   margin-left: 80px;
 }
 
@@ -461,6 +469,9 @@ form.rss_register{
   margin-left: 80px;
 }
 
+form#bookmark_upload{
+  margin-left: 80px;
+}
 
 /* related css */
 div#main {
@@ -476,4 +487,21 @@ button.ref-btn {
 
 .settings-alert {
   display: none;
+}
+
+/* --- */
+
+.connect > :nth-child(n){
+  width : 20%;
+  margin-left : 80px;
+  display : block;
+}
+
+.reject > :nth-child(n){
+  width : 20%;
+  display : block;
+}
+
+.clear {
+  clear: both
 }

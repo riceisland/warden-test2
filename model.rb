@@ -191,7 +191,21 @@ class Rss_item < Sequel::Model
     create_table
   end
 end
-      
+
+class Browser_bookmarks < Sequel::Model
+  unless table_exists?
+    set_schema do
+      primary_key :id  
+      integer :user_id
+      varchar :title
+      varchar :url
+      varchar :issued
+      integer :refrection
+ 	end
+	create_table
+  end
+end  
+           
       
 class Tags < Sequel::Model
   unless table_exists?

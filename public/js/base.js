@@ -149,6 +149,7 @@ jQuery(function($) {
       data: $(this).serialize(),
       error: function(){alert('ERROR');},
       success: function(str){
+      	alert(str)
       	var dataset = JSON.parse(str);
         if(dataset.status == "error"){
           $(".settings-alert").show();
@@ -162,7 +163,10 @@ jQuery(function($) {
     return false;
   });
   
-  timer = setTimeout(function(){ page_reload(); }, 15000);
+  
+  if (location.pathname == "/main") {
+    timer = setTimeout(function(){ page_reload(); }, 15000);
+  }
   
   function page_reload(){
   	location.reload();
@@ -171,7 +175,7 @@ jQuery(function($) {
   $(".ui-checkbox :checkbox").change(function() {
     var isChecked = $(this).attr("checked");
     if(isChecked == "checked"){
-    	timer = setTimeout(function(){ page_reload(); }, 4000);
+    	timer = setTimeout(function(){ page_reload(); }, 15000);
     } else {
     	clearTimeout(timer);
     }

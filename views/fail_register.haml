@@ -2,7 +2,7 @@
 	%div{:class => "alert alert-error"}
 		%button{:class => "close", :'data-dismiss' => "alert"}x
 		登録できませんでした
-	%form{:action => "/register", :method => "POST", :class => "userform"}
+	%form{:action => "/register", :method => "POST", :class => "userform", :'data-ajax' => "false"}
 		%input{:type => "text", :name =>"name", :placeholder => "UserName", :class => "span3"}
 		%input{:type => "text", :name =>"mail", :placeholder => "Email Address", :class => "span3"}
 		%input{:type => "password", :name =>"password", :placeholder => "Password",:class => "span3"}

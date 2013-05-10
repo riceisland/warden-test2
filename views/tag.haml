@@ -5,7 +5,7 @@
 			%i{:class => "icon-edit"}
 	%div{:class => "edit", :id => @content[:app] + "_edit"}
 		%p Tag Edit
-		%form{:class => "edit_form"}
+		%form{:class => "edit_form",  :'data-ajax' => "false"}
 			%input{:type => "text", :name => "tag_edit", :value => @content[:tag_concat]}
 			%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
 			%button{:type => "submit", :class => "btn"}

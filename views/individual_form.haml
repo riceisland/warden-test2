@@ -1,3 +1,3 @@
-%form{:id => "individual_" + @content[:id].to_s, :class => "individual", :method => "post", :action => "/individual"}
+%form{:id => "individual_" + @content[:id].to_s, :class => "individual", :method => "post", :action => "/individual", :'data-ajax' => "false"}
 	%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
 	%input{:type => "hidden", :name => "app", :value => @content[:app]}
