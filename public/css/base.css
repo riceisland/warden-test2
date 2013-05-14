@@ -69,11 +69,13 @@ img.icon {
          border-radius: 6px;
 }
 
+
+/*
 img.ref_button {
 	width: 8px;
 	height: 15px;
 }
-
+*/
 /*content css */
 
 .username {
@@ -114,9 +116,11 @@ iframe {
 
 /* form css */
 
+/*
 form {
   width:500px;
 }
+*/
 
 textarea {
   padding: 8px;
@@ -281,11 +285,13 @@ img.line33 {
   left: 220px;
 }
 
-/* instagram css */
+/* instagram css
+
 img#instagram_img {
   width: 340px;
   height: 340px;
 }
+*/
 
 /* box css */
 div.topbox {
@@ -310,36 +316,76 @@ div.box {
 
 /* tag_edit css */
 
+form.edit_form {
+  margin-bottom: 5px;
+}
+
 .edit {
-  background-color: #F5F5F5;
+  background-color: #F8F8F8;
   display: none;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-right: 10px;
-  padding-left: 10px;
+  padding: 5px 10px;
   margin-top: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+    border-radius: 3px;        /* CSS3草案 */  
+    -webkit-border-radius: 3px;    /* Safari,Google Chrome用 */  
+    -moz-border-radius: 3px;   /* Firefox用 */   
 }
 
 .view {	
-  background-color: #F5F5F5;
-  padding-top: 5px;
-  padding-bottom: 5px;
-  padding-right: 10px;
-  padding-left: 10px;
+  background-color: #F8F8F8;
+  padding: 5px 10px;
   margin-top: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+    border-radius: 3px;        /* CSS3草案 */  
+    -webkit-border-radius: 3px;    /* Safari,Google Chrome用 */  
+    -moz-border-radius: 3px;   /* Firefox用 */ 
 }
 
 a.tag {
   color: #696969;
 }
 
-/* 412 add */
-
-body {
-    background: url(http://subtlepatterns.com/patterns/scribble_light.png) ;
+span.edit-confirm {
+  font-size: 12px;
+  margin-left: 5px;
 }
+
+/* ref & remove css */
+
+div.ref_and_remove{
+  float: right;
+}
+
+div.ref_and_remove > div{
+  margin: 0;
+}
+
+form.remove {
+  margin: 0;
+}
+
+form.remove > div {
+  margin: 0;
+  margin-bottom: 4px;
+}
+
+form.ref_form {
+  margin: 0;
+}
+
+form.ref_form > div {
+  margin: 0;
+  margin-bottom: 4px;
+}
+
+span.ref_count {
+  float: right;
+  margin-top: 32px;
+  margin-right: 5px;
+}
+
+
+/* 412 add */
  
 #wrapper {
     width: 90%;
@@ -370,7 +416,7 @@ body {
     -moz-column-break-inside: avoid;
     column-break-inside: avoid;
     padding: 15px;
-    padding-bottom: 5px;
+    padding-bottom: 10px;
     background: -webkit-linear-gradient(45deg, #FFF, #F9F9F9);
     opacity: 1;
      

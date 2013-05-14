@@ -91,12 +91,15 @@ jQuery(function($) {
    })
 
 //Edit
-
+  $("form.edit_form > div").css("display", "none");
+  $("form.edit_form > div.ui-input-text").css("width", "64%");
+  
   $(".edit_toggle").click(function(){
   	id = $(this).closest("div.pin").attr("id")
   	tag_parent = "#tags_" + id + " div"
   	//alert(tag_parent);
     $(tag_parent).toggle();
+    $("form.edit_form > div.ui-btn").css({"width" : "33%","display":"inline-block"});
     return false;
   });
 
@@ -138,6 +141,28 @@ jQuery(function($) {
         $(count_id).html(obj);     
       }
     });
+    return false;
+  });
+  
+  $("form.remove").submit(function(){
+  	id = $(this).closest("div.pin").attr("id")
+  	div_id = "#" + id
+    
+    if(window.confirm('本当に削除しますか？')){
+    
+      $.ajax({
+        url: "/remove",
+        type: 'POST',
+        timeout: 1000,
+        data: $(this).serialize(),
+        error: function(){alert('ERROR');},
+        success: function(obj){
+          alert("削除しました");
+          $(div_id).remove();    
+        }
+      });
+      
+    }
     return false;
   });
 

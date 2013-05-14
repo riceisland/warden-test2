@@ -1850,7 +1850,7 @@ post "/individual" do
   @relates_array = Array.new
   
   id = params[:data_id].split("-")
-  p id[1]
+  #p id[1]
   @content = one_data_create(params[:app], id[1])
    
   this_id = @content[:id]
@@ -1951,7 +1951,40 @@ put "/upload" do
 #p elem.content
 #p Time.at(elem["add_date"].to_i)
    end
-
   end 
+end
+
+post "/remove" do
+
+=begin  
+  id = params[:data_id].split("-")
+  p id[1]
+  
+  case params[:app]
+    when "twitter_h"
+      Tweets.where(:user_id => current_user.id, :id => id).delete
+      
+	when "tumblr"
+	  Tumblr_posts.where(:user_id => current_user.id, :id => id).delete
+      
+	when "instagram"
+	  Instagram_photos.where(:user_id => current_user.id, :id => id).delete
+	   
+	when "hatena"
+	  Hatena_bookmarks.where(:user_id => current_user.id, :id => id).delete
+	  
+	when "evernote"
+	  Evernote_notes.where(:user_id => current_user.id, :id => id).delete
+	  
+	when "browser_bookmarks"
+	  Browser_bookmakrs.where(:user_id => current_user.id, :id => id).delete
+
+	else
+  end  
+
+  Tags.where(:user_id => current_user.id, :data_id => id).delete
+=end
+
+  return "ok"
 
 end
