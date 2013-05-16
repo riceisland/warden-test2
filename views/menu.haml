@@ -1,12 +1,15 @@
-%fieldset{:class => "ui-grid-a"}
+%fieldset{:class => "ui-grid-a menu"}
+	%div{:class => "ui-block-a"}
+		%button{:'data-theme' => "c", :id => "menu"}MENU▼
+%fieldset{:class => "ui-grid-a toggle_menu", :id => "toggle_menu"}
 	%div{:class => "ui-block-a"}
 		%button{:'data-theme' => "c", :id => "about_open"}ABOUT				
 		%div{:class => "modal hide fade",:id => "modal_about", :tabindex => "-1", :role => "dialog", :'aria-labelledby' => "ModalLabel", :'aria-hidden' => "true"}
 			%div{:class => "modal-header"}
 				%span{:class =>"close", :'data-dismiss' => "modal", :'aria-hidden' => "true"}x
-				%h3{:id => "ModalLabel"}= "ABOUT"
+				%h3{:id => "ModalLabel"}= "ABOUT THIS APPLICATION"
 			%div{:class => "modal-body"}
-				%div= "this is test"
+				%img{:src => "/img/logref_expimg.png"}
 			%div{:class => "modal-footer"}
 				%button{:class =>"btn", :'data-dismiss' => "modal", :'aria-hidden' => "true"}Close
 	-@menu.each do |elem|

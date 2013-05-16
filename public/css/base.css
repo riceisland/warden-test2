@@ -551,3 +551,23 @@ button.ref-btn {
 .clear {
   clear: both
 }
+
+/* menu_toggle */
+
+fieldset.toggle_menu {
+  display: none;
+}
+
+@media only screen and (min-width: 800px) {
+  fieldset.menu {
+    display: none;
+  }
+  
+  fieldset.toggle_menu {
+    display: block;
+  }
+  
+  fieldset.toggle_menu > div {
+    display: inline-block;
+  }
+}

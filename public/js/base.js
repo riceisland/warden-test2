@@ -204,7 +204,11 @@ jQuery(function($) {
     } else {
     	clearTimeout(timer);
     }
-  })	 
+  })
+  
+  $(".menu").click(function(){
+    $("#toggle_menu").toggleClass("toggle_menu");
+  })
       
   
 });

@@ -54,14 +54,14 @@ CALLBACK_URL = "http://localhost:4567/instagram_callback"
 #twitter,tumblr,instagram key,secret
 configure do
 
-  TWITTER_KEY = ""
-  TWITTER_SECRET = ""
+  TWITTER_KEY = "kKw2qK1VOmPvycg6RVTiA"
+  TWITTER_SECRET = "LTSCjG2Fkj5TUbsFIaFeEcDDIjDQwuBzHem9BLlk"
   
-  TUMBLR_KEY = ""
-  TUMBLR_SECRET = ""
+  TUMBLR_KEY = "oJ2eYbl0jdzCB0PZY3oDgR2jkkfB3s1buxzIRCbTWuMqMjxYv0"
+  TUMBLR_SECRET = "MFCzA1Db7utdAmj0S8ycmwzrTVcV5w1InYZNcy05Usrk3nkEMk"
   
-  INSTAGRAM_KEY = ""
-  INSTAGRAM_SECRET = ""
+  INSTAGRAM_KEY = "46e304415ae2408e85bd2ca3b78d4903"
+  INSTAGRAM_SECRET = "db8c0297bb4b4a2db278134a4892ffb9"
   
 end
 

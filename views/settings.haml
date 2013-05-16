@@ -7,7 +7,7 @@
 		%div{:id => elem[0]}
 			%img{:src => "/img/"+ elem[0] +".png", :class => "icon"}
 			%h4= elem[0]
-			%a{:href => elem[1],:id => elem[0] + "_connect", :class => "connect"}
+			%a{:href => elem[1],:id => elem[0] + "_connect", :class => "connect", :'data-ajax' => "false"}
 				%button{:'data-theme' => elem[3]}= elem[2]
 	%hr
 	%div{:id => "rss"}
@@ -16,7 +16,7 @@
 		-@channel_list.each do |elem|
 			%div{:class => "rss_list"}
 				%span= elem[:title]
-				%a{:href => "/reject/rss/" + elem[:channel_id].to_s}
+				%a{:href => "/reject/rss/" + elem[:channel_id].to_s, :'data-ajax' => "false"}
 					%button{:'data-theme' => "c"} "解除する"
 		%form{:class => "rss_register"}
 			%input{:type => "text", :name => "rss_url", :placeholder  => "URLを入力してください"}
@@ -30,7 +30,7 @@
 		-if @browser_bookmarks
 			%div{:class => "bb_msg"}
 				%span 登録済みです
-				%a{:href => "/reject/browser_bookmarks/", :class => "reject"}
+				%a{:href => "/reject/browser_bookmarks/", :class => "reject",:'data-ajax' => "false"}
 					%button{:'data-theme' => "c"}解除する			
 		-else
 			%form{:action => "/upload", :method => "POST", :enctype => "multipart/form-data", :id => "bookmark_upload", :'data-ajax' => "false"}

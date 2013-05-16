@@ -1,6 +1,6 @@
 %div{:id => @content[:id], :class =>"pin evernote"}
 	=haml :individual_form
-	=haml :remove
+	=haml :ref_and_remove
 	%div{:id => "snippet"}
 		%div{:id => "title"}= @content[:note_title]
 		%div{:id => "body"}
@@ -18,4 +18,3 @@
 			%a{:href => @link, :class =>"btn", :target => "_blank"}Edit
 			%button{:class =>"btn", :'data-dismiss' => "modal", :'aria-hidden' => "true"}Close
 	= haml :tag
-	= haml :ref_form
