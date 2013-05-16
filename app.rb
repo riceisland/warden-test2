@@ -90,7 +90,7 @@ end
 
 def shorten(long_url)
   id = 'riceisland'
-  api_key = 'R_aa5bc27c2693d26e9238164ec7f95ef8'
+  api_key = ''
   version = '2.0.1'
   
   query = "version=#{version}&longUrl=#{long_url}&login=#{id}&apiKey=#{api_key}"
