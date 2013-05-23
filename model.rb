@@ -104,6 +104,29 @@ class Instagram_photos < Sequel::Model
   end
 end
 
+class Flickr_oauth < Sequel::Model
+  unless table_exists?
+    set_schema do
+      varchar :uid
+      varchar :flickr_access_token
+      varchar :flickr_access_token_secret
+    end
+    create_table
+  end
+end
+
+class Flickr_photos < Sequel::Model
+  unless table_exists?
+    set_schema do
+      primary_key :id
+      integer :user_id
+      varchar :data_id
+      integer :refrection
+    end
+    create_table
+  end
+end
+
 class Hatena_oauth < Sequel::Model
   unless table_exists?
     set_schema do

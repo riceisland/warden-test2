@@ -190,7 +190,7 @@ jQuery(function($) {
   
   
   if (location.pathname == "/main") {
-    timer = setTimeout(function(){ page_reload(); }, 15000);
+    timer = setTimeout(function(){ page_reload(); }, 30000);
   }
   
   function page_reload(){
@@ -200,7 +200,7 @@ jQuery(function($) {
   $(".ui-checkbox :checkbox").change(function() {
     var isChecked = $(this).attr("checked");
     if(isChecked == "checked"){
-    	timer = setTimeout(function(){ page_reload(); }, 15000);
+    	timer = setTimeout(function(){ page_reload(); }, 30000);
     } else {
     	clearTimeout(timer);
     }

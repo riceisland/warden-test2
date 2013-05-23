@@ -1,0 +1,8 @@
+%div{:id => @content[:id], :class =>"pin instagram"}
+	=haml :individual_form
+	=haml :ref_and_remove
+	%img{:src => @content[:flickr_img_url], :id => "flickr_img"}
+	%p= @content[:flickr_text]
+	%span{:class => "time"}= @content[:flickr_time]
+	%span{:class => "submit_individual"}= "詳細を見る"
+	= haml :tag
