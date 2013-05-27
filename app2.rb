@@ -56,14 +56,14 @@ helpers do
 end
 
 before do
-  conf = YAML.load_file("config.yaml")
+  @conf = YAML.load_file("config.yaml")
 
   @title = "まとめてらんだむ"
   #@prefix = "/mat_rnd"
   #@prefix = env["prefix"]
   Instagram.configure do |config|
-    config.client_id = conf["instagram_config"]["key"]
-    config.client_secret = conf["instagram_config"]["secret"]
+    config.client_id = @conf["instagram_config"]["key"]
+    config.client_secret = @conf["instagram_config"]["secret"]
   end
   
   #instagram用
@@ -71,16 +71,16 @@ before do
   #CALLBACK_URL = "http://java.slis.tsukuba.ac.jp/log-ref/instagram_callback"
   
   Flickr.configure do |config|
-    config.api_key = conf["flickr_config"]["key"]
-    config.shared_secret = conf["flickr_config"]["secret"]
+    config.api_key = @conf["flickr_config"]["key"]
+    config.shared_secret = @conf["flickr_config"]["secret"]
   end
 
 end
 
 def configure_twitter_token(token, secret)
   Twitter.configure do |config|
-    config.consumer_key = conf["twitter_config"]["key"]
-	config.consumer_secret = conf["twitter_config"]["secret"]
+    config.consumer_key = @conf["twitter_config"]["key"]
+	config.consumer_secret = @conf["twitter_config"]["secret"]
     config.oauth_token = token
     config.oauth_token_secret = secret
   end
@@ -88,8 +88,8 @@ end
 
 def configure_tumblr_token(token, secret)
   Tumblife.configure do |config|
-    config.consumer_key = conf["tumblr_config"]["key"]
-	config.consumer_secret = conf["tumblr_config"]["secret"]
+    config.consumer_key = @conf["tumblr_config"]["key"]
+	config.consumer_secret = @conf["tumblr_config"]["secret"]
 	config.oauth_token = token
 	config.oauth_token_secret = secret
   end
@@ -206,8 +206,10 @@ def twitter_home_data_create(id)
 	 # @twitter_long_url = 'https://twitter.com/_/status/' + @rand_fav_id.to_s
 	  #@short_url = shorten(@long_url)
   end
-    
-  data_hash = {:app => "twitter_h", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
+   
+  comment = ref_comment("twitter_h", id)  
+      
+  data_hash = {:app => "twitter_h", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
     
   return data_hash
 
@@ -233,8 +235,10 @@ def twitter_favs_data_create(id)
 	 # @twitter_long_url = 'https://twitter.com/_/status/' + @rand_fav_id.to_s
 	  #@short_url = shorten(@long_url)
   end
+  
+  comment = ref_comment("twitter_f", id)
     
-  data_hash = {:app => "twitter_f", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
+  data_hash = {:app => "twitter_f", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
    
   return data_hash
 
@@ -255,8 +259,10 @@ def tumblr_data_create(id)
   time = post.date    
   type = post.type
   tags = post.tag
+  
+  comment = ref_comment("tumblr", id)
     
-  content = {:app => "tumblr", :id => new_id, :type => type, :tumblr_time => time, :tag_concat => tag_concat(id),  :tag_a_concat => tag_a_concat(id), :ref_count => ref_count}
+  content = {:app => "tumblr", :id => new_id, :type => type, :tumblr_time => time, :tag_concat => tag_concat(id),  :tag_a_concat => tag_a_concat(id), :ref_count => ref_count, :comment => comment }
     
   case type
     when "text"
@@ -317,8 +323,10 @@ def instagram_data_create(id)
     instagram_tags = nil
     instagram_text = nil
   end
-
-  data_hash = {:app => "instagram", :instagram_img_url => instagram_img_url, :instagram_tags => instagram_tags, :instagram_time => instagram_time, :instagram_text => instagram_text, :tag_concat => tag_concat(id),  :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
+  
+  comment = ref_comment("instagram", id)
+  
+  data_hash = {:app => "instagram", :instagram_img_url => instagram_img_url, :instagram_tags => instagram_tags, :instagram_time => instagram_time, :instagram_text => instagram_text, :tag_concat => tag_concat(id),  :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
   
   return data_hash
   
@@ -340,12 +348,10 @@ def flickr_data_create(id)
     photo.get_sizes!
     photo.get_info!
     
-        p photo
-    
-    data_hash = {:app => "flickr", :flickr_img_url => photo.source_url, :flickr_time => photo.taken_at, :flickr_text => photo.description, :tag_concat => tag_concat(id),  :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
-    
-    p data_hash
-    
+    comment = ref_comment("flickr", id)
+        
+    data_hash = {:app => "flickr", :flickr_img_url => photo.source_url, :flickr_time => photo.taken_at, :flickr_text => photo.description, :tag_concat => tag_concat(id),  :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
+
     return data_hash
     
   end
@@ -366,7 +372,11 @@ def hatena_data_create(id)
     @hatena_issued = elem.issued
   end 
 
-  data_hash = {:app => "hatena", :hatena_title => @hatena_title, :hatena_url => @hatena_url, :hatena_issued => @hatena_issued, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
+  comment = ref_comment("hatena", id)
+  
+  p comment
+
+  data_hash = {:app => "hatena", :hatena_title => @hatena_title, :hatena_url => @hatena_url, :hatena_issued => @hatena_issued, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
   
   return data_hash
 
@@ -456,8 +466,10 @@ def evernote_data_create(id)
   @create_date = @create_time.split(/ /)[0]
 	      
   @link = "https://sandbox.evernote.com/Home.action#n=" + note.guid.to_s 
-	  
-  data_hash = {:app => "evernote", :note_title => @note_title, :content => @content, :snippet => @snippet, :link => @link, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :evernote_time => @create_time }
+
+  comment = ref_comment("evernote", id)
+  
+  data_hash = {:app => "evernote", :note_title => @note_title, :content => @content, :snippet => @snippet, :link => @link, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :evernote_time => @create_time, :comment => comment  }
   
   return data_hash
 
@@ -477,8 +489,10 @@ def rss_data_create(id)
     @rss_date = elem.date
     @rss_description = elem.description
   end 
+  
+  comment = ref_comment("rss", id)
     
-  data_hash = {:app => "rss", :rss_title => @rss_title, :rss_url => @rss_url, :rss_date => @rss_date, :rss_description => @rss_description, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
+  data_hash = {:app => "rss", :rss_title => @rss_title, :rss_url => @rss_url, :rss_date => @rss_date, :rss_description => @rss_description, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
   
   return data_hash
 
@@ -496,8 +510,10 @@ def browser_bookmarks_data_create(id)
     @bb_url = elem.url
     @bb_issued = elem.issued
   end 
+  
+  comment = ref_comment("browser_bookmarks", id)
 
-  data_hash = {:app => "browser_bookmarks", :bb_title => @bb_title, :bb_url => @bb_url, :bb_issued => @bb_issued, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count }
+  data_hash = {:app => "browser_bookmarks", :bb_title => @bb_title, :bb_url => @bb_url, :bb_issued => @bb_issued, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment }
   
   return data_hash
 
@@ -558,6 +574,24 @@ def db_tag_create(app, id, tag)
     :time => time,
     :app => app,
   })
+  
+end
+
+def db_comment_create(app, id, comment)
+
+  time = Time.now.to_s
+  
+  Comments.create({
+    :user_id => current_user.id,
+    :data_id => id,
+    :comment => comment,
+    :time => time,
+    :app => app,
+  })
+  
+  h = {:comment => comment, :time => time}
+  
+  return h
   
 end
 
@@ -627,6 +661,26 @@ def ref_counter(app, id)
 	ref_count = ref.refrection
 	return ref_count
   end 
+  
+end
+
+
+def ref_comment(app, id)
+  
+  ref_sql = Comments.filter(:data_id => id, :app => app)
+  
+  p ref_sql
+  
+  comments = Array.new
+  
+  ref_sql.each do |ref|
+	h = {:comment => ref.comment, :time => ref.time}
+	comments.push(h)
+  end 
+  
+  #p comments.length
+  
+  return comments
   
 end
 
@@ -1331,7 +1385,7 @@ end
 
 get "/data_refresh" do
 
-  Resque.enqueue(DataRefresh, current_user.id)
+  #Resque.enqueue(DataRefresh, current_user.id)
  
   redirect to ("/settings")
   
@@ -1829,6 +1883,20 @@ post "/tagedit" do
   end
  
   return tag_a_concat(dataset[1]) 
+end
+
+post "/comment" do
+
+  dataset = params[:data_id].split("-")
+
+  data = db_comment_create(dataset[0], dataset[1], params[:comment])
+  
+  data_json = JSON.generate(data)
+  
+  p data_json  
+  
+  return data_json
+  
 end
 
 post "/refrection" do

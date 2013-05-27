@@ -68,7 +68,8 @@ sub {
 
 img {
   height: auto;
-  max-width: 100%;
+  /* max-width: 100%; */
+  max-width: 85%;
   vertical-align: middle;
   border: 0;
   -ms-interpolation-mode: bicubic;
@@ -745,7 +746,7 @@ dd {
 }
 
 hr {
-  margin: 20px 0;
+ /* margin: 20px 0;*/
   border: 0;
   border-top: 1px solid #eeeeee;
   border-bottom: 1px solid #ffffff;

@@ -350,6 +350,24 @@ span.edit-confirm {
   margin-left: 5px;
 }
 
+/* comment css */
+div.comment {
+  margin: 5px;
+  padding: 10px;
+  border-radius: 7px;        /* CSS3草案 */  
+  -webkit-border-radius: 7px;    /* Safari,Google Chrome用 */  
+  -moz-border-radius: 7px;   /* Firefox用 */   
+  background-color: #f3f3f3;
+}
+
+div.comment_text {
+  font-size: 12px;
+}
+
+div.comment_time {
+  font-size: 10px;
+}
+
 /* ref & remove css */
 
 div.ref_and_remove{
@@ -459,11 +477,11 @@ span.ref_count {
     }
 }
 
-
+/*
 #columns:hover .pin:not(:hover) {
     opacity: 0.4;
 }
-
+*/
 
 fieldset {
   margin: 50px auto;

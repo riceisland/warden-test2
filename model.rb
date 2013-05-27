@@ -244,6 +244,20 @@ class Tags < Sequel::Model
   end
 end  
 
+class Comments < Sequel::Model
+  unless table_exists?
+    set_schema do
+      primary_key :id
+	  integer :user_id
+	  varchar :data_id
+	  varchar :comment
+	  varchar :time
+	  varchar :app
+	end
+	create_table
+  end
+end  
+
 class Main_log < Sequel::Model
   unless table_exists?
     set_schema do

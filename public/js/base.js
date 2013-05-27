@@ -90,6 +90,12 @@ jQuery(function($) {
      $(form_id).submit(); 
    })
 
+   $('[placeholder]').ahPlaceholder({
+     placeholderColor : 'silver',
+     placeholderAttr : 'placeholder',
+     likeApple : true
+   });
+
 //Edit
   $("form.edit_form > div").css("display", "none");
   $("form.edit_form > div.ui-input-text").css("width", "64%");
@@ -120,6 +126,42 @@ jQuery(function($) {
         $(tag_view).html(obj);
       }
     });
+    return false;
+  });
+
+  $("form.comment_form").submit(function(){
+  	id = $(this).closest("div.pin").attr("id")
+  	tag_parent = "#tags_" + id + " div";
+  	comments_id = "div#comments_" + id;
+  	total_id = "div#comment_total_" + id;
+    len = $("div.comment").length;
+    newlen = len + 1;
+    msg = newlen.toString() + " Comments"; 
+    alert(msg);
+  
+    $.ajax({
+      url: "/comment",
+      type: 'POST',
+      timeout: 1000,
+      data: $(this).serialize(),
+      error: function(){alert('ERROR');},
+      success: function(obj){
+      	var dataset = JSON.parse(obj);
+        
+        $(total_id).html(msg);
+
+        $(comments_id).append([
+  	      "<div class='comment'>",
+  	      "<div class='commnt_text'>"+ dataset.comment + "</div>",
+  	      "<div class='comment_time'>"+ dataset.time +"</div>",
+  	      "</div>",
+  	    ].join(""));
+  	    
+  	    
+
+      }
+    });
+        
     return false;
   });
       
@@ -190,7 +232,7 @@ jQuery(function($) {
   
   
   if (location.pathname == "/main") {
-    timer = setTimeout(function(){ page_reload(); }, 30000);
+    timer = setTimeout(function(){ page_reload(); }, 60000);
   }
   
   function page_reload(){
@@ -200,7 +242,7 @@ jQuery(function($) {
   $(".ui-checkbox :checkbox").change(function() {
     var isChecked = $(this).attr("checked");
     if(isChecked == "checked"){
-    	timer = setTimeout(function(){ page_reload(); }, 30000);
+    	timer = setTimeout(function(){ page_reload(); }, 60000);
     } else {
     	clearTimeout(timer);
     }
