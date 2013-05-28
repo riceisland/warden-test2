@@ -5,7 +5,7 @@
 		%div{:class => "comment"}
 			%div{:class => "comment_text"}= elem[:comment]
 			%div{:class => "comment_time"}= elem[:time]
-%div{:class => "comment_form"}
+%div{:class => "comment_form", :id => "comment_form_"+ @content[:id]}
 	%form{:class => "comment_form",  :'data-ajax' => "false"}
 		%input{:type => "text", :name => "comment", :placeholder => "コメントはこちらに入力してください"}
 		%input{:type => "hidden", :name => "data_id", :value => @content[:id]}

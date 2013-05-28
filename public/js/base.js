@@ -131,14 +131,16 @@ jQuery(function($) {
 
   $("form.comment_form").submit(function(){
   	id = $(this).closest("div.pin").attr("id")
-  	tag_parent = "#tags_" + id + " div";
   	comments_id = "div#comments_" + id;
+  	form_id = "div#comment_form_" + id;
   	total_id = "div#comment_total_" + id;
-    len = $("div.comment").length;
+    len = $(comments_id + " > div.comment").length;
     newlen = len + 1;
     msg = newlen.toString() + " Comments"; 
-    alert(msg);
-  
+    //alert(msg);
+    
+    comment = $(form_id).find("input[name='comment']").val();
+    
     $.ajax({
       url: "/comment",
       type: 'POST',
@@ -156,12 +158,12 @@ jQuery(function($) {
   	      "<div class='comment_time'>"+ dataset.time +"</div>",
   	      "</div>",
   	    ].join(""));
-  	    
-  	    
+        
+        $(form_id).find("input[name='comment']").val("");  	    
 
       }
-    });
-        
+    });  
+   
     return false;
   });
       
@@ -251,6 +253,24 @@ jQuery(function($) {
   $(".menu").click(function(){
     $("#toggle_menu").toggleClass("toggle_menu");
   })
+  
+  $('form').submit(function() {
+    $(this).submit(function () {
+        alert('フォームからのデータ送信は一度ずつ行なって下さい。');
+        return false;
+  });
+  
+    $('input').keypress(function(ev) {
+        if ((ev.which && ev.which === 13) || (ev.keyCode && ev.keyCode === 13)) {
+                return false;
+        } else {
+                return true;
+        }
+  });
+
+
+  
+});
       
   
 });
