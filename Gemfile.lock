@@ -9,6 +9,11 @@ GEM
     feed-normalizer (1.5.2)
       hpricot (>= 0.6)
       simple-rss (>= 1.1)
+    flickr-objects (0.2.0)
+      faraday (>= 0.7.6)
+      faraday_middleware (>= 0.8)
+      multi_xml (~> 0.4)
+      simple_oauth (~> 0.1)
     haml (4.0.2)
       tilt
     hashie (2.0.3)
@@ -20,12 +25,15 @@ GEM
       multi_json (~> 1.0, >= 1.0.3)
     mono_logger (1.0.1)
     multi_json (1.7.2)
+    multi_xml (0.5.3)
     multipart-post (1.2.0)
     nokogiri (1.5.9)
     oauth (0.4.7)
+    parallel (0.6.4)
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
+    rake (10.0.4)
     redis (3.0.4)
     redis-namespace (1.3.0)
       redis (~> 3.0.0)
@@ -65,11 +73,14 @@ PLATFORMS
 
 DEPENDENCIES
   feed-normalizer
+  flickr-objects
   haml
   instagram
   multi_json
   nokogiri
   oauth (= 0.4.7)
+  parallel
+  rake
   resque
   sequel
   sinatra (= 1.3.0)

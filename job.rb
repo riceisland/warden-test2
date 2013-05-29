@@ -1,50 +1,49 @@
 require 'resque'
 require './app2'
 
-class DataRefresh
+module DataRefresh
 
   @queue = :data_refresh
-  
+ 
   def self.perform(user_id)
 
-  twitter_oauth = Twitter_oauth.where(:uid => user_id).first
-  
-  if twitter_oauth    
-    twitter_db_create(twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
-  end
-  
+#twitter
+ 
+    twitter_oauth = Twitter_oauth.where(:uid => user_id).first
+    twitter_data = TwitterData::TwitterData.new(user_id, twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
+    twitter_data.twitter_db_create()
+ 
 #tumblr
 
-  tumblr_oauth = Tumblr_oauth.where(:uid => user_id).first
+    tumblr_oauth = Tumblr_oauth.where(:uid => user_id).first
+    tumblr_data = TumblrData::TumblrData.new(current_user.id, tumblr_oauth.tumblr_access_token, tumblr_oauth.tumblr_access_token_secret)
+    tumblr_data.tumblr_db_create()
   
-  if tumblr_oauth  
-    tumblr_db_create(tumblr_oauth.tumblr_access_token, tumblr_oauth.tumblr_access_token_secret)
-  end
-  
+#flickr
+    flickr_oauth = Flickr_oauth.where(:uid => user_id).first
+    flickr_data = FlickrData::FlickrData.new(current_user.id, flickr_oauth.flickr_access_token, flickr_oauth.flickr_access_token_secret)
+    flickr_data.flickr_db_create() 
+
 #instagram
 
-  instagram_oauth = Instagram_oauth.where(:uid => user_id).first
-  
-  if instagram_oauth
-    instagram_db_create(instagram_oauth.instagram_access_token)
-  end
-
-#evernote
-
-  evernote_oauth = Evernote_oauth.where(:uid => user_id).first
-  
-  if evernote_oauth  
-    evernote_db_create(evernote_oauth.evernote_access_token, evernote_oauth.evernote_shard_id)
-  end
+    instagram_oauth = Instagram_oauth.where(:uid => user_id).first
+    instagram_data = InstagramData::InstagramData.new(current_user.id, instagram_oauth.instagram_access_token)
+    instagram_data.instagram_db_create()
 
 #hatena
 
-  hatena_oauth = Hatena_oauth.where(:uid => user_id).first
+    hatena_oauth = Hatena_oauth.where(:uid => user_id).first
+    hatena_data = HatenaData::HatenaData.new(current_user.id)
+    hatena_data.hatena_db_create(hatena_oauth.hatena_access_token,hatena_oauth.hatena_access_token_secret)
   
-  if hatena_oauth 
-    hatena_db_create(hatena_oauth.hatena_access_token,hatena_oauth.hatena_access_token_secret)
-  end
+#evernote
 
+    evernote_data = EvernoteData::EvernoteData.new(current_user.id)
+    evernote_data.evernote_db_create()
+ 
+    puts "Processed a job!" 
+  
+=begin 
 #rss
 #uidはどこへいったの？？？
   channels = Rss_user_relate.group(:channel_id).having('count(channel_id) > 0').all;
@@ -74,8 +73,7 @@ class DataRefresh
       rss_db_create(e, elem[0])
     }
   end
-  
+=end  
   end
-
 
 end

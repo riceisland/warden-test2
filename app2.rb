@@ -31,6 +31,8 @@ require "./evernote_config"
 require "./model.rb"
 require './job'
 
+require_relative './lib/data.rb'
+
 # Sinatra のセッションを有効にする
 set :public_folder, File.join(File.dirname(__FILE__) , %w{ . public })
 enable :sessions
@@ -40,7 +42,8 @@ use Rack::Session::Cookie, :secret => Digest::SHA1.hexdigest(rand.to_s)
 #enable :static
 
 #Setup redis for resque
-Resque.redis = Redis.new
+#Resque.redis = Redis.new
+Resque.redis = 'localhost:6379'
 
 helpers do
   include Rack::Utils
@@ -95,17 +98,6 @@ def configure_tumblr_token(token, secret)
   end
 end
 
-def shorten(long_url)
-  id = 'riceisland'
-  api_key = ''
-  version = '2.0.1'
-  
-  query = "version=#{version}&longUrl=#{long_url}&login=#{id}&apiKey=#{api_key}"
-  result = JSON,(Net::HTTP.get("api.bit.ly", "/shorten?#{query}"))
-  result['results'].each_pair {|long_url, value|
-    return value['shortUrl']
-  }
-end
 
 def base_url
   default_port = (request.scheme == "http") ? 80 : 443
@@ -139,982 +131,6 @@ def evernote_oauth_consumer
     :request_token_path => "/oauth",
     :access_token_path => "/oauth",
     :authorize_path => "/OAuth.action"})
-end
-
-def rand_id_sample(app)
-
-  content_ids = Array.new()
-    
-  case app
-    when "twitter_f"
-      ids = Twitter_favorites.select(:id).filter(:user_id => current_user.id)
-
-    when "twitter_h"
-      ids = Tweets.select(:id).filter(:user_id => current_user.id)
-    
-    when "tumblr"
-      ids = Tumblr_posts.select(:id).filter(:user_id => current_user.id)
-    
-    when "instagram"
-      ids = Instagram_photos.select(:id).filter(:user_id => current_user.id)
-
-    when "flickr"
-      ids = Flickr_photos.select(:id).filter(:user_id => current_user.id)
-    
-    when "hatena"
-      ids = Hatena_bookmarks.select(:id).filter(:user_id => current_user.id)    
-      
-    when "evernote"
-      ids = Evernote_notes.select(:id).filter(:user_id => current_user.id)
-    
-    when "rss"    
-      ids = Rss_user_relate.select(:id).filter(:user_id => current_user.id)
-      
-    when "browser_bookmarks"    
-      ids = Browser_bookmarks.select(:id).filter(:user_id => current_user.id)
-    else
-  end
-  		
-  ids.each do |id|
-    #new_id = app + id.id.to_s
-	content_ids.push(id.id)
-  end
-	
-  rand_id = content_ids.sample
-  #rand_id = "276189947369775105"
-  
-  #p app
-  #p rand_id
-  
-  return rand_id
-
-end
-
-def twitter_home_data_create(id)
-  
-  ref_count = ref_counter("twitter_h", id)
-  twit_id = Tweets.select(:data_id).filter(:id => id).first
-  new_id = "twitter_h-" + id.to_s
-
-  @twitter.user_timeline(:count=> 1, :max_id => twit_id.data_id).each do |fav|
-    
-    @twitter_img_url = fav.user.profile_image_url 
-    @twitter_user_name = fav.user.name
-    @twitter_screen_name = fav.user.screen_name
-    @twitter_text = fav.text
-    @twitter_time = fav.created_at
-	 # @twitter_long_url = 'https://twitter.com/_/status/' + @rand_fav_id.to_s
-	  #@short_url = shorten(@long_url)
-  end
-   
-  comment = ref_comment("twitter_h", id)  
-      
-  data_hash = {:app => "twitter_h", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
-    
-  return data_hash
-
-end
-
-
-def twitter_favs_data_create(id)
-  
-  #p id
-  ref_count = ref_counter("twitter_f", id)
-  
-  twit_id = Twitter_favorites.select(:data_id).filter(:id => id).first
-  new_id = "twitter_f-" + id.to_s
-	 
-  @twitter.favorites(:count=> 1, :max_id => twit_id.data_id).each do |fav|
-   # p fav.text
-    
-    @twitter_img_url = fav.user.profile_image_url 
-    @twitter_user_name = fav.user.name
-    @twitter_screen_name = fav.user.screen_name
-    @twitter_text = fav.text
-    @twitter_time = fav.created_at
-	 # @twitter_long_url = 'https://twitter.com/_/status/' + @rand_fav_id.to_s
-	  #@short_url = shorten(@long_url)
-  end
-  
-  comment = ref_comment("twitter_f", id)
-    
-  data_hash = {:app => "twitter_f", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
-   
-  return data_hash
-
-end
-
-def tumblr_data_create(id)
-
-  ref_count = ref_counter("tumblr", id)
-        
-  blogurl = @tumblr.info.user.blogs[0].url
-  blogurl.gsub!('http://', '')
-  
-  post_id = Tumblr_posts.select(:data_id).filter(:id => id).first
-  new_id = "tumblr-" + id.to_s    
-  
-  post = @tumblr.posts(blogurl, {:id => post_id.data_id}).posts[0]
-  
-  time = post.date    
-  type = post.type
-  tags = post.tag
-  
-  comment = ref_comment("tumblr", id)
-    
-  content = {:app => "tumblr", :id => new_id, :type => type, :tumblr_time => time, :tag_concat => tag_concat(id),  :tag_a_concat => tag_a_concat(id), :ref_count => ref_count, :comment => comment }
-    
-  case type
-    when "text"
-      content.store(:post_title, post.title)
-      content.store(:body, post.body)
-    when "photo" 
-      layouts = post.photoset_layout
-      if layouts
-         layout = layouts.to_s.split("")
-      end
-      content.store(:imgarr, post.photos)
-      content.store(:caption, post.caption)
-      content.store(:layouts, layouts)
-      content.store(:layout, layout)
-    when "quote"
-      content.store(:text, post.text)
-      content.store(:source, post.source)
-    when "link"
-      content.store(:post_title, post.title)
-      content.store(:url, post.url)
-      content.store(:description, post.description)
-    when "chat"
-      content.store(:post_title, post.title)
-      content.store(:dialogue, post.dialogue)    
-    when "audio"
-      content.store(:code, post.embed_code)
-      content.store(:caption, post.caption)
-    when "video"
-      code = post.player[2].embed_code 
-      content.store(:blogtitle, post.blogname)   
-      content.store(:code, code)
-      content.store(:caption, post.caption)    
-    else
-  end 
-  
-  return content
-
-end
-
-def instagram_data_create(id)
-
-  ref_count = ref_counter("instagram", id)
-  photo_id = Instagram_photos.select(:data_id).filter(:id => id).first
-  new_id = "instagram-" + id.to_s
-  
-  begin 
-  photo = @instagram.media_item(photo_id.data_id)
-  instagram_img_url = photo.images.low_resolution.url
-  #p instagram_img_url.url
-
-  instagram_time = photo.created_time
-  instagram_time = Time.at(instagram_time.to_i).to_s
-	
-  if photo.caption
-    instagram_tags = photo.tags #array  
-    instagram_text = photo.caption.text
-  else
-    instagram_tags = nil
-    instagram_text = nil
-  end
-  
-  comment = ref_comment("instagram", id)
-  
-  data_hash = {:app => "instagram", :instagram_img_url => instagram_img_url, :instagram_tags => instagram_tags, :instagram_time => instagram_time, :instagram_text => instagram_text, :tag_concat => tag_concat(id),  :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
-  
-  return data_hash
-  
-  rescue
-  
-  end 
-  
-end
-
-def flickr_data_create(id)
-
-  ref_count = ref_counter("flickr", id)
-  photo_id = Flickr_photos.select(:data_id).filter(:id => id).first
-  new_id = "flickr-" + id.to_s
-  
-  begin
-    photo = @flickr.photos.find(photo_id.data_id)
-    photo.small!(320)
-    photo.get_sizes!
-    photo.get_info!
-    
-    comment = ref_comment("flickr", id)
-        
-    data_hash = {:app => "flickr", :flickr_img_url => photo.source_url, :flickr_time => photo.taken_at, :flickr_text => photo.description, :tag_concat => tag_concat(id),  :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
-
-    return data_hash
-    
-  end
-
-end
-
-
-def hatena_data_create(id)
-
-  ref_count = ref_counter("hatena", id)
-    
-  bookmark = Hatena_bookmarks.filter(:id => id)
-  new_id = "hatena-" + id.to_s
-    
-  bookmark.each do |elem|
-    @hatena_title = elem.title
-    @hatena_url = elem.url
-    @hatena_issued = elem.issued
-  end 
-
-  comment = ref_comment("hatena", id)
-  
-  p comment
-
-  data_hash = {:app => "hatena", :hatena_title => @hatena_title, :hatena_url => @hatena_url, :hatena_issued => @hatena_issued, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
-  
-  return data_hash
-
-end
-
-def evernote_data_create(id)
-
-  ref_count = ref_counter("evernote", id)
-	  
-  noteStoreUrl = NOTESTORE_URL_BASE + @evernote_oauth.evernote_shard_id
-  noteStoreTransport = Thrift::HTTPClientTransport.new(noteStoreUrl)
-  noteStoreProtocol = Thrift::BinaryProtocol.new(noteStoreTransport)
-  noteStore = Evernote::EDAM::NoteStore::NoteStore::Client.new(noteStoreProtocol)  
-  
-  guid = Evernote_notes.select(:data_id).filter(:id => id).first
-  new_id = "evernote-" + id.to_s
-  
-  note = noteStore.getNote(@evernote_oauth.evernote_access_token, guid.data_id ,true,true,true,true)
-  @note_title = note.title.force_encoding("UTF-8")
-  @content = note.content
-  @content.force_encoding("UTF-8")
-	    
-  resources_reg = @content.scan(/<en-media.*hash=\"(.*?)\"/)
-	    
-  resources_reg.each do |reg|
-  note.resources.each do |resource|
-    resource_hash = resource.data.bodyHash.unpack('H*').first
-	  @guid = resource.guid
-	
-	  attribute = noteStore.getResourceAttributes(@evernote_oauth.evernote_access_token, @guid)
-	        
-	  @fileName = attribute.fileName.force_encoding("UTF-8")
-	   
-	  ext = case resource.mime
-	    when 'image/png'
-	       'png'
-	    when 'image/jpg'
-           'jpg'
-        when 'image/gif'
-           'gif'
-        when 'audio/mpeg'
-	       'mpeg'
-	    when 'application/pdf'
-	       'pdf'
-	    else #'application/octet-stream'
-	         ''
-	  end
-	       
-	  if resource_hash == reg[0]
-	         
-	    case ext
-	      when 'png' || 'jpg' || 'gif'
-	        @replace =  "<img src='https://sandbox.evernote.com/shard/s1/res/" + @guid + "." + ext + "'>" 
-	      when 'pdf'
-	         @href = "<a href='https://sandbox.evernote.com/shard/s1/res/"+ @guid + "/" + @fileName + "." + ext  +"' target='_blank'>" 
-	         @replace = @href + "<img src='https://sandbox.evernote.com/images/file-generic.png'>" + @fileName + "</a>"
-	      when 'mpeg'
-	         @replace = "<embed src='https://sandbox.evernote.com/shard/s1/res/" + @guid + "/" + @fileName + "'>"
-	      else #'application/octet-stream'
-	         @href = "<a href='https://sandbox.evernote.com/shard/s1/res/"+ @guid + "/" + @fileName + "." + ext  +"'>" 
-	         @replace = @href + "<img src='https://sandbox.evernote.com/images/file-generic.png'>" + @fileName + "</a>"
-	    end
-	
-	    @content.sub!(/<\/en-media>/, "")
-	    @content.sub!(/<en-media.*?>/, @replace)
-	        
-	  end     
-	end
-  end
-	     
-  content_snippet = note.content.gsub(/<.*?>/, "")
-  str =  content_snippet.split(//)
-	
-  i=2
-  @snippet = ""
-  while i < 300
-    if str[i]
-      @snippet = @snippet + str[i]
-      i = i + 1
-    else
-	  break
-	end
-  end 
-	      
-  #default: 2012-09-03 15:24:24 +0900
-  @create_time = Time.at(note.created / 1000).to_s
-  @create_date = @create_time.split(/ /)[0]
-	      
-  @link = "https://sandbox.evernote.com/Home.action#n=" + note.guid.to_s 
-
-  comment = ref_comment("evernote", id)
-  
-  data_hash = {:app => "evernote", :note_title => @note_title, :content => @content, :snippet => @snippet, :link => @link, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :evernote_time => @create_time, :comment => comment  }
-  
-  return data_hash
-
-end
-
-def rss_data_create(id)
-
-  ref_count = ref_counter("rss", id)
-    
-  item = Rss_item.filter(:data_id => id)
-  
-  new_id = "rss-" + id.to_s
-    
-  item.each do |elem|
-    @rss_title = elem.title
-    @rss_url = elem.url
-    @rss_date = elem.date
-    @rss_description = elem.description
-  end 
-  
-  comment = ref_comment("rss", id)
-    
-  data_hash = {:app => "rss", :rss_title => @rss_title, :rss_url => @rss_url, :rss_date => @rss_date, :rss_description => @rss_description, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment  }
-  
-  return data_hash
-
-end
-
-def browser_bookmarks_data_create(id)
-
-  ref_count = ref_counter("browser_bookmarks", id)
-    
-  bookmark = Browser_bookmarks.filter(:id => id)
-  new_id = "browser_bookmarks-" + id.to_s
-    
-  bookmark.each do |elem|
-    @bb_title = elem.title
-    @bb_url = elem.url
-    @bb_issued = elem.issued
-  end 
-  
-  comment = ref_comment("browser_bookmarks", id)
-
-  data_hash = {:app => "browser_bookmarks", :bb_title => @bb_title, :bb_url => @bb_url, :bb_issued => @bb_issued, :tag_concat => tag_concat(id), :tag_a_concat => tag_a_concat(id), :id => new_id, :ref_count => ref_count, :comment => comment }
-  
-  return data_hash
-
-end
-
-
-def db_row_create(app, id)
-  
-  case app
-    when "twitter_f"
-      Twitter_favorites.create({
-	    :user_id => current_user.id,
-		:data_id => id,
-		:refrection => 0,
-	  })
-	when "twitter_h"
-	   Tweets.create({
-	     :user_id => current_user.id,
-		 :data_id => id,
-	     :refrection => 0,
-	   })
-	 when "tumblr"
-       Tumblr_posts.create({
-         :user_id => current_user.id,
-         :data_id => id,
-         :refrection => 0,
-       })
-     when "instagram"
-       Instagram_photos.create({
-         :user_id => current_user.id,
-         :data_id => id,
-         :refrection => 0,
-       })
-     
-     when "flickr"
-       Flickr_photos.create({
-         :user_id => current_user.id,
-         :data_id => id,
-         :refrection => 0,
-       })       	  
-             
-     when "evernote"	 
-       Evernote_notes.create({
-         :user_id => current_user.id,
-         :data_id => id,
-         :refrection => 0,
-       })
-  end
-end
-
-def db_tag_create(app, id, tag)
-  time = Time.now.to_s
-  
-  Tags.create({
-    :user_id => current_user.id,
-    :data_id => id,
-    :tag => tag,
-    :time => time,
-    :app => app,
-  })
-  
-end
-
-def db_comment_create(app, id, comment)
-
-  time = Time.now.to_s
-  
-  Comments.create({
-    :user_id => current_user.id,
-    :data_id => id,
-    :comment => comment,
-    :time => time,
-    :app => app,
-  })
-  
-  h = {:comment => comment, :time => time}
-  
-  return h
-  
-end
-
-def rss_db_create(e, channel_id)
-  past_item = Rss_item.select(:id).filter(:url => e.url).first
-  #p past_item
-  
-  unless past_item       
-    Rss_item.create({
-      :channel_id => channel_id,
-      :title => e.title.toutf8,
-      :url => e.url,
-      :date => e.date_published.to_s,
-      :description => e.description.toutf8,
-    })          
-  end
-     
-  this_data = Rss_item.select(:id).filter(:url => e.url).first
-
-  past_relate_id = Rss_user_relate.select(:id).filter(:user_id => current_user.id, :id => this_data.id).first
-     
-  unless past_relate_id
-    #p this_data.data_id
-    Rss_user_relate.create({
-      :user_id => current_user.id,
-      :id => this_data.id,
-      :refrection => 0,
-      :channel_id => channel_id,
-    })
-  end
-
-end
-
-def ref_counter(app, id)
-
-  case app
-    when "twitter_f"
-      ref_sql = Twitter_favorites.select(:refrection).filter(:id => id)
-    
-    when "twitter_h"
-      ref_sql = Tweets.select(:refrection).filter(:id => id)
-    
-    when "tumblr"
-      ref_sql = Tumblr_posts.select(:refrection).filter(:id => id)
-    
-    when "instagram"
-      ref_sql = Instagram_photos.select(:refrection).filter(:id => id)
-
-    when "flickr"
-      ref_sql = Flickr_photos.select(:refrection).filter(:id => id)
-    
-    when "hatena"
-      ref_sql = Hatena_bookmarks.select(:refrection).filter(:id => id)
-    
-    when "evernote"
-      ref_sql = Evernote_notes.select(:refrection).filter(:id => id)
-      
-    when "rss"
-      ref_sql = Rss_user_relate.select(:refrection).filter(:id => id)
-      
-    when "browser_bookmarks"
-      ref_sql = Browser_bookmarks.select(:refrection).filter(:id => id)
-    else
-  end
-  
-  ref_sql.each do |ref|
-	ref_count = ref.refrection
-	return ref_count
-  end 
-  
-end
-
-
-def ref_comment(app, id)
-  
-  ref_sql = Comments.filter(:data_id => id, :app => app)
-  
-  p ref_sql
-  
-  comments = Array.new
-  
-  ref_sql.each do |ref|
-	h = {:comment => ref.comment, :time => ref.time}
-	comments.push(h)
-  end 
-  
-  #p comments.length
-  
-  return comments
-  
-end
-
-#後でなおす
-def tag_concat(id)
-  tags = Tags.select(:tag).filter(:user_id => current_user.id, :data_id => id) 
-  tag_concat = ""
-  
-  tags.each do |tag|
-    tag_concat = tag_concat + tag.tag + ","
-  end
-  tag_concat.chop!
-  
-  return tag_concat
-end
-
-def tag_a_concat(id)
-  tags = Tags.select(:tag).filter(:user_id => current_user.id, :data_id => id) 
-  tag_a_concat = ""
-  tags.each do |tag|
-    tag_html = "<a href= /tagsearch?tagname=" + tag.tag + "&page=1>" + tag.tag + "</a> "  
-    tag_a_concat = tag_a_concat + tag_html
-  end
-  return tag_a_concat
-end
-
-def tag_recreate(id, tags, app)
-  Tags.filter(:user_id => current_user.id, :data_id => id).delete
-   
-  split_tag = tags.split(",")
-   
-  split_tag.each do |elem|
-    elem.gsub!(/\s/, "")
-    db_tag_create(app, id, elem)
-  end
-end
-
-def one_data_create(app, id)
-  
-  if id == ""
-    id = rand_id_sample(app)
-  end
-
-  case app
-    when "twitter_f"
-      
-      p "---"
-      twitter_oauth = Twitter_oauth.where(:uid => current_user.id).first
- 
-      configure_twitter_token(twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
-      @twitter = Twitter::Client.new
-        
-      data_hash = twitter_favs_data_create(id)
-          
-    when "twitter_h"
-      
-      twitter_oauth = Twitter_oauth.where(:uid => current_user.id).first
- 
-      configure_twitter_token(twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
-      @twitter = Twitter::Client.new
-        
-      data_hash = twitter_home_data_create(id)
-      
-    when "tumblr"
-      
-      tumblr_oauth = Tumblr_oauth.where(:uid => current_user.id).first
-
-      configure_tumblr_token(tumblr_oauth.tumblr_access_token, tumblr_oauth.tumblr_access_token_secret)
-      @tumblr = Tumblife.client
-      
-      data_hash = tumblr_data_create(id)
-       
-    when "instagram"
-      
-      instagram_oauth = Instagram_oauth.where(:uid => current_user.id).first
-
-      @instagram = Instagram.client(:access_token => instagram_oauth.instagram_access_token)
-    
-	  data_hash = instagram_data_create(id)
-	  
-	when "flickr"
-	  
-	  flickr_oauth = Flickr_oauth.where(:uid => current_user.id).first
-	  @flickr = Flickr.new(flickr_oauth.flickr_access_token, flickr_oauth.flickr_access_token_secret)
-      #@user = @flickr.test_login
-      
-      data_hash = flickr_data_create(id)
-      
-    when "hatena"
-
-      data_hash = hatena_data_create(id)
-      
-    when "evernote"
-      
-      @evernote_oauth = Evernote_oauth.where(:uid => current_user.id).first
-      data_hash = evernote_data_create(id)
-      
-    when "rss"
-            
-      data_hash = rss_data_create(id)
-      
-    when "browser_bookmarks"
-    
-      data_hash = browser_bookmarks_data_create(id)
-          
-    else
-          
-  end
-  return data_hash
-
-end
-
-def twitter_db_create(token,secret) 
-
-  configure_twitter_token(token, secret)
-  @twitter = Twitter::Client.new
-  
-  begin
-      
-    @twitter.favorites(:count => 100).each do |twit|
- 
-      past_fav = Twitter_favorites.select(:id).filter(:user_id => current_user.id, :data_id => twit.id)
-
-      if past_fav.empty?
-        db_row_create("twitter_f", twit.id)
-	  else
-	    break
-	  end
-	        
-    end  #--each do
-     
-    @twitter.user_timeline(:count => 200).each do |twit|
-   
-      past_tweet = Tweets.select(:id).filter(:user_id => current_user.id, :data_id => twit.id)
-
-      if past_tweet.empty?
-        db_row_create("twitter_h", twit.id)
-      else
-	    break
-	  end
-	        
-    end  #--each do
-    
-  rescue Twitter::Error::Unauthorized => error
-	  
-	if error.to_s.index("Invalid or expired token")
-      reject("twitter")
-    end
-	  
-  rescue Twitter::Error::Forbidden => error	    
-	
-  end
-  
-end
-
-def tumblr_db_create(token,secret)   
-
-  configure_tumblr_token(token, secret)
-  tumblr = Tumblife.client
-    
-  info = tumblr.info
-  blogurl = info.user.blogs[0].url
-  blogurl.gsub!('http://', '')
-    
-  offset = 0
-  limit = 20
-    
-  begin
-    
-  catch(:tumblr_exit){
-    begin
-      res = tumblr.posts(blogurl, {:offset => offset, :limit => limit})
-
-      res.posts.each do |post|
-      
-        past_post = Tumblr_posts.select(:id).filter(:user_id => current_user.id, :data_id => post.id)
-      
-        if past_post.empty?
-          db_row_create("tumblr", post.id)
-            
-          post.tags.each do |tag|
-            db_tag_create("tumblr", post.id, tag)                            
-          end
-            
-        else
-          throw :tumblr_exit
-        end
-        
-      end
-      offset += limit      
-    end while offset < res.total_posts
-  }
-    
-  rescue
-    p "error!"
-  end
-
-end
-
-def instagram_db_create(token) 
-  instagram = Instagram.client(:access_token => token)
-    
-  instagram.user_recent_media.each do |photo|
-    
-    past_photo = Instagram_photos.select(:id).filter(:user_id => current_user.id, :data_id => photo.id)
-      
-    if past_photo.empty?
-      db_row_create("instagram", photo.id)  
-        
-      if photo.tags #array
-               
-        photo.tags.each do |tag|   
-          db_tag_create("instagram", photo.id, tag)            
-        end            
-      end
-        
-    else
-      break
-    end
-  end
-  
-end
-
-def flickr_db_create(token, secret)
-
-  flickr = Flickr.new(token, secret)
-  p flickr
-  user = flickr.test_login
-  
-  list = flickr.photos.search(:user_id => user["user"]["id"])
-
-  list.each do |photo|
-  
-    past_photo = Flickr_photos.select(:id).filter(:user_id => current_user.id, :data_id => photo.id)
-    
-    #p photo.id
-
-    if past_photo.empty?
-      db_row_create("flickr", photo.id)  
-    else
-      break
-    end   
-  end
-end
-
-
-def evernote_db_create(token, shard_id)
-
-  noteStoreUrl = NOTESTORE_URL_BASE + shard_id
-  noteStoreTransport = Thrift::HTTPClientTransport.new(noteStoreUrl)
-  noteStoreProtocol = Thrift::BinaryProtocol.new(noteStoreTransport)
-  noteStore = Evernote::EDAM::NoteStore::NoteStore::Client.new(noteStoreProtocol)
-    
-  notebooks = noteStore.listNotebooks(token)
-      
-  filter = Evernote::EDAM::NoteStore::NoteFilter.new
-  filter.words = ""
-   
-  spec = Evernote::EDAM::NoteStore::NotesMetadataResultSpec.new(
-    includeTitle: false,
-    includeContentLength: false,
-    includeCreated: false,
-    includeUpdated: false,
-    includeUpdateSequenceNum: false,
-    includeNotebookGuid: false,
-    includeTagGuids: true,
-    includeAttributes: true,
-    includeLargestResourceMime: false,
-    includeLargestResourceSize: false,
-  )
-      
-  offset = 0
-  pageSize = 10
-  
-  begin
-    
-    catch(:evernote_exit){
-      begin      
-      res = noteStore.findNotesMetadata(token, filter, offset, 10, spec)
-      
-      i = res.notes.length
-      while i > 0 
-      
-        i = i - 1      
-        past_note = Evernote_notes.select(:id).filter(:user_id => current_user.id, :data_id => res.notes[i].guid)
-      
-        if past_note.empty?
-          db_row_create("evernote", res.notes[i].guid)
-       
-          evernote_tags = res.notes[i].tagGuids
-          if evernote_tags
-            evernote_tags.each do |tag_id|
-              tag_resource = noteStore.getTag(evernote_oauth.evernote_access_token, tag_id)
-              tag = tag_resource.name.force_encoding("UTF-8")
-              db_tag_create("evernote", res.notes[i].guid, tag)
-
-            end  #-- evernote_tags.each
-          end #--if evernote_tags
-          
-        else
-          throw :evernote_exit
-        end #-- if past_note.empty?          
-       
-      end #-- while
-    
-      offset = offset + pageSize
-    
-    end while res.totalNotes > offset
-    
-    } #-- catch
-    
-  rescue Evernote::EDAM::Error::EDAMUserException => e
-	#再認証が必要
-	if e.errorCode == 9
-	  reject("evernote")
-    end
-
-  end
-
-end
-
-def hatena_db_create(token, secret)
-
-  hatena = OAuth::AccessToken.new(hatena_oauth_consumer,token,secret)
-    
-  request_url = 'http://b.hatena.ne.jp/atom/feed?of=0' 
-    
-  begin
-     
-    catch(:hatena_exit){  
-      while true
-        response = hatena.request(:get, request_url)
-  
-        xml_doc = Nokogiri::XML(response.body)
-        xml_doc.css("entry").each do |elem|
-          entry_doc = Nokogiri::XML(elem.to_html)
-          id = entry_doc.css("id")[0].content
-        
-          past_bookmark = Hatena_bookmarks.select(:id).filter(:user_id => current_user.id, :id => id)
-        
-          if past_bookmark.empty?
-          
-            title = entry_doc.css("title")[0].content
-            issued = entry_doc.css("issued")[0].content
-            name = entry_doc.css("name")[0].content
-            comment = entry_doc.css("summary")[0].content
-            url = entry_doc.xpath("//*[@rel='related']")[0].attribute("href").value 
-         
-            entry_doc.xpath("//dc:subject", "dc" => 'http://purl.org/dc/elements/1.1/').each do |elem|
-              db_tag_create("hatena", id, elem.content)
-            end #--entry_coc.xpath().each
-  
-            Hatena_bookmarks.create({
-              :user_id => current_user.id,
-              :data_id => id,
-              :name => name,
-              :title => title,
-              :issued => issued,
-              :url => url,
-              :comment => comment,
-              :refrection => 0,
-            })
-          
-          else
-            throw :hatena_exit
-          end #--if past_bookmark
-       
-          rel_next = xml_doc.xpath("//*[@rel='next']")[0]
-          
-          if rel_next
-           request_url = xml_doc.xpath("//*[@rel='next']")[0].attribute("href").value
-          else
-            #request_url = ""
-            #break
-            throw :hatena_exit
-          end
-      
-        end #--xml_doc.css().each 
-       
-      end #--while true
-    } #--catch
-    
-  rescue => e
-    #もし認証が切れた場合は強制reject操作しておく
-    if e.message == "token_rejected"
-      reject("hatena")     
-    end
-    
-  end
-
-end
-
-def reject(app)
-
-  case app
-    when "twitter"
-      Twitter_oauth.where(:uid => current_user.id).delete
-      Twitter_favorites.where(:user_id => current_user.id).delete
-      Tweets.where(:user_id => current_user.id).delete
-      Tags.where(:user_id => current_user.id, :app => "twitter_f").delete
-      Tags.where(:user_id => current_user.id, :app => "twitter_h").delete
-      
-	when "tumblr"
-	  Tumblr_oauth.where(:uid => current_user.id).delete
-	  Tumblr_posts.where(:user_id => current_user.id).delete
-	  Tags.where(:user_id => current_user.id, :app => "tumblr").delete
-      
-	when "instagram"
-	  Instagram_oauth.where(:uid => current_user.id).delete
-	  Instagram_photos.where(:user_id => current_user.id).delete
-	  Tags.where(:user_id => current_user.id, :app => "instagram").delete
-	  
-    when "flickr"
-	  Flickr_oauth.where(:uid => current_user.id).delete
-	  Flickr_photos.where(:user_id => current_user.id).delete
-	  Tags.where(:user_id => current_user.id, :app => "flickr").delete
-	   
-	when "hatena"
-	  Hatena_oauth.where(:uid => current_user.id).delete
-	  Hatena_bookmarks.where(:user_id => current_user.id).delete
-	  Tags.where(:user_id => current_user.id, :app => "hatena").delete
-	  
-	when "evernote"
-	  Evernote_oauth.where(:uid => current_user.id).delete
-	  Evernote_notes.where(:user_id => current_user.id).delete
-	  Tags.where(:user_id => current_user.id, :app => "evernote").delete
-	  
-	when "browser_bookmarks"
-	  Browser_bookmakrs.where(:user_id => current_user.id).delete
-	  Tags.where(:user_id => current_user.id, :app => "browser_bookmarks").delete
-
-	else
-  end  
-
 end
 
 # 認証方式を登録。
@@ -1346,9 +362,10 @@ post "/rss_register" do
   begin
     feed = FeedNormalizer::FeedNormalizer.parse(open(url))
     channel_title = feed.title.force_encoding("UTF-8")
+    rss_data = RssData::RssData.new(current_user.id)
     
     past_regist = Rss_channel.where(:link => url).first
-    p past_regist
+    #p past_regist
 
     unless past_regist
       Rss_channel.create({
@@ -1360,7 +377,7 @@ post "/rss_register" do
     this_channel = Rss_channel.select(:channel_id).where(:link => url).first 
     
     feed.entries.reject{|x|x.title=~/^PR:/}.map{|e|
-     rss_db_create(e, channel_id)
+     rss_data.rss_db_create(e, channel_id)
     }
 
     data_hash["status"] = "success" 
@@ -1385,8 +402,8 @@ end
 
 get "/data_refresh" do
 
-  #Resque.enqueue(DataRefresh, current_user.id)
- 
+  Resque.enqueue(DataRefresh, current_user.id)
+
   redirect to ("/settings")
   
 end  
@@ -1441,10 +458,9 @@ get "/twitter_set" do
       :twitter_access_token_secret => session[:twitter_access_token_secret] ,
     })
   end
-  
-    twitter_db_create(session[:twitter_access_token], session[:twitter_access_token_secret])
-      
- 
+     
+  twitter_data = TwitterData::TwitterData.new(current_user.id, session[:twitter_access_token], session[:twitter_access_token_secret])
+  twitter_data.twitter_db_create() 
   
   session.delete(:twitter_access_token)
   session.delete(:twitter_access_token_secret)
@@ -1498,10 +514,11 @@ get "/tumblr_set" do
       :tumblr_access_token => session[:tumblr_access_token],
       :tumblr_access_token_secret => session[:tumblr_access_token_secret],
     })
-    
-    tumblr_db_create(session[:tumblr_access_token],session[:tumblr_access_token_secret])
         
   end
+  
+  tumblr_data = TumblrData::TumblrData.new(current_user.id, session[:tumblr_access_token], session[:tumblr_access_token_secret])
+  tumblr_data.tumblr_db_create() 
   
   session.delete(:tumblr_access_token)
   session.delete(:tumblr_access_token_secret) 
@@ -1574,8 +591,9 @@ get '/flickr_set' do
       :flickr_access_token => session[:flickr_access_token],
       :flickr_access_token_secret => session[:flickr_access_token_secret], 
     })
-    
-    flickr_db_create(session[:flickr_access_token],session[:flickr_access_token_secret])
+
+    flickr_data = FlickrData::FlickrData.new(current_user.id, session[:flickr_access_token], session[:flickr_access_token_secret])
+    flickr_data.flickr_db_create() 
     
     session.delete(:flickr_access_token)
     session.delete(:flickr_access_token_secret) 
@@ -1634,8 +652,9 @@ get "/hatena_set" do
       :hatena_access_token => session[:hatena_access_token],
       :hatena_access_token_secret => session[:hatena_access_token_secret],
     })
-    
-    hatena_db_create(session[:hatena_access_token],session[:hatena_access_token_secret])
+
+    hatena_data = HatenaData::HatenaData.new(current_user.id)
+    hatena_data.hatena_db_create(session[:hatena_access_token],session[:hatena_access_token_secret])
     
   end
   
@@ -1764,7 +783,7 @@ get '/main' do
     Parallel.each(apps, in_threads:8){|app|
      
       begin
-        data_hash = one_data_create(app, "")
+        data_hash = AllData.one_data_create(current_user.id,app, "")
         #p data_hash 
       rescue Twitter::Error::Unauthorized => error
 	  
@@ -1782,7 +801,7 @@ get '/main' do
 
       rescue NoMethodError => e
 	    p e
-	    retry
+	  #  retry
 	
 	  rescue Evernote::EDAM::Error::EDAMUserException => e
 	 	#再認証が必要
@@ -1831,7 +850,7 @@ post "/tagedit" do
 
   dataset = params[:data_id].split("-")
 
-  tag_recreate(dataset[1], params[:tag_edit], dataset[0])
+  Alldata.tag_recreate(current_user.id,dataset[1], params[:tag_edit], dataset[0])
   
   if dataset[0] == "hatena"    
 
@@ -1882,18 +901,18 @@ post "/tagedit" do
     end
   end
  
-  return tag_a_concat(dataset[1]) 
+  return AllData.tag_a_concat(current_user.id,dataset[1]) 
 end
 
 post "/comment" do
 
   dataset = params[:data_id].split("-")
 
-  data = db_comment_create(dataset[0], dataset[1], params[:comment])
+  data = AllData.db_comment_create(current_user.id, dataset[0], dataset[1], params[:comment])
   
   data_json = JSON.generate(data)
   
-  p data_json  
+  #p data_json  
   
   return data_json
   
@@ -1966,7 +985,7 @@ get "/individual" do
     app_list = ["twitter_f", "twitter_h", "tumblr", "instagram", "hatena", "evernote", "flickr"]
     rand_app = app_list.sample     
 
-    @content = one_data_create(rand_app, "")     
+    @content = AllData.one_data_create(current_user.id,rand_app, "")     
     
     this_id = @content[:id]
     time = Time.now
@@ -1995,7 +1014,7 @@ post "/individual" do
   
   id = params[:data_id].split("-")
   #p id[1]
-  @content = one_data_create(params[:app], id[1])
+  @content = AllData.one_data_create(current_user.id,params[:app], id[1])
    
   this_id = @content[:id]
   time = Time.now
@@ -2011,7 +1030,7 @@ end
 
 get "/reject/:app" do
 
-  reject(params[:app])
+  AllData.reject(current_user.id,params[:app])
   redirect "/settings"
 
 end
@@ -2048,7 +1067,7 @@ get "/tagsearch" do
   
     @paginated.each do |elem|
       
-      data_hash = one_data_create(elem.app, elem.data_id)
+      data_hash = AllData.one_data_create(current_user.id, elem.app, elem.data_id)
       @contents_array.push(data_hash)
           
     end
@@ -2092,9 +1111,7 @@ put "/upload" do
         :issued => Time.at(elem["add_date"].to_i),
         :refrection => 0,
       })
- #p elem["href"]
-#p elem.content
-#p Time.at(elem["add_date"].to_i)
+
    end
   end 
 end
@@ -2136,3 +1153,4 @@ post "/remove" do
   return "ok"
 
 end
+

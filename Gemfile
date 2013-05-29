@@ -15,6 +15,9 @@ gem 'sqlite3'
 gem 'feed-normalizer'
 gem 'will_paginate'
 gem 'resque'
+gem 'rake'
+gem 'parallel'
+gem 'flickr-objects'
 
 #group :development do
 #  gem 'sinatra-contrib', gem: 'sinatra/reloader'

@@ -6,6 +6,7 @@ Sequel.extension :pagination
 Sequel.connect("sqlite://user.db")
 
 class User < Sequel::Model
+  plugin :validation_helpers
   unless table_exists?
     set_schema do
 	  primary_key :id
