@@ -260,17 +260,15 @@ jQuery(function($) {
         return false;
   });
   
-    $('input').keypress(function(ev) {
+  $('input').keypress(function(ev) {
         if ((ev.which && ev.which === 13) || (ev.keyCode && ev.keyCode === 13)) {
                 return false;
         } else {
                 return true;
         }
+        });
   });
 
+   $('#column').BlocksIt();
 
-  
-});
-      
-  
 });

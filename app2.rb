@@ -548,7 +548,8 @@ get "/instagram_set" do
       :instagram_access_token => session[:instagram_access_token],
     })
     
-    instagram_db_create(session[:instagram_access_token])
+    instagram_data = InstagramData::InstagramData.new(current_user.id, session[:instagram_access_token])
+    instagram_data.instagram_db_create()
 
   end
  

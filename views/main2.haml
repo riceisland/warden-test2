@@ -1,23 +1,22 @@
-%div{:id => "wrapper"}
-	%div{:id => "columns"}
-		-@contents_array.each do |elem|
-			-@content = elem
-			-case elem[:app]
-				-when "twitter_f"
-					= haml :twitter_f
-				-when "twitter_h"
-					= haml :twitter_h
-				-when "tumblr"
-					= haml :tumblr
-				-when "instagram"
-					= haml :instagram
-				-when "flickr"
-					= haml :flickr
-				-when "hatena"
-					= haml :hatena
-				-when "evernote"
-					= haml :evernote
-				-when "rss"
-					= haml :rss
-				-when "browser_bookmarks"
-					= haml :browser_bookmark
+%div{:id => "columns"}
+	-@contents_array.each do |elem|
+		-@content = elem
+		-case elem[:app]
+			-when "twitter_f"
+				= haml :twitter_f
+			-when "twitter_h"
+				= haml :twitter_h
+			-when "tumblr"
+				= haml :tumblr
+			-when "instagram"
+				= haml :instagram
+			-when "flickr"
+				= haml :flickr
+			-when "hatena"
+				= haml :hatena
+			-when "evernote"
+				= haml :evernote
+			-when "rss"
+				= haml :rss
+			-when "browser_bookmarks"
+				= haml :browser_bookmark

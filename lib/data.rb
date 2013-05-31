@@ -333,6 +333,7 @@ module AllData
   end
 
   module_function :tag_recreate
+  module_function :db_row_create
   module_function :db_tag_create
   module_function :db_comment_create
   module_function :rand_id_sample
