@@ -23,6 +23,7 @@ require 'resque'
 require 'yaml'
 require 'redis'
 require 'flickr-objects'
+require 'addressable/uri'
 #require "sinatra/reloader" if development?
 
 #evernote用

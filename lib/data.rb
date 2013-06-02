@@ -25,42 +25,124 @@ module AllData
 
     content_ids = Array.new()
     
+    begin
+    
     case app
       when "twitter_f"
-        ids = Twitter_favorites.select(:id).filter(:user_id => uid)
+        ids = Twitter_favorites.select(:id).filter(:user_id => uid, :shuffle => 0).all
 
       when "twitter_h"
-        ids = Tweets.select(:id).filter(:user_id => uid)
+        ids = Tweets.select(:id).filter(:user_id => uid, :shuffle => 0).all
     
       when "tumblr"
-        ids = Tumblr_posts.select(:id).filter(:user_id => uid)
+        ids = Tumblr_posts.select(:id).filter(:user_id => uid, :shuffle => 0).all
     
       when "instagram"
-        ids = Instagram_photos.select(:id).filter(:user_id => uid)
+        ids = Instagram_photos.select(:id).filter(:user_id => uid, :shuffle => 0).all
 
       when "flickr"
-        ids = Flickr_photos.select(:id).filter(:user_id => uid)
+        ids = Flickr_photos.select(:id).filter(:user_id => uid, :shuffle => 0).all
     
       when "hatena"
-        ids = Hatena_bookmarks.select(:id).filter(:user_id => uid)    
+        ids = Hatena_bookmarks.select(:id).filter(:user_id => uid, :shuffle => 0).all   
       
       when "evernote"
-        ids = Evernote_notes.select(:id).filter(:user_id => uid)
+        ids = Evernote_notes.select(:id).filter(:user_id => uid, :shuffle => 0).all
     
       when "rss"    
-        ids = Rss_user_relate.select(:id).filter(:user_id => uid)
+        ids = Rss_user_relate.select(:id).filter(:user_id => uid, :shuffle => 0).all
       
       when "browser_bookmarks"    
-        ids = Browser_bookmarks.select(:id).filter(:user_id => uid)
+        ids = Browser_bookmarks.select(:id).filter(:user_id => uid, :shuffle => 0).all
       else
     end
-  		
+
     ids.each do |id|
 	  content_ids.push(id.id)
     end
+      
+    if content_ids.length > 0
 	
-    rand_id = content_ids.sample
-  
+      rand_id = content_ids.sample
+      
+      
+      case app
+      when "twitter_f"
+        Twitter_favorites.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+
+      when "twitter_h"
+        ids = Tweets.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+            
+      when "tumblr"
+        ids = Tumblr_posts.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+    
+      when "instagram"
+        ids = Instagram_photos.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+
+      when "flickr"
+        ids = Flickr_photos.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+    
+      when "hatena"
+        ids = Hatena_bookmarks.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+      
+      when "evernote"
+        ids = Evernote_notes.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+    
+      when "rss"    
+        ids = Rss_user_relate.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+      
+      when "browser_bookmarks"    
+        ids = Browser_bookmarks.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+      else
+      end
+      
+    
+    else
+      
+      case app
+      when "twitter_f"
+        Twitter_favorites.filter(:user_id => uid).update(:shuffle => 0)
+
+      when "twitter_h"
+        ids = Tweets.filter(:user_id => uid).update(:shuffle => 0)
+                    
+      when "tumblr"
+        ids = Tumblr_posts.filter(:user_id => uid).update(:shuffle => 0)
+    
+      when "instagram"
+        ids = Instagram_photos.filter(:user_id => uid).update(:shuffle => 0)
+
+      when "flickr"
+        ids = Flickr_photos.filter(:user_id => uid).update(:shuffle => 0)
+    
+      when "hatena"
+        ids = Hatena_bookmarks.filter(:user_id => uid).update(:shuffle => 0)
+              
+      when "evernote"
+        ids = Evernote_notes.filter(:user_id => uid).update(:shuffle => 0)
+    
+      when "rss"    
+        ids = Rss_user_relate.filter(:user_id => uid).update(:shuffle => 0)
+      
+      when "browser_bookmarks"    
+        ids = Browser_bookmarks.filter(:user_id => uid).update(:shuffle => 0)
+      else
+      end
+      
+      raise "shuffle_allread"
+      
+    end
+    
+    rescue RuntimeError => e
+      
+      if e.to_s == "shuffle_allread"
+        
+        retry
+      
+      end
+    
+    end  
+      
     return rand_id
 
   end
@@ -146,36 +228,42 @@ module AllData
 	      :user_id => uid,
 		  :data_id => id,
 		  :refrection => 0,
+		  :shuffle => 0,
 	    })
 	  when "twitter_h"
 	     Tweets.create({
 	       :user_id => uid,
 		   :data_id => id,
 	       :refrection => 0,
+	       :shuffle => 0,
 	     })
 	   when "tumblr"
          Tumblr_posts.create({
            :user_id => uid,
            :data_id => id,
            :refrection => 0,
+           :shuffle => 0,
          })
        when "instagram"
          Instagram_photos.create({
            :user_id => uid,
            :data_id => id,
            :refrection => 0,
+           :shuffle => 0,
          })
        when "flickr"
          Flickr_photos.create({
            :user_id => uid,
            :data_id => id,
            :refrection => 0,
+           :shuffle => 0,
          })       	      
        when "evernote"	 
          Evernote_notes.create({
            :user_id => uid,
            :data_id => id,
            :refrection => 0,
+           :shuffle => 0,
          })
     end
   end
@@ -841,6 +929,7 @@ module HatenaData
                 :url => url,
                 :comment => comment,
                 :refrection => 0,
+                :shuffle => 0,
               })
           
             else
@@ -1121,6 +1210,7 @@ module RssData
         :id => this_data.id,
         :refrection => 0,
         :channel_id => channel_id,
+        :shuffle => 0,
       })
     end
   end

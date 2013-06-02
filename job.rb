@@ -150,6 +150,7 @@ module BookmarkDataCreate
           :description => description,
           :issued => Time.at(elem["add_date"].to_i),
           :refrection => 0,
+          :shuffle => 0,
         })
     
       end

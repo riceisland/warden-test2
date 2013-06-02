@@ -43,6 +43,7 @@ class Tweets < Sequel::Model
 	  integer :user_id
 	  integer :data_id
 	  integer :refrection
+	  integer :shuffle
 	end
 	create_table
   end
@@ -55,6 +56,7 @@ class Twitter_favorites < Sequel::Model
 	  integer :user_id
 	  integer :data_id
 	  integer :refrection
+	  integer :shuffle
 	end
 	create_table
   end
@@ -78,6 +80,7 @@ class Tumblr_posts < Sequel::Model
 	  integer :user_id
 	  integer :data_id
 	  integer :refrection
+	  integer :shuffle
 	end
 	create_table
   end
@@ -100,6 +103,7 @@ class Instagram_photos < Sequel::Model
       integer :user_id
       varchar :data_id
       integer :refrection
+      integer :shuffle
     end
     create_table
   end
@@ -123,6 +127,7 @@ class Flickr_photos < Sequel::Model
       integer :user_id
       varchar :data_id
       integer :refrection
+      integer :shuffle
     end
     create_table
   end
@@ -151,6 +156,7 @@ class Hatena_bookmarks < Sequel::Model
       varchar :issued
       varchar :comment
       integer :refrection
+      integer :shuffle
     end
     create_table
   end
@@ -174,6 +180,7 @@ class Evernote_notes < Sequel::Model
 	  integer :user_id
 	  varchar :data_id
 	  varchar :refrection
+	  integer :shuffle
 	end
 	create_table
   end
@@ -197,6 +204,7 @@ class Rss_user_relate < Sequel::Model
       foreign_key :id, :table => :Rss_items
       varchar :refrection
       foreign_key :channel_id, :table => :Rss_channels
+      integer :shuffle
     end
     create_table
   end
@@ -226,6 +234,7 @@ class Browser_bookmarks < Sequel::Model
       varchar :issued
       varchar :description
       integer :refrection
+      integer :shuffle
  	end
 	create_table
   end
