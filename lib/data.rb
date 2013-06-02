@@ -216,7 +216,7 @@ module AllData
 	    Tags.where(:user_id => uid, :app => "evernote").delete
 	  
 	  when "browser_bookmarks"
-	    Browser_bookmakrs.where(:user_id => uid).delete
+	    Browser_bookmarks.where(:user_id => uid).delete
 	    Tags.where(:user_id => uid, :app => "browser_bookmarks").delete
 
 	  else
@@ -743,13 +743,14 @@ module BrowserBookmarkData
       @bb_title = elem.title
       @bb_url = elem.url
       @bb_issued = elem.issued
+      @bb_description = elem.description
     end 
   
     comment = ref_comment("browser_bookmarks", id)
     tag_c = tag_concat("browser_bookmarks", id)
     tag_a = tag_a_concat("browser_bookmarks", id) 
   
-    data_hash = {:app => "browser_bookmarks", :bb_title => @bb_title, :bb_url => @bb_url, :bb_issued => @bb_issued, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment }
+    data_hash = {:app => "browser_bookmarks", :bb_title => @bb_title, :bb_url => @bb_url, :bb_issued => @bb_issued, :bb_description => @bb_description, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment }
   
     return data_hash
 

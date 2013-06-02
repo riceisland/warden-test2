@@ -224,6 +224,7 @@ class Browser_bookmarks < Sequel::Model
       varchar :title
       varchar :url
       varchar :issued
+      varchar :description
       integer :refrection
  	end
 	create_table

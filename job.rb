@@ -1,5 +1,11 @@
+#! ruby -Ku
+# -*- coding: utf-8 -*-
 require 'resque'
+require 'nokogiri'
+#require 'net/https'
+require 'parallel'
 require './app2'
+require "./extract"
 
 module DataRefresh
 
@@ -75,5 +81,82 @@ module DataRefresh
   end
 =end  
   end
+
+end
+
+
+module DataCreate
+
+  @queue = :data_create
+  
+  def self.perform(user_id, app, token, secret)
+  
+    case app
+    when "twitter"
+    
+      twitter_data = TwitterData::TwitterData.new(current_user.id, token, secret)
+      twitter_data.twitter_db_create() 
+    
+    when "flickr"
+    
+      flickr_data = FlickrData::FlickrData.new(current_user.id, token, secret)
+      flickr_data.flickr_db_create()
+    
+    end
+    
+  end
+  
+end
+
+module BookmarkDataCreate
+
+  @queue = :bookmark_data_create
+  
+  def self.perform(user_id, file)
+    
+    doc = Nokogiri::HTML(file)
+
+    extractor = ExtractContent::Extractor.new
+  
+    Parallel.each(doc.css("a"), in_threads:8){|elem| 
+     
+      if elem["href"] =~ /\Ahttps?\:\/\//
+      
+        begin
+          description = extractor.analyse(open(elem["href"]).read)[0]    
+          #p description
+          
+        rescue
+          description = ""
+        
+        end
+      
+        unless description == ""
+       
+          str =  description.split(//)
+          len = str.length
+        
+          if len > 200
+            new_str = str.slice(0, 200)
+            description = new_str.join("")
+          end
+        
+        end
+    
+        Browser_bookmarks.create({
+          :user_id => user_id,
+          :title => elem.content,
+          :url => elem["href"],
+          :description => description,
+          :issued => Time.at(elem["add_date"].to_i),
+          :refrection => 0,
+        })
+    
+      end
+
+   }
+
+  end
+
 
 end

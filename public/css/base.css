@@ -350,6 +350,15 @@ span.edit-confirm {
   margin-left: 5px;
 }
 
+/* bm css */
+div.description {
+  font-size :10px;
+  margin :5px 0px;
+  line-height :140%;
+  color :gray;
+	
+}
+
 /* comment css */
 div.comment {
   margin: 5px;

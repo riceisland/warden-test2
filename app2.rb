@@ -32,6 +32,8 @@ require "./model.rb"
 require './job'
 
 require_relative './lib/data.rb'
+require "./extract"
+
 
 # Sinatra のセッションを有効にする
 set :public_folder, File.join(File.dirname(__FILE__) , %w{ . public })
@@ -459,8 +461,7 @@ get "/twitter_set" do
     })
   end
      
-  twitter_data = TwitterData::TwitterData.new(current_user.id, session[:twitter_access_token], session[:twitter_access_token_secret])
-  twitter_data.twitter_db_create() 
+  Resque.enqueue(DataCreate, current_user.id, session[:twitter_access_token],session[:twitter_access_token_secret])
   
   session.delete(:twitter_access_token)
   session.delete(:twitter_access_token_secret)
@@ -593,8 +594,7 @@ get '/flickr_set' do
       :flickr_access_token_secret => session[:flickr_access_token_secret], 
     })
 
-    flickr_data = FlickrData::FlickrData.new(current_user.id, session[:flickr_access_token], session[:flickr_access_token_secret])
-    flickr_data.flickr_db_create() 
+    Resque.enqueue(DataCreate, current_user.id, session[:flickr_access_token], session[:flickr_access_token_secret])
     
     session.delete(:flickr_access_token)
     session.delete(:flickr_access_token_secret) 
@@ -1101,19 +1101,14 @@ put "/upload" do
   if params[:file]
     f = params[:file][:tempfile]
     file = f.read
-    doc = Nokogiri::HTML(file)
+    file.force_encoding("UTF-8")
     
-    doc.css("a").each do |elem|
+        
+    Resque.enqueue(BookmarkDataCreate, current_user.id, file)
     
-      Browser_bookmarks.create({
-        :user_id => current_user.id,
-        :title => elem.content,
-        :url => elem["href"],
-        :issued => Time.at(elem["add_date"].to_i),
-        :refrection => 0,
-      })
+    
+    redirect to ("/settings")
 
-   end
   end 
 end
 
