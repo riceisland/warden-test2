@@ -179,6 +179,7 @@ end
 get "/" do
   if request.env["warden"].user.nil?
   	@menu = Array.new
+  	@menu.push(["about", "c"])
     @menu.push(["login", "c"])
     @menu.push(["register", "c"])
     #erb :login
@@ -201,6 +202,7 @@ get "/login" do
   if request.env["warden"].user.nil?
   
     @menu = Array.new
+    @menu.push(["about", "c"])
     @menu.push(["login", "d"])
     @menu.push(["register", "c"])
 
@@ -217,6 +219,7 @@ end
 post "/unauthenticated" do
   
   @menu = Array.new
+  @menu.push(["about", "c"])
   @menu.push(["login", "d"])
   @menu.push(["register", "c"])
   #erb :fail_login
@@ -233,6 +236,7 @@ end
 get "/register" do
   if request.env["warden"].user.nil?
     @menu = Array.new
+    @menu.push(["about", "c"])
     @menu.push(["login", "c"])
     @menu.push(["register", "d"])
 
@@ -245,6 +249,7 @@ end
 get "/register/error" do
   if request.env["warden"].user.nil?
     @menu = Array.new
+    @menu.push(["about", "c"])
     @menu.push(["login", "c"])
     @menu.push(["register", "d"])
 
@@ -278,6 +283,7 @@ get "/settings" do
     redirect to ("/")
   else
 	@menu = Array.new
+  	@menu.push(["about", "c"])
     @menu.push(["main", "c"])
     @menu.push(["settings", "d"])
     @menu.push(["logout", "c"])
@@ -731,6 +737,7 @@ get '/main' do
     @main = ""
   
     @menu = Array.new
+  	@menu.push(["about", "c"])
     @menu.push(["main", "d"])
     @menu.push(["settings", "c"])
     @menu.push(["logout", "c"])
@@ -980,6 +987,7 @@ get "/individual" do
   else
   
   	@menu = Array.new
+  	@menu.push(["about", "c"])
     @menu.push(["main", "c"])
     @menu.push(["settings", "c"])
     @menu.push(["logout", "c"])
@@ -1008,6 +1016,7 @@ end
 post "/individual" do
 
   @menu = Array.new
+  @menu.push(["about", "c"])
   @menu.push(["main", "d"])
   @menu.push(["settings", "c"])
   @menu.push(["logout", "c"])
@@ -1053,6 +1062,7 @@ get "/tagsearch" do
     redirect to ("/")
   else
     @menu = Array.new
+  	@menu.push(["about", "c"])
     @menu.push(["main", "d"])
     @menu.push(["settings", "c"])
     @menu.push(["logout", "c"])
@@ -1151,3 +1161,20 @@ post "/remove" do
 
 end
 
+get "/about" do
+
+ if request.env["warden"].user.nil?
+  	@menu.push(["about", "d"])
+    @menu.push(["login", "c"])
+    @menu.push(["register", "c"])
+  else
+    @menu = Array.new
+  	@menu.push(["about", "d"])
+    @menu.push(["main", "c"])
+    @menu.push(["settings", "c"])
+    @menu.push(["logout", "c"])
+  end
+
+  haml :about
+
+end

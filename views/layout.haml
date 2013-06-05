@@ -7,17 +7,18 @@
 		%link{:rel=>"shortcut icon", :type=>"image/vnd.microsoft.icon", :href=>"/img/favicon.ico"}   
 		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/jquery.mobile.flatui.css"}
 		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/bootstrap.css"}  
-		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/base.css"}  
+		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/base.css"} 
 		%script{:type => 'text/javascript', :src => "/js/jquery-1.8.3.min.js"}
 		%script{:type => 'text/javascript', :src => "/js/jqm.min.js"}
-		%script{:type => 'text/javascript', :src => "/js/base.js"}
 		%script{:type => 'text/javascript', :src => "/js/jquery.ah-placeholder.js"}
 		%script{:type => 'text/javascript', :src => "/js/blocksit.js"}
+		%script{:type => 'text/javascript', :src => "/js/base.js"} 
 	%body
 		%div{:class => "container-fluid"}
 			%div{:class => "span3"}
 				= haml :menu
 			%div{:class => "span9"}
 				!= yield
+		%script{:type => "text/javascript", :src =>"/js/bootstrap/bootstrap-tab.js"}
 		%script{:type => "text/javascript", :src =>"/js/bootstrap/bootstrap-alert.js"}
 		%script{:type => "text/javascript", :src =>"/js/bootstrap/bootstrap-modal.js"}

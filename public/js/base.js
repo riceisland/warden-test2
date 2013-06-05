@@ -269,6 +269,11 @@ jQuery(function($) {
         });
   });
 
-   $('#column').BlocksIt();
+   $('#columns').BlocksIt();
+   
+   $('#exptab a').click(function (e) {
+     e.preventDefault();
+     $(this).tab('show');
+   })
 
 });
