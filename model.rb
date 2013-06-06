@@ -319,3 +319,394 @@ class Search_log < Sequel::Model
   end
 end
 
+require 'sequel'
+
+#sequel使えるようにする
+Sequel::Model.plugin(:schema)
+Sequel.extension :pagination
+Sequel.connect("sqlite://user.db")
+
+class B_User < Sequel::Model
+ 
+  unless table_exists?
+    set_schema do
+	  primary_key :id
+	  varchar :uid
+	  varchar :time
+	  varchar :usingTime
+	  varchar :useBrowser
+	  varcahr :device_t
+	  varcahr :device_f_r
+	  varcahr :device_f_s
+	  varcahr :device_b_r
+	  varcahr :device_b_s
+	end
+	create_table
+  end
+  
+end
+
+class A_User < Sequel::Model
+ 
+  unless table_exists?
+    set_schema do
+	  primary_key :id
+	  varchar :uid
+	  varchar :time
+	  varchar :usingFreq
+	  varchar :useful
+	  varchar :useful_reason
+	  varchar :free
+	end
+	create_table
+  end
+  
+end
+
+class B_RRQ < Sequel::Model
+  unless table_exists?
+    set_schema do
+      foreign_key :id, :table => :B_User
+      integer :rrq_1
+      integer :rrq_2
+      integer :rrq_3
+      integer :rrq_4
+      integer :rrq_5
+      integer :rrq_6
+      integer :rrq_7
+      integer :rrq_8
+      integer :rrq_9
+      integer :rrq_10
+      integer :rrq_11
+      integer :rrq_12
+    end
+    create_table
+  end
+end
+
+class A_RRQ < Sequel::Model
+  unless table_exists?
+    set_schema do
+      foreign_key :id, :table => :A_User
+      integer :rrq_1
+      integer :rrq_2
+      integer :rrq_3
+      integer :rrq_4
+      integer :rrq_5
+      integer :rrq_6
+      integer :rrq_7
+      integer :rrq_8
+      integer :rrq_9
+      integer :rrq_10
+      integer :rrq_11
+      integer :rrq_12
+    end
+    create_table
+  end
+end
+
+class B_iact_t < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :B_User
+	  integer :iact_t_1
+      integer :iact_t_2
+      integer :iact_t_3
+      integer :iact_t_4
+	  integer :iact_t_5
+      integer :iact_t_6
+      integer :iact_t_7
+      integer :iact_t_8
+	  integer :iact_t_9
+      integer :iact_t_10
+      integer :iact_t_11
+      integer :iact_t_12
+	  integer :iact_t_13
+      integer :iact_t_14
+      integer :iact_t_15
+      integer :iact_t_16
+	end
+	create_table
+  end
+end
+
+class A_iact_t < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :A_User
+	  integer :iact_t_1
+      integer :iact_t_2
+      integer :iact_t_3
+      integer :iact_t_4
+	  integer :iact_t_5
+      integer :iact_t_6
+      integer :iact_t_7
+      integer :iact_t_8
+	  integer :iact_t_9
+      integer :iact_t_10
+      integer :iact_t_11
+      integer :iact_t_12
+	  integer :iact_t_13
+      integer :iact_t_14
+      integer :iact_t_15
+      integer :iact_t_16
+	end
+	create_table
+  end
+end
+
+
+class B_iact_f < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :B_User
+	  integer :iact_f_1
+      integer :iact_f_2
+      integer :iact_f_3
+      integer :iact_f_4
+	  integer :iact_f_5
+      integer :iact_f_6
+      integer :iact_f_7
+      integer :iact_f_8
+	  integer :iact_f_9
+      integer :iact_f_10
+      integer :iact_f_11
+      integer :iact_f_12
+	  integer :iact_f_13
+      integer :iact_f_14
+      integer :iact_f_15
+      integer :iact_f_16
+	end
+	create_table
+  end
+end
+
+class A_iact_f < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :A_User
+	  integer :iact_f_1
+      integer :iact_f_2
+      integer :iact_f_3
+      integer :iact_f_4
+	  integer :iact_f_5
+      integer :iact_f_6
+      integer :iact_f_7
+      integer :iact_f_8
+	  integer :iact_f_9
+      integer :iact_f_10
+      integer :iact_f_11
+      integer :iact_f_12
+	  integer :iact_f_13
+      integer :iact_f_14
+      integer :iact_f_15
+      integer :iact_f_16
+	end
+	create_table
+  end
+end
+
+class B_iact_b < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :B_User
+	  integer :iact_b_1
+      integer :iact_b_2
+      integer :iact_b_3
+      integer :iact_b_4
+	  integer :iact_b_5
+      integer :iact_b_6
+      integer :iact_b_7
+      integer :iact_b_8
+	  integer :iact_b_9
+      integer :iact_b_10
+      integer :iact_b_11
+      integer :iact_b_12
+	  integer :iact_b_13
+      integer :iact_b_14
+      integer :iact_b_15
+      integer :iact_b_16
+	end
+	create_table
+  end
+end
+
+class A_iact_b < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :A_User
+	  integer :iact_b_1
+      integer :iact_b_2
+      integer :iact_b_3
+      integer :iact_b_4
+	  integer :iact_b_5
+      integer :iact_b_6
+      integer :iact_b_7
+      integer :iact_b_8
+	  integer :iact_b_9
+      integer :iact_b_10
+      integer :iact_b_11
+      integer :iact_b_12
+	  integer :iact_b_13
+      integer :iact_b_14
+      integer :iact_b_15
+      integer :iact_b_16
+	end
+	create_table
+  end
+end
+
+class B_tv_t < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :B_User
+	  integer :tv_t_1
+      integer :tv_t_2
+      integer :tv_t_3
+      integer :tv_t_4
+	  integer :tv_t_5
+      integer :tv_t_6
+      integer :tv_t_7
+      integer :tv_t_8
+	  integer :tv_t_9
+      integer :tv_t_10
+      integer :tv_t_11
+      integer :tv_t_12
+	end
+	create_table
+  end
+end
+
+class A_tv_t < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :A_User
+	  integer :tv_t_1
+      integer :tv_t_2
+      integer :tv_t_3
+      integer :tv_t_4
+	  integer :tv_t_5
+      integer :tv_t_6
+      integer :tv_t_7
+      integer :tv_t_8
+	  integer :tv_t_9
+      integer :tv_t_10
+      integer :tv_t_11
+      integer :tv_t_12
+	end
+	create_table
+  end
+end
+
+class B_tv_f < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :B_User
+	  integer :tv_f_1
+      integer :tv_f_2
+      integer :tv_f_3
+      integer :tv_f_4
+	  integer :tv_f_5
+      integer :tv_f_6
+      integer :tv_f_7
+      integer :tv_f_8
+	  integer :tv_f_9
+      integer :tv_f_10
+      integer :tv_f_11
+      integer :tv_f_12
+	  integer :tv_f_13
+      integer :tv_f_14
+      integer :tv_f_15
+      integer :tv_f_16
+	end
+	create_table
+  end
+end
+
+class A_tv_f < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :A_User
+	  integer :tv_f_1
+      integer :tv_f_2
+      integer :tv_f_3
+      integer :tv_f_4
+	  integer :tv_f_5
+      integer :tv_f_6
+      integer :tv_f_7
+      integer :tv_f_8
+	  integer :tv_f_9
+      integer :tv_f_10
+      integer :tv_f_11
+      integer :tv_f_12
+	end
+	create_table
+  end
+end
+
+
+class B_tv_b < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :B_User
+	  integer :tv_b_1
+      integer :tv_b_2
+      integer :tv_b_3
+      integer :tv_b_4
+	  integer :tv_b_5
+      integer :tv_b_6
+      integer :tv_b_7
+      integer :tv_b_8
+	  integer :tv_b_9
+      integer :tv_b_10
+      integer :tv_b_11
+      integer :tv_b_12
+	end
+	create_table
+  end
+end
+
+class A_tv_b < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  foreign_key :id, :table => :A_User
+	  integer :tv_b_1
+      integer :tv_b_2
+      integer :tv_b_3
+      integer :tv_b_4
+	  integer :tv_b_5
+      integer :tv_b_6
+      integer :tv_b_7
+      integer :tv_b_8
+	  integer :tv_b_9
+      integer :tv_b_10
+      integer :tv_b_11
+      integer :tv_b_12
+	end
+	create_table
+  end
+end
+
+
+class A_SUS < Sequel::Model
+  unless table_exists?
+    set_schema do
+      foreign_key :id, :table => :A_User
+      integer :sus_1
+      integer :sus_2
+      integer :sus_3
+      integer :sus_4
+      integer :sus_5
+      integer :sus_6
+      integer :sus_7
+      integer :sus_8
+      integer :sus_9
+      integer :sus_10
+      integer :sus_11
+      integer :sus_12
+    end
+    create_table
+  end
+end
+
+

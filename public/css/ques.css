@@ -1,0 +1,27 @@
+div#main{
+	margin: 30px;
+}
+
+input[type=radio] {
+	display: inline;
+}
+
+table {
+	margin: 10px 0px 30px 0px;
+}
+
+td {
+	padding: 7px;
+}
+
+th {
+	padding: 7px;
+}
+
+tr.gray {
+	background-color: #f0f0f0;
+}
+
+form#b_ques div{
+	margin: 20px 0px;
+}

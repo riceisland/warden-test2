@@ -1,0 +1,2130 @@
+!!! XML
+!!!
+%html
+	%head
+		%title= @title
+		%meta{:"http-equiv"=>"Content-Type", :content=>"text/html", :charset=>"utf-8"}
+		%link{:rel=>"shortcut icon", :type=>"image/vnd.microsoft.icon", :href=>"/img/favicon.ico"} 
+		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/bootstrap.css"}
+		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/ques.css"}   
+		%script{:type => 'text/javascript', :src => "/js/jquery-1.8.3.min.js"}
+		%script{:type => 'text/javascript', :src => "/js/ques.js"}
+	%body
+		%div{:id => "main"}
+			%form{:id => "a_ques", :action => "/a_ques_end", :method => "POST", :class => "userform", :'data-ajax' => "false"}
+				%fieldset
+					%legend 事後アンケート
+					%div{:id => "usingFreq"}
+						%label Q1. あなたは本システムをどの程度利用しましたか。
+						%table
+							%tr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "freq", :value => "ev"}毎日
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "freq", :value => "2"}2-3日に一度
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "freq", :value => "7"}週に一度
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "freq", :value => "0"}それ以下
+					%hr
+					%div{:id => "rrq"}
+						%label Q2. 以下の項目は、あなたにどの程度当てはまるでしょうか。最も当てはまると思う数字を1つだけ選んで下さい。
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td 物事の本質や意味について深く考えることがとても好きだ
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[1]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[1]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[1]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[1]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[1]", :value => "4"}
+							%tr
+								%td 自分自身についてじっくり考えることは、楽しいとは思わない
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[2]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[2]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[2]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[2]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[2]", :value => "4"}
+							%tr{:class => "gray"}
+								%td もともと自己をとても探求したいと思っている
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[3]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[3]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[3]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[3]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[3]", :value => "4"}	
+							%tr
+								%td 自分の人生を哲学的に見ることがとても好きだとしばしば思う
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[4]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[4]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[4]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[4]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[4]", :value => "4"}
+							%tr{:class => "gray"}
+								%td 自己分析はあまり好きではない
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[5]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[5]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[5]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[5]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[5]", :value => "4"}	
+							%tr
+								%td なぜそうするのかを分析するのがとても好きだ
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[6]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[6]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[6]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[6]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[6]", :value => "4"}	
+							%tr{:class => "gray"}
+								%td 「内的な」自己を探るのがとても好きだ
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[7]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[7]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[7]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[7]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[7]", :value => "4"}	
+							%tr
+								%td 物事に対する自分の態度や気持ちに、強い興味がある
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[8]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[8]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[8]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[8]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[8]", :value => "4"}	
+							%tr{:class => "gray"}
+								%td 哲学的、抽象的な考えは、それほど私の興味を引くものではない
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[9]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[9]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[9]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[9]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[9]", :value => "4"}	
+							%tr
+								%td 内省的、自省的な考え方は本当に好きではない
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[10]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[10]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[10]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[10]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[10]", :value => "4"}									
+							%tr{:class => "gray"}
+								%td 私はそれほど物事を深く考えるタイプの人ではない
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[11]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[11]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[11]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[11]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[11]", :value => "4"}	
+							%tr
+								%td 私は「深い」内省的なタイプの人だとよく人に言われる
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[12]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "rrq[12]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[12]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[12]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "rrq[12]", :value => "4"}	
+					%hr
+					%div{:id => "i_act"}
+						%p Q3. あなた自身の経験から考えて、以下の項目は各サービスの特徴としてどれくらい当てはまると思いますか？最も当てはまると思う数字を1つだけ選んで下さい。
+						%label Q3-1. いろいろな自分を演出することができる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[1]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[1]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[1]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[1]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[1]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[1]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[1]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[1]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[1]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[1]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[1]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[1]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[1]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[1]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[1]", :value => "4"}
+						%label Q3-2. 場面に合わせていろいろな役割を演じられる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[2]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[2]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[2]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[2]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[2]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[2]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[2]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[2]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[2]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[2]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[2]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[2]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[2]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[2]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[2]", :value => "4"}
+						%label Q3-3. 自分がなりたいと思っている人物になりきることができる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[3]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[3]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[3]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[3]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[3]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[3]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[3]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[3]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[3]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[3]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[3]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[3]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[3]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[3]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[3]", :value => "4"}
+						%label Q3-4. 「こうありたい自分」や「なりたい自分」になることができる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[4]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[4]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[4]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[4]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[4]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[4]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[4]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[4]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[4]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[4]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[4]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[4]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[4]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[4]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[4]", :value => "4"}
+						%label Q3-5. 自分の有能さを、他の人にアピールできる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[5]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[5]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[5]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[5]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[5]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[5]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[5]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[5]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[5]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[5]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[5]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[5]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[5]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[5]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[5]", :value => "4"}	
+						%label Q3-6. ありのままの自分について話すことができる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[6]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[6]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[6]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[6]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[6]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[6]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[6]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[6]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[6]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[6]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[6]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[6]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[6]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[6]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[6]", :value => "4"}
+						%label Q3-7. 自分のいろいろな面を表現することができる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[7]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[7]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[7]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[7]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[7]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[7]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[7]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[7]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[7]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[7]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[7]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[7]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[7]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[7]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[7]", :value => "4"}
+						%label Q3-8. 自分の感情について、素直に表現することができる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[8]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[8]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[8]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[8]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[8]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[8]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[8]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[8]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[8]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[8]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[8]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[8]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[8]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[8]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[8]", :value => "4"}
+						%label Q3-9. 普段は表に出せないような自分の考えを出すことができる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[9]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[9]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[9]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[9]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[9]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[9]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[9]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[9]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[9]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[9]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[9]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[9]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[9]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[9]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[9]", :value => "4"}
+						%label Q3-10. 自分の個性を思い切って表現することができる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[10]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[10]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[10]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[10]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[10]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[10]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[10]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[10]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[10]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[10]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[10]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[10]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[10]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[10]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[10]", :value => "4"}
+						%label Q3-11. 自分の持っている個性や長所を、人前で発揮できる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[11]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[11]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[11]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[11]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[11]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[11]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[11]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[11]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[11]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[11]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[11]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[11]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[11]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[11]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[11]", :value => "4"}
+						%label Q3-12. 自分自身をコントロールできるようになれる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[12]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[12]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[12]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[12]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[12]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[12]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[12]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[12]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[12]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[12]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[12]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[12]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[12]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[12]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[12]", :value => "4"}
+						%label Q3-13. 自分を抑えるための方法を自然に身につけることができる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[13]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[13]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[13]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[13]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[13]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[13]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[13]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[13]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[13]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[13]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[13]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[13]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[13]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[13]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[13]", :value => "4"}	
+						%label Q3-14. 自分について、客観的に考えたり感じたりすることができる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[14]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[14]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[14]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[14]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[14]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[14]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[14]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[14]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[14]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[14]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[14]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[14]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[14]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[14]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[14]", :value => "4"}
+						%label Q3-15. 自分自身について振り返るきっかけになる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[15]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[15]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[15]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[15]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[15]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[15]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[15]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[15]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[15]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[15]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[15]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[15]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[15]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[15]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[15]", :value => "4"}
+						%label Q3-16. 自分が何をしたいのかや、どんな目標に向かっているかを、はっきり意識できる
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[16]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_t[16]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[16]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[16]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_t[16]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[16]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_f[16]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[16]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[16]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_f[16]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[16]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "iact_b[16]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[16]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[16]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "iact_b[16]", :value => "4"}
+					%hr
+					%div{:id => "task_value"}
+						%p Q4. 「サービスを用いて記録してきた内容」の記述として、以下の項目はどの程度当てはまりますか。最も当てはまると思う数字を1つだけ選んで下さい。				
+						%label Q4-1. 面白いと感じられる内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[1]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[1]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[1]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[1]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[1]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[1]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[1]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[1]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[1]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[1]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[1]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[1]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[1]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[1]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[1]", :value => "4"}
+						%label Q4-2. 満足感が得られる内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[2]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[2]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[2]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[2]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[2]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[2]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[2]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[2]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[2]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[2]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[2]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[2]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[2]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[2]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[2]", :value => "4"}
+						%label Q4-3. 興味を持てるような内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[3]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[3]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[3]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[3]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[3]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[3]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[3]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[3]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[3]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[3]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[3]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[3]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[3]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[3]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[3]", :value => "4"}
+						%label Q4-4. 好奇心が湧いてくるような内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[4]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[4]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[4]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[4]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[4]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[4]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[4]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[4]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[4]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[4]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[4]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[4]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[4]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[4]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[4]", :value => "4"}
+						%label Q4-5. 楽しいと感じられる内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[5]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[5]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[5]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[5]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[5]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[5]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[5]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[5]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[5]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[5]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[5]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[5]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[5]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[5]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[5]", :value => "4"}	
+						%label Q4-6. 知的な刺激が感じられる内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[6]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[6]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[6]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[6]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[6]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[6]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[6]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[6]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[6]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[6]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[6]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[6]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[6]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[6]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[6]", :value => "4"}
+						%label Q4-7. より自分らしい自分に近づくことができる内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[7]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[7]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[7]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[7]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[7]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[7]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[7]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[7]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[7]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[7]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[7]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[7]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[7]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[7]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[7]", :value => "4"}
+						%label Q4-8. 自分自身のことがよりよく理解できるようになる内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[8]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[8]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[8]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[8]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[8]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[8]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[8]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[8]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[8]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[8]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[8]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[8]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[8]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[8]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[8]", :value => "4"}
+						%label Q4-9. 自分の個性を活かすのに役立つような内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[9]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[9]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[9]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[9]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[9]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[9]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[9]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[9]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[9]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[9]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[9]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[9]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[9]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[9]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[9]", :value => "4"}
+						%label Q4-10. 自分という人間に対して興味・関心を持つような内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[10]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[10]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[10]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[10]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[10]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[10]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[10]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[10]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[10]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[10]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[10]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[10]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[10]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[10]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[10]", :value => "4"}
+						%label Q4-11. 人間的に成長すると思えるような内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[11]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[11]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[11]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[11]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[11]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[11]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[11]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[11]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[11]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[11]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[11]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[11]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[11]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[11]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[11]", :value => "4"}
+						%label Q4-12. 今まで気付かなかった自分の一面を発見できるような内容
+						%table{:border => "1"}
+							%tr
+								%th
+								%th 当てはまらない
+								%th あまり当てはまらない
+								%th どちらともいえない
+								%th やや当てはまる
+								%th 当てはまる
+							%tr{:class => "gray"}
+								%td Twitter
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[12]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_t[12]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[12]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[12]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_t[12]", :value => "4"}
+							%tr
+								%td Flickr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[12]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_f[12]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[12]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[12]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_f[12]", :value => "4"}
+							%tr{:class => "gray"}
+								%td ブックマーク
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[12]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "tv_b[12]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[12]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[12]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "tv_b[12]", :value => "4"}	
+					%div{:id => "sus"}
+						%label Q5. 実験で使用したシステムを以下の10項目から評価して下さい。
+						%table{:border => "1"}
+							%tr
+								%th
+								%th まったくそう思わない
+								%th あまりそう思わない
+								%th どちらともいえない
+								%th ややそう思う
+								%th 非常にそう思う
+							%tr{:class => "gray"}
+								%td このシステムをしばしば使いたいと思う
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[1]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[1]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[1]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[1]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[1]", :value => "4"}
+							%tr
+								%td このシステムは不必要なほど複雑であると感じた
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[2]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[2]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[2]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[2]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[2]", :value => "4"}
+							%tr{:class => "gray"}
+								%td このシステムは容易に使えると思った
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[3]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[3]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[3]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[3]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[3]", :value => "4"}	
+							%tr
+								%td このシステムを使うのに技術専門家のサポートを必要とするかもしれない
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[4]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[4]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[4]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[4]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[4]", :value => "4"}
+							%tr{:class => "gray"}
+								%td このシステムでは、さまざまな機能がよくまとまっていると感じた
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[5]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[5]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[5]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[5]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[5]", :value => "4"}	
+							%tr
+								%td このシステムでは、一貫性の無いところが多くあったと感じた
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[6]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[6]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[6]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[6]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[6]", :value => "4"}	
+							%tr{:class => "gray"}
+								%td たいていのユーザは、このシステムの使い方を素早く学べるだろうと思った
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[7]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[7]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[7]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[7]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[7]", :value => "4"}	
+							%tr
+								%td このシステムはとても扱いにくいと思った
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[8]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[8]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[8]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[8]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[8]", :value => "4"}	
+							%tr{:class => "gray"}
+								%td このシステムを使うのに、自分は自信があると感じた
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[9]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[9]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[9]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[9]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[9]", :value => "4"}	
+							%tr
+								%td このシステムを使い始める前に多くのことを学ぶ必要があると感じた
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[10]", :value => "0"}
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "sus[10]", :value => "1"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[10]", :value => "2"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[10]", :value => "3"}
+								%td
+									%label{:class => "radio"}	
+										%input{:type => "radio", :name => "sus[10]", :value => "4"}										
+					%div{:id => "useful"}
+						%label Q6-1. システムを使用して、普段の行動や思考に変化が生じたと思いますか。
+						%table
+							%tr
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "useful", :value => "y"}はい
+								%td
+									%label{:class => "radio"}
+										%input{:type => "radio", :name => "useful", :value => "n"}いいえ	
+						%label Q6-2. Q6-1で「はい」と回答した人にお尋ねします。その変化はどのようなもので、どのような時に変化を感じましたか。				
+						%textarea{:rows => "4", :name => "useful_reason"}	
+						%label Q6-3. その他システムを利用して感じたことがあれば教えて下さい。				
+						%textarea{:rows => "4", :name => "free", :id => "free"}	
+					%hr
+					%p アンケートは以上で終了です。最後に送信ボタンを1回だけ押して下さい。
+					%button{:type => "submit", :class => "btn"} 送信する															
