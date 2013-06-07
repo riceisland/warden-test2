@@ -1,6 +1,5 @@
 body{
 	margin: 0 auto;
-	background-color: #EEE;
 }
 
 li.underline {
@@ -627,10 +626,9 @@ div#flow div {
 	margin : 30px 0px;
 }
 
-div#function {
+.function {
 	color : #dc143c;
 }
-
 
 div#sys hr {
 	margin : 20px 0px;
@@ -643,3 +641,17 @@ div#sys div {
 p.red {
 	color : #dc143c;
 }
+
+/*recruit css*/
+#recruit_tab {
+	margin-top : 30px;
+}
+
+img#screen_shot {
+	width : 40%;
+	height : 40%;
+	position :relative;
+	left : 700px;
+	top : -400px;
+}
+

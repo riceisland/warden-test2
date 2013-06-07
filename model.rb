@@ -709,4 +709,18 @@ class A_SUS < Sequel::Model
   end
 end
 
+class Recruit < Sequel::Model
+  unless table_exists?
+    set_schema do
+	  primary_key :id  
+	  varchar :username
+	  varchar :mail
+	  varchar :question
+	  integer :check
+	  varchar :time
+	end
+	create_table
+  end
+end
+
 

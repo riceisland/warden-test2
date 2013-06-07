@@ -255,12 +255,12 @@ jQuery(function($) {
   })
   
   $('form').submit(function() {
-    $(this).submit(function () {
-        alert('フォームからのデータ送信は一度ずつ行なって下さい。');
-        return false;
-  });
+    //$(this).submit(function () {
+    //    alert('フォームからのデータ送信は一度ずつ行なって下さい。');
+    //    return false;
+    //});
   
-  $('input').keypress(function(ev) {
+    $('input').keypress(function(ev) {
         if ((ev.which && ev.which === 13) || (ev.keyCode && ev.keyCode === 13)) {
                 return false;
         } else {
@@ -275,5 +275,21 @@ jQuery(function($) {
      e.preventDefault();
      $(this).tab('show');
    })
+   
+   $("form#recruit").submit(function(){
+  		
+      username = $("#recruit_username").val();
+      email = $("#recruit_mail").val();
+
+      if ((username == "") || (email == "")) {
+       	alert('名前とメールアドレスは必ずご記入下さい。')
+        return false;
+      }
+      else {
+        return true;
+      }
+
+  })
+
 
 });

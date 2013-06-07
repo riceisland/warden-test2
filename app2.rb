@@ -1530,3 +1530,26 @@ get "/about" do
   haml :about
 
 end
+
+get '/recruit' do
+
+  haml :recruit, :layout => false
+
+end
+
+post '/recruit' do
+  
+  time = Time.now.to_s
+  
+  Recruit.create({
+    :username => params[:username],
+    :mail => params[:mail],
+    :question => params[:question],
+    :check => 0,
+    :time => time,
+  })
+
+
+  p "ご応募ありがとうございます。後ほど実験担当者よりメールにて連絡致します。"
+
+end

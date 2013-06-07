@@ -1,0 +1,90 @@
+!!! XML
+!!!
+%html
+	%head
+		%title= @title
+		%meta{:"http-equiv"=>"Content-Type", :content=>"text/html", :charset=>"utf-8"}
+		%link{:rel=>"shortcut icon", :type=>"image/vnd.microsoft.icon", :href=>"/img/favicon.ico"}   
+		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/bootstrap.css"}  
+		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/base.css"} 
+		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/ques.css"} 
+		%script{:type => 'text/javascript', :src => "/js/jquery-1.8.3.min.js"}
+		%script{:type => 'text/javascript', :src => "/js/jquery.ah-placeholder.js"}
+		%script{:type => 'text/javascript', :src => "/js/blocksit.js"}
+		%script{:type => 'text/javascript', :src => "/js/base.js"}
+	%body
+		%div{:id => "main"}
+			%h3 実験協力のお願い
+			%p 図書館情報メディア研究科博士前期課程２年次、松村研究室所属の米島まどかと申します。<br />私は現在、「過去に蓄積された情報を呼び起こすシステムに関する研究」というテーマで研究を行っており、開発したシステムを利用した実験を計画しています。<br />以下、実験概要・システムの概要・応募フォームとなっております。<br />不明点等ございましたら、下記連絡先までご連絡下さい。ご協力の程、何卒よろしくお願い致します。
+			%div{:id => "contact"}
+				%h5 実験担当者及び連絡先
+				%p 	米島まどか<br />筑波大学大学院図書館情報メディア研究科博士前期課程2年次<br />mail:　yonejima[atmark]slis.tsukuba.ac.jp				
+			%ul{:class => "nav nav-tabs", :id => "recruit_tab"}
+				%li{:class => "active"}
+					%a{:href => "#sys", :'data-toggle' => "tab"}システムの概要
+				%li
+					%a{:href => "#exp", :'data-toggle' => "tab"}実験概要
+				%li
+					%a{:href => "#form", :'data-toggle' => "tab"}応募フォーム				
+			%div{:class => "tab-content"}
+				%div{:class => "tab-pane active", :id => "sys"}
+					%h3 利用して頂くシステムの概要
+					%p システムは以下に挙げる情報を収集し提示するものです。<br />実験では、このシステムを3週間程度利用すると共にアンケートへ回答して頂きます。
+					%p ＜収集する情報 : 右画像のように表示されます＞
+					%ul
+						%li Twitterに投稿したつぶやき
+						%li Twitterでお気に入りに登録したつぶやき
+						%li Flickrに投稿した写真
+						%li ブラウザに登録したブックマーク
+					%p{:class => "function"} そのため、本実験では以下に挙げる全ての項目に該当する方に応募を限らせて頂きます。
+					%ul
+						%li Twitterを利用している
+						%li 携帯電話などを利用して写真を撮影することがある
+						%li 撮影した写真をFlickrに投稿してもよい（プライベートの設定は可能です）
+						%li ブラウザやソーシャルブックマーク（はてなブックマークなど）にブックマークが登録されている	
+						%li システムが収集したつぶやき・写真・ブックマークを実験者が閲覧してもよい<br />（個別に削除することも可能です）			
+					%img{:src => "/img/screen_shot.png", :id => "screen_shot"}		
+				%div{:class => "tab-pane", :id => "exp"}
+					%h3 実験概要
+					%p 本研究及び実験の内容は以下の通りです。<br />下記の内容に同意して頂ける場合のみ、応募フォームよりご応募下さい。
+					%hr
+					%div{:id => "title"}
+						%h5 研究タイトル
+						%p 過去に蓄積された情報を呼び起こすシステムに関する研究	
+					%div{:id => "purpose"}
+						%h5 目的と手法
+						%p 本実験は、振り返りを支援する目的で開発したシステムが人間の意識にどの程度作用するか明らかにすることを目的としています。<br />実験では、システムを利用すると共にアンケートへ回答して頂きます。
+					%div{:id => "place"}
+						%h5 実施場所
+						%p インターネットが使用出来る環境であればどこでも可能です
+					%div{:id => "function", :class => "function"}
+						%h5 注意事項とお願い
+						%p 分析の過程で、個人が各サービスを通して蓄積したデータ（つぶやき、写真、ブックマーク）にアクセスする場合があります。<br />（分析から除外してほしいデータを個別に削除することは可能です。）<br />予めご了承の上、ご応募下さい。
+					%div{:id => "indivi"}
+						%h5 個人情報保護
+						%p 収集したデータは研究以外の目的では使用せず、データの流出が無いよう厳重に管理します。<br />収集した個人情報は個人の特定ができないようIDで管理します。
+					%div{:id => "right"}
+						%h5 実験協力者の権利
+						%p 実験協力に同意した場合でも、個人の都合により随時これを撤回できます。<br />その際、記録したデータは全て破棄します。
+					%div{:id => "contact"}
+						%h5 実験担当者及び連絡先
+						%p 	米島まどか<br />筑波大学大学院図書館情報メディア博士前期課程2年次<br />mail:　yonejima[atmark]slis.tsukuba.ac.jp	
+				%div{:class => "tab-pane", :id => "form"}
+					%h3
+					%form{:id => "recruit", :action => "/recruit", :method => "POST", :class => "recruitform form-horizontal", :'data-ajax' => "false"}
+						%div{:class => "control-group"}
+							%label{:class => "control-label"} 名前
+							%div{:class => "controls"}
+								%input{:type => "text", :id => "recruit_username", :name => "username"}
+						%div{:class => "control-group"}
+							%label{:class => "control-label"} メールアドレス
+							%div{:class => "controls"}
+								%input{:type => "text", :id => "recruit_mail", :name => "mail"}
+						%div{:class => "control-group"}
+							%label{:class => "control-label"} 質問等
+							%div{:class => "controls"}
+								%textarea{:rows => "4", :id => "recruit_q", :name => "question"}	
+						%div{:class => "control-group"}
+							%div{:class => "controls"}
+								%button{:type => "submit", :class => "btn"} 応募する					
+		%script{:type => "text/javascript", :src =>"/js/bootstrap/bootstrap-tab.js"}
