@@ -146,6 +146,7 @@ Warden::Strategies.add :login_test do
 
   # 認証
   def authenticate!
+  p params["password"]
     hexpass = OpenSSL::Digest::SHA1.hexdigest(params["password"])
     user = User.authenticate(params["name"], hexpass)
     
@@ -192,9 +193,15 @@ end
 # 認証を実行する。
 # 成功すれば設定ページに移動。
 post "/login" do
-  request.env["warden"].authenticate!
-  redirect to ("/data_refresh")
-  #redirect to ("/main")
+
+  if params[:name] != "" || params[:password] != ""
+    request.env["warden"].authenticate!
+    redirect to ("/data_refresh")
+    #redirect to ("/main")
+  else
+    redirect to ("/unauthenticated")
+  end
+
 end
 
 #get-login（URL直打ちパターン）
@@ -225,6 +232,17 @@ post "/unauthenticated" do
   #erb :fail_login
   haml :fail_login
 end
+
+get "/unauthenticated" do
+  
+  @menu = Array.new
+  @menu.push(["about", "c"])
+  @menu.push(["login", "d"])
+  @menu.push(["register", "c"])
+  #erb :fail_login
+  haml :fail_login
+end
+
 
 # ログアウトする。
 # ログアウト後はトップページに移動。

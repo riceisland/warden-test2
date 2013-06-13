@@ -18,6 +18,7 @@ gem 'resque'
 gem 'rake'
 gem 'parallel'
 gem 'flickr-objects'
+gem 'daemon-spawn', :require => 'daemon_spawn'  
 
 #group :development do
 #  gem 'sinatra-contrib', gem: 'sinatra/reloader'

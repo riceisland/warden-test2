@@ -642,6 +642,10 @@ p.red {
 	color : #dc143c;
 }
 
+img.imgflow {
+	max-width :100%;
+}
+
 /*recruit css*/
 #recruit_tab {
 	margin-top : 30px;

@@ -243,10 +243,15 @@ jQuery(function($) {
 
   $(".ui-checkbox :checkbox").change(function() {
     var isChecked = $(this).attr("checked");
+    
+    if (location.pathname == "/main") {
+    
     if(isChecked == "checked"){
     	timer = setTimeout(function(){ page_reload(); }, 60000);
     } else {
     	clearTimeout(timer);
+    }
+    
     }
   })
   

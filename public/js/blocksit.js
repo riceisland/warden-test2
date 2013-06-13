@@ -4,7 +4,7 @@
 	var blocksOptions = {
 		numOfCol: 2,
 		offsetX: 5,
-		offsetY: 5,
+		offsetY: 0,
 		blockElement: 'div'
 	};
 	
