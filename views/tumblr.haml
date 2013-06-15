@@ -1,5 +1,4 @@
 %div{:id => @content[:id], :class =>"pin tumblr"}
-	=haml :individual_form
 	=haml :ref_and_remove
 	-case @content[:type]
 		-when "text"
@@ -43,5 +42,5 @@
 			%div{:id => "code"}= @content[:code]
 			%div{:id => "caption"}= @content[:caption]
 	%span{:class => "time"}= @content[:tumblr_time]
-	%span{:class => "submit_individual"}= "詳細を見る"
+	%a{:href => @content[:url], :target => "_blank", :class => "detail"}= "詳細を見る"
 	= haml :tag

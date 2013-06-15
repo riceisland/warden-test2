@@ -2,4 +2,7 @@
 	%form{:class => "remove", :'data-ajax' => "false"}
 		%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
 		%input{:type => "hidden", :name => "app", :value => @content[:app]}
-		%button{:type => "submit", :'data-role' => "button", :'data-icon' => "flat-cross", :'data-iconpos' => "notext", :'data-theme' => "c", :'data-inline' => "true"}気に入った？
+		%button{:type => "submit",:'data-role' => "button", :'data-icon' => "flat-cross", :'data-iconpos'=>"notext", :'data-theme'=>"b", :'data-inline'=>"true", :'data-corners'=>"true", :'data-shadow'=>"true", :'data-iconshadow'=>"true", :'data-wrapperels'=>"span", :title=>"Cross", :class=>"ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext"}
+			%span{:class => "ui-btn-inner"}
+				%span{:class => "ui-btn-text"}Cross
+				%span{:class=>"ui-icon ui-icon-flat-cross ui-icon-shadow"}

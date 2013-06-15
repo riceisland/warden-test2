@@ -1,5 +1,4 @@
 %div{:id => @content[:id], :class =>"pin twitter"}
-	=haml :individual_form
 	=haml :ref_and_remove
 	%div{:class => "twitter_user"}
 		%img{:src => @content[:twitter_img_url], :class => "icon"}
@@ -8,5 +7,5 @@
 	%div{:class => "tweet"}
 		%p{:class => "text"}= @content[:twitter_text]
 		%span{:class => "time"}= @content[:twitter_time]
-		%span{:class => "submit_individual"}= "詳細を見る"
+		%a{:href => @content[:url], :target => "_blank", :class => "detail"}= "詳細を見る"
 	= haml :tag

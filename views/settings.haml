@@ -1,4 +1,4 @@
-%div{:id => "wrapper"}
+%div{:id => "settings"}
 	%div{:class => "alert alert-error settings-alert"}
 		%span{:class => "close", :'data-dismiss' => "alert"}x
 		"登録できませんでした"
@@ -7,8 +7,7 @@
 		%div{:id => elem[0]}
 			%img{:src => "/img/"+ elem[0] +".png", :class => "icon"}
 			%h4= elem[0]
-			%a{:href => elem[1],:id => elem[0] + "_connect", :class => "connect", :'data-ajax' => "false"}
-				%button{:'data-theme' => elem[3]}= elem[2]
+			%a{:href => elem[1],:id => elem[0] + "_connect", :class => "connect pure-button"}= elem[2]
 	%hr
 	%div{:id => "rss"}
 		%img{:src => "/img/rss.png", :class => "icon"}
@@ -16,11 +15,10 @@
 		-@channel_list.each do |elem|
 			%div{:class => "rss_list"}
 				%span= elem[:title]
-				%a{:href => "/reject/rss/" + elem[:channel_id].to_s, :'data-ajax' => "false"}
-					%button{:'data-theme' => "c"} "解除する"
+				%a{:href => "/reject/rss/" + elem[:channel_id].to_s, :class => "pure-button"}"解除する"
 		%form{:class => "rss_register"}
 			%input{:type => "text", :name => "rss_url", :placeholder  => "URLを入力してください"}
-			%button{:type => "submit", :'data-theme' => "b"}登録！
+			%button{:type => "submit",:class => "pure-button"}登録！
 	%div{:class => "clear"}
 	%hr
 	%div{:id => "browser_bookmark"}
@@ -30,10 +28,9 @@
 		-if @browser_bookmarks
 			%div{:class => "bb_msg"}
 				%span 登録済みです
-				%a{:href => "/reject/browser_bookmarks/", :class => "reject",:'data-ajax' => "false"}
-					%button{:'data-theme' => "c"}解除する			
+				%a{:href => "/reject/browser_bookmarks/", :class => "reject pure-button"}解除する			
 		-else
 			%form{:action => "/upload", :method => "POST", :enctype => "multipart/form-data", :id => "bookmark_upload", :'data-ajax' => "false"}
 				%input{:type => "file", :name => "file"}
-				%button{:type => "submit", :value => "upload", :'data-theme' => "b"}UPLOAD
+				%button{:type => "submit", :value => "upload", :class => "pure-button"}UPLOAD
 				%input{:type => "hidden", :name => "_method", :value => "PUT"}

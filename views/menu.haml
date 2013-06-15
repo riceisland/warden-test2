@@ -1,11 +1,11 @@
-%fieldset{:class => "ui-grid-a menu"}
-	%div{:class => "ui-block-a"}
-		%button{:'data-theme' => "c", :id => "menu"}MENU▼
-%fieldset{:class => "ui-grid-a toggle_menu", :id => "toggle_menu"}		
-	-@menu.each do |elem|
-		%div{:class => "ui-block-a"}
-			%a{:href => "/" + elem[0]}
-				%button{:'data-theme' => elem[1]}= elem[0]
-	-if @main
-		%input{:type => "checkbox", :name => "checkbox-a", :'data-theme' => "c", :id => "checkbox-a", :checked => "checked"}
-		%label{:for => "checkbox-a"}自動更新
+%a{:href => "#nav", :class => "nav-menu-button"}Menu
+%div{:class => "nav-inner"}
+	%div{:class => "pure-menu pure-menu-open"}
+		%ul
+			-@menu.each do |elem|
+				%li{:class => elem[1]}
+					%a{:href => "/" + elem[0]}= elem[0]
+			-if @main
+				%li	
+					%label{:for => "checkbox-a"}
+						%input{:type => "checkbox", :name => "checkbox-a", :id => "checkbox-a", :checked => "checked"}自動更新

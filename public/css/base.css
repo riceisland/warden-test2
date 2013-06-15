@@ -96,6 +96,11 @@ img.ref_button {
   font-size: 12px;
 }
 
+.detail {
+  color: #999999;
+  font-size: 12px;
+}
+
 .text {
   font-size: 18px;
   line-height: 26px;
@@ -406,7 +411,7 @@ form.ref_form > div {
 
 span.ref_count {
   float: right;
-  margin-top: 32px;
+  margin-top: 35px;
   margin-right: 5px;
 }
 
@@ -434,17 +439,18 @@ span.ref_count {
  */  
  
 #columns {
-    margin: 50px auto;
+    /*margin: 50px auto;*/
     position :relative;
 }
 
 .pin {
     /* display: inline-block; */
-    width :200px;
+    width :400px;
     background: #FEFEFE;
     border: 2px solid #FAFAFA;
     box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
-    margin: 0 2px 15px;
+    /*margin: 0 2px 15px;*/
+    margin: 10px;
     -webkit-column-break-inside: avoid;
     -moz-column-break-inside: avoid;
     column-break-inside: avoid;
@@ -475,51 +481,10 @@ span.ref_count {
     color: #333;
     margin: 0;
 }
-/* 
-@media (min-width: 960px) {
-    #columns {
-        -webkit-column-count: 1;
-        -moz-column-count: 1;
-        column-count: 1;
-    }
-}
- 
-@media (min-width: 1100px) {
-    #columns {
-        -webkit-column-count: 2;
-        -moz-column-count: 2;
-        column-count: 2;
-    }
-}
-*/
-/*
-#columns:hover .pin:not(:hover) {
-    opacity: 0.4;
-}
-*/
+
 
 fieldset {
   margin: 50px auto;
-}
-
-/*
-.ui-btn {
-  width: 110px;
-}
-*/
-
-.ui-btn-set {
-  width: 150px;
-  margin-left: 80px;
-}
-
-.ui-btn-rss {
-  width: 150px;
-  margin-bottom: 10px;
-}
-
-.ui-grid-a {
-  text-transform: uppercase;
 }
 
 img.icon {
@@ -554,7 +519,8 @@ form#bookmark_upload{
 
 /* related css */
 div#main {
-  margin-top: 50px;
+  margin: 30px 20px 10px 30px;
+  width: 95%;
 }
 
 /* refrection css */
@@ -570,12 +536,17 @@ button.ref-btn {
 
 /* --- */
 
+/*
 .connect > :nth-child(n){
   width : 20%;
   margin-left : 80px;
   display : block;
 }
+*/
 
+.connect {
+	margin-left: 20px;
+}
 .reject > :nth-child(n){
   width : 20%;
   display : block;
@@ -585,25 +556,6 @@ button.ref-btn {
   clear: both
 }
 
-/* menu_toggle */
-
-fieldset.toggle_menu {
-  display: none;
-}
-
-@media only screen and (min-width: 800px) {
-  fieldset.menu {
-    display: none;
-  }
-  
-  fieldset.toggle_menu {
-    display: block;
-  }
-  
-  fieldset.toggle_menu > div {
-    display: inline-block;
-  }
-}
 
 /* about css */
 div#exp p {
@@ -659,3 +611,125 @@ img#screen_shot {
 	top : -400px;
 }
 
+form.comment_form > div {
+	display: inline-block;
+}
+
+form.comment_form > div.ui-input-text {
+	width: 66%;
+}
+
+/* 0613add */
+
+#layout {
+    padding-left:150px; /* "left col (nav + list)" width */
+    /*position: relative;*/
+}
+
+/*nav css*/
+#nav{
+	margin-left:-160px; /* "left col (nav + list)" width */
+    width:150px;
+    background: #919191;
+    text-align: center;
+    padding: 2em 0;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    overflow: auto;
+}
+
+    #nav .pure-menu a:hover,
+    #nav .pure-menu a:focus {
+        background: rgb(55, 60, 90);
+    }
+    #nav .pure-menu a {
+        color: #fff;
+        margin-left: 0.5em;
+    }
+    #nav label {
+        color: #fff;
+        margin-left: 0.5em;
+        margin-top: 10px;
+    }
+    #nav input {
+    	margin-left: 20px;
+    }   
+    #nav .nav-menu-button {
+        display: none;
+    }
+    
+#nav .pure-menu {
+    background: transparent;
+    border: none;
+    text-align: left;
+}
+
+    #nav .pure-menu-selected {
+        background: #1f8dd6;
+    }
+
+#nav li {
+	font-size: 130%;
+	text-transform: capitalize;
+	text-decoration: none;
+	margin : 5px 0px;
+}
+
+@media (max-width: 480px) {
+    #layout, #nav, #main {
+        position: static;
+        margin: 0;
+        padding: 0;
+    }
+    #nav {
+        width: 100%;
+        height: 40px;
+        position: relative;
+    }
+    #nav .nav-menu-button {
+        display: block;
+        top: 0.5em;
+        right: 0.5em;
+        position: absolute;
+        color: white;
+    }
+    #nav.active {
+        height: 80%;
+    }
+    .nav-inner {
+        display: none;
+    }
+    #nav.active .nav-inner {
+        display: block;
+        margin-top: 30px;
+    }
+}
+
+
+
+form.comment_form > input {
+	width: 75%;
+	height: 150%;
+}
+
+form.comment_form {
+	margin-top: 10px;
+}
+
+
+.ref_button{
+    position: relative;
+    display:block; /*a要素をブロックに*/
+    width:10px;
+    height:10px;
+ 
+    -webkit-border-radius:4px;　/* webkit */
+       -moz-border-radius:4px;　/* fx */
+         -o-border-radius:4px;　/* opera */
+            border-radius:4px;
+ 
+    color: #FFF;
+    text-decoration:none;
+    text-indent:-9999px; 
+}

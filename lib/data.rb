@@ -456,24 +456,24 @@ module TwitterData
       
       @twitter.favorites(:count => 100).each do |twit|
   
-        past_fav = Twitter_favorites.select(:id).filter(:user_id => @user_id, :data_id => twit.id)
+        past_fav = Twitter_favorites.select(:id).filter(:user_id => @user_id, :data_id => twit.id).first
 
-        if past_fav.empty?
-          db_row_create(@user_id,"twitter_f", twit.id)
+        if past_fav
+          break
 	    else
-	      break
+          db_row_create(@user_id,"twitter_f", twit.id)
 	    end
 	        
       end  #--each do
      
       @twitter.user_timeline(:count => 200).each do |twit|
    
-        past_tweet = Tweets.select(:id).filter(:user_id => @user_id, :data_id => twit.id)
+        past_tweet = Tweets.select(:id).filter(:user_id => @user_id, :data_id => twit.id).first
 
-        if past_tweet.empty?
-          db_row_create(@user_id,"twitter_h", twit.id)
+        if past_tweet
+          break
         else
-	      break
+	      db_row_create(@user_id,"twitter_h", twit.id)
 	    end
 	        
       end  #--each do
@@ -502,7 +502,8 @@ module TwitterData
       @twitter_screen_name = fav.user.screen_name
       @twitter_text = fav.text
       @twitter_time = fav.created_at
-
+	  @twitter_url = 'https://twitter.com/_/status/' + fav.id.to_s
+      p @twitter_url
     end
    
     comment = ref_comment("twitter_h", id)
@@ -511,7 +512,7 @@ module TwitterData
     
     p @twitter_img_url 
       
-    data_hash = {:app => "twitter_h", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment  }
+    data_hash = {:app => "twitter_h", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment, :url => @twitter_url  }
   
     return data_hash
 
@@ -530,14 +531,15 @@ module TwitterData
       @twitter_screen_name = fav.user.screen_name
       @twitter_text = fav.text
       @twitter_time = fav.created_at
-
+	  @twitter_url = 'https://twitter.com/_/status/' + fav.id.to_s
+	  
     end
   
     comment = ref_comment("twitter_f", id)
     tag_c = tag_concat("twitter_f", id)
     tag_a = tag_a_concat("twitter_f", id) 
         
-    data_hash = {:app => "twitter_f", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment  }
+    data_hash = {:app => "twitter_f", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment , :url => @twitter_url }
    
     return data_hash
 
@@ -573,6 +575,7 @@ module TumblrData
     ref_count = ref_counter("tumblr", id)
         
     blogurl = @tumblr.info.user.blogs[0].url
+	p blogurl
     blogurl.gsub!('http://', '')
   
     post_id = Tumblr_posts.select(:data_id).filter(:id => id).first
@@ -583,12 +586,16 @@ module TumblrData
     time = post.date    
     type = post.type
     tags = post.tag
+	url = post.post_url
+	
+	p time
+	p url
   
     comment = ref_comment("tumblr", id)
     tag_c = tag_concat("tumblr", id)
     tag_a = tag_a_concat("tumblr", id) 
     
-    content = {:app => "tumblr", :id => new_id, :type => type, :tumblr_time => time, :tag_concat => tag_c,  :tag_a_concat => tag_a, :ref_count => ref_count, :comment => comment }
+    content = {:app => "tumblr", :id => new_id, :type => type, :tumblr_time => time, :tag_concat => tag_c,  :tag_a_concat => tag_a, :ref_count => ref_count, :comment => comment, :url => url }
     
     case type
       when "text"
@@ -630,7 +637,7 @@ module TumblrData
   
   def tumblr_db_create()   
     
-    info = tumblr.info
+    info = @tumblr.info
     blogurl = info.user.blogs[0].url
     blogurl.gsub!('http://', '')
     
@@ -641,21 +648,23 @@ module TumblrData
     
     catch(:tumblr_exit){
       begin
-        res = tumblr.posts(blogurl, {:offset => offset, :limit => limit})
+        res = @tumblr.posts(blogurl, {:offset => offset, :limit => limit})
 
         res.posts.each do |post|
+          
+          past_post = Tumblr_posts.select(:id).filter(:user_id => @user_id, :data_id => post.id).first
       
-          past_post = Tumblr_posts.select(:id).filter(:user_id => @user_id, :data_id => post.id)
-      
-          if past_post.empty?
-            db_row_create("tumblr", post.id)
+	      p past_post
+          if past_post
+            throw :tumblr_exit
+            
+          else
+            db_row_create(@user_id, "tumblr", post.id)
             
             post.tags.each do |tag|
               db_tag_create(@user_id,"tumblr", post.id, tag)                            
             end
-            
-          else
-            throw :tumblr_exit
+
           end
         
         end
@@ -699,6 +708,9 @@ module InstagramData
 
       instagram_time = photo.created_time
       instagram_time = Time.at(instagram_time.to_i).to_s
+	  url = photo.link
+	  
+	  p url
 	
       if photo.caption
         instagram_tags = photo.tags #array  
@@ -712,7 +724,7 @@ module InstagramData
       tag_c = tag_concat("instagram", id)
       tag_a = tag_a_concat("instagram", id) 
       
-      data_hash = {:app => "instagram", :instagram_img_url => instagram_img_url, :instagram_tags => instagram_tags, :instagram_time => instagram_time, :instagram_text => instagram_text, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment  }
+      data_hash = {:app => "instagram", :instagram_img_url => instagram_img_url, :instagram_tags => instagram_tags, :instagram_time => instagram_time, :instagram_text => instagram_text, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment, :url => url  }
   
       return data_hash
   
@@ -726,10 +738,13 @@ module InstagramData
     
     @instagram.user_recent_media.each do |photo|
     
-      past_photo = Instagram_photos.select(:id).filter(:user_id => @user_id, :data_id => photo.id)
+      past_photo = Instagram_photos.select(:id).filter(:user_id => @user_id, :data_id => photo.id).first
       
-      if past_photo.empty?
-        db_row_create("instagram", photo.id)  
+      if past_photo
+        break
+      else
+        
+		db_row_create(@user_id,"instagram", photo.id)  
         
         if photo.tags #array
                
@@ -737,9 +752,7 @@ module InstagramData
             db_tag_create(@user_id,"instagram", photo.id, tag)            
           end            
         end
-        
-      else
-        break
+		
       end
     end
   
@@ -759,6 +772,12 @@ module FlickrData
     @user_id = uid
 
     @conf = YAML.load_file("config.yaml")
+	
+	Flickr.configure do |config|
+      config.api_key = @conf["flickr_config"]["key"]
+      config.shared_secret = @conf["flickr_config"]["secret"]
+    end
+
 
     @flickr = Flickr.new(token, secret)
     
@@ -767,23 +786,26 @@ module FlickrData
   def flickr_db_create()
 
     user = @flickr.test_login
-  
+
     list = @flickr.photos.search(:user_id => user["user"]["id"])
 
     list.each do |photo|
   
-      past_photo = Flickr_photos.select(:id).filter(:user_id => @user_id, :data_id => photo.id)
+      past_photo = Flickr_photos.select(:id).filter(:user_id => @user_id, :data_id => photo.id).first
 
-      if past_photo.empty?
-        db_row_create("flickr", photo.id)  
+      if past_photo
+		break
       else
-        break
+	    db_row_create(@user_id,"flickr", photo.id)  
       end   
     end
   end
 
   def flickr_data_create(id)
 
+    u = @flickr.test_login
+
+	
     ref_count = ref_counter("flickr", id)
     photo_id = Flickr_photos.select(:data_id).filter(:id => id).first
     new_id = "flickr-" + id.to_s
@@ -793,12 +815,16 @@ module FlickrData
       photo.small!(320)
       photo.get_sizes!
       photo.get_info!
+	  
+	  #p photo.
+	  
+	  url = 'http://www.flickr.com/photos/'+ u["user"]["id"] +'/' + photo_id.data_id.to_s
     
       comment = ref_comment("flickr", id)
       tag_c = tag_concat("flickr", id)
       tag_a = tag_a_concat("flickr", id) 
         
-      data_hash = {:app => "flickr", :flickr_img_url => photo.source_url, :flickr_time => photo.taken_at, :flickr_text => photo.description, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment  }
+      data_hash = {:app => "flickr", :flickr_img_url => photo.source_url, :flickr_time => photo.taken_at, :flickr_text => photo.description, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment , :url => url }
 
       return data_hash
     
@@ -906,10 +932,12 @@ module HatenaData
             entry_doc = Nokogiri::XML(elem.to_html)
             id = entry_doc.css("id")[0].content
         
-            past_bookmark = Hatena_bookmarks.select(:id).filter(:user_id => @user_id, :id => id)
+            past_bookmark = Hatena_bookmarks.select(:id).filter(:user_id => @user_id, :id => id).first
         
-            if past_bookmark.empty?
-          
+            if past_bookmark
+              throw :hatena_exit
+                        
+            else
               title = entry_doc.css("title")[0].content
               issued = entry_doc.css("issued")[0].content
               name = entry_doc.css("name")[0].content
@@ -931,9 +959,7 @@ module HatenaData
                 :refrection => 0,
                 :shuffle => 0,
               })
-          
-            else
-              throw :hatena_exit
+
             end #--if past_bookmark
        
             rel_next = xml_doc.xpath("//*[@rel='next']")[0]
@@ -1107,10 +1133,12 @@ module EvernoteData
           while i > 0 
       
             i = i - 1      
-            past_note = Evernote_notes.select(:id).filter(:user_id => @user_id, :data_id => res.notes[i].guid)
+            past_note = Evernote_notes.select(:id).filter(:user_id => @user_id, :data_id => res.notes[i].guid).first
       
-            if past_note.empty?
-              db_row_create("evernote", res.notes[i].guid)
+            if past_note
+			  throw :evernote_exit
+			else
+			   db_row_create(@user_id,"evernote", res.notes[i].guid)
        
               evernote_tags = res.notes[i].tagGuids
               if evernote_tags
@@ -1123,8 +1151,7 @@ module EvernoteData
                 end  #-- evernote_tags.each
               end #--if evernote_tags
           
-            else
-              throw :evernote_exit
+
             end #-- if past_note.empty?          
        
           end #-- while

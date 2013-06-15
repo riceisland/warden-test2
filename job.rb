@@ -22,30 +22,30 @@ module DataRefresh
 #tumblr
 
     tumblr_oauth = Tumblr_oauth.where(:uid => user_id).first
-    tumblr_data = TumblrData::TumblrData.new(current_user.id, tumblr_oauth.tumblr_access_token, tumblr_oauth.tumblr_access_token_secret)
+    tumblr_data = TumblrData::TumblrData.new(user_id, tumblr_oauth.tumblr_access_token, tumblr_oauth.tumblr_access_token_secret)
     tumblr_data.tumblr_db_create()
   
 #flickr
     flickr_oauth = Flickr_oauth.where(:uid => user_id).first
-    flickr_data = FlickrData::FlickrData.new(current_user.id, flickr_oauth.flickr_access_token, flickr_oauth.flickr_access_token_secret)
-    flickr_data.flickr_db_create() 
+    flickr_data = FlickrData::FlickrData.new(user_id, flickr_oauth.flickr_access_token, flickr_oauth.flickr_access_token_secret)
+    #flickr_data.flickr_db_create() 
 
 #instagram
 
     instagram_oauth = Instagram_oauth.where(:uid => user_id).first
-    instagram_data = InstagramData::InstagramData.new(current_user.id, instagram_oauth.instagram_access_token)
+    instagram_data = InstagramData::InstagramData.new(user_id, instagram_oauth.instagram_access_token)
     instagram_data.instagram_db_create()
 
 #hatena
 
     hatena_oauth = Hatena_oauth.where(:uid => user_id).first
-    hatena_data = HatenaData::HatenaData.new(current_user.id)
+    hatena_data = HatenaData::HatenaData.new(user_id)
     hatena_data.hatena_db_create(hatena_oauth.hatena_access_token,hatena_oauth.hatena_access_token_secret)
   
 #evernote
 
-    evernote_data = EvernoteData::EvernoteData.new(current_user.id)
-    evernote_data.evernote_db_create()
+    evernote_data = EvernoteData::EvernoteData.new(user_id)
+    #evernote_data.evernote_db_create()
  
     puts "Processed a job!" 
   
@@ -94,12 +94,12 @@ module DataCreate
     case app
     when "twitter"
     
-      twitter_data = TwitterData::TwitterData.new(current_user.id, token, secret)
+      twitter_data = TwitterData::TwitterData.new(user_id, token, secret)
       twitter_data.twitter_db_create() 
     
     when "flickr"
     
-      flickr_data = FlickrData::FlickrData.new(current_user.id, token, secret)
+      flickr_data = FlickrData::FlickrData.new(user_id, token, secret)
       flickr_data.flickr_db_create()
     
     end

@@ -23,7 +23,7 @@ require 'resque'
 require 'yaml'
 require 'redis'
 require 'flickr-objects'
-require 'addressable/uri'
+
 #require "sinatra/reloader" if development?
 
 #evernote用
@@ -109,11 +109,11 @@ def base_url
 end
 
 def twitter_oauth_consumer
-  return OAuth::Consumer.new(TWITTER_KEY, TWITTER_SECRET, :site => "https://twitter.com")
+  return OAuth::Consumer.new(@conf["twitter_config"]["key"],@conf["twitter_config"]["secret"], :site => "https://twitter.com")
 end
 
 def tumblr_oauth_consumer
-  OAuth::Consumer.new(TUMBLR_KEY, TUMBLR_SECRET, {site:  "http://www.tumblr.com"})
+  OAuth::Consumer.new(@conf["tumblr_config"]["key"], @conf["tumblr_config"]["secret"], {site:  "http://www.tumblr.com"})
 end
 
 def hatena_oauth_consumer
@@ -180,9 +180,9 @@ end
 get "/" do
   if request.env["warden"].user.nil?
   	@menu = Array.new
-  	@menu.push(["about", "c"])
-    @menu.push(["login", "c"])
-    @menu.push(["register", "c"])
+  	@menu.push(["about", ""])
+    @menu.push(["login", ""])
+    @menu.push(["register", ""])
     #erb :login
     haml :top
   else
@@ -209,9 +209,9 @@ get "/login" do
   if request.env["warden"].user.nil?
   
     @menu = Array.new
-    @menu.push(["about", "c"])
-    @menu.push(["login", "d"])
-    @menu.push(["register", "c"])
+    @menu.push(["about", ""])
+    @menu.push(["login", "pure-menu-selected"])
+    @menu.push(["register", ""])
 
     haml :login
   else   
@@ -226,9 +226,9 @@ end
 post "/unauthenticated" do
   
   @menu = Array.new
-  @menu.push(["about", "c"])
-  @menu.push(["login", "d"])
-  @menu.push(["register", "c"])
+  @menu.push(["about", ""])
+  @menu.push(["login", "pure-menu-selected"])
+  @menu.push(["register", ""])
   #erb :fail_login
   haml :fail_login
 end
@@ -236,9 +236,9 @@ end
 get "/unauthenticated" do
   
   @menu = Array.new
-  @menu.push(["about", "c"])
-  @menu.push(["login", "d"])
-  @menu.push(["register", "c"])
+  @menu.push(["about", ""])
+  @menu.push(["login", "pure-menu-selected"])
+  @menu.push(["register", ""])
   #erb :fail_login
   haml :fail_login
 end
@@ -254,9 +254,9 @@ end
 get "/register" do
   if request.env["warden"].user.nil?
     @menu = Array.new
-    @menu.push(["about", "c"])
-    @menu.push(["login", "c"])
-    @menu.push(["register", "d"])
+    @menu.push(["about", ""])
+    @menu.push(["login", ""])
+    @menu.push(["register", "pure-menu-selected"])
 
     haml :register
   else
@@ -267,9 +267,9 @@ end
 get "/register/error" do
   if request.env["warden"].user.nil?
     @menu = Array.new
-    @menu.push(["about", "c"])
-    @menu.push(["login", "c"])
-    @menu.push(["register", "d"])
+    @menu.push(["about", ""])
+    @menu.push(["login", ""])
+    @menu.push(["register", "pure-menu-selected"])
 
     haml :fail_register
   else
@@ -653,10 +653,10 @@ get "/settings" do
     redirect to ("/")
   else
 	@menu = Array.new
-  	@menu.push(["about", "c"])
-    @menu.push(["main", "c"])
-    @menu.push(["settings", "d"])
-    @menu.push(["logout", "c"])
+  	@menu.push(["about", ""])
+    @menu.push(["main", ""])
+    @menu.push(["settings", "pure-menu-selected"])
+    @menu.push(["logout", ""])
   
     @settings_array = Array.new
   
@@ -1107,10 +1107,10 @@ get '/main' do
     @main = ""
   
     @menu = Array.new
-  	@menu.push(["about", "c"])
-    @menu.push(["main", "d"])
-    @menu.push(["settings", "c"])
-    @menu.push(["logout", "c"])
+  	@menu.push(["about", ""])
+    @menu.push(["main", "pure-menu-selected"])
+    @menu.push(["settings", ""])
+    @menu.push(["logout", ""])
 
     @contents_array = Array.new
     apps = Array.new
@@ -1357,10 +1357,10 @@ get "/individual" do
   else
   
   	@menu = Array.new
-  	@menu.push(["about", "c"])
-    @menu.push(["main", "c"])
-    @menu.push(["settings", "c"])
-    @menu.push(["logout", "c"])
+  	@menu.push(["about", ""])
+    @menu.push(["main", ""])
+    @menu.push(["settings", ""])
+    @menu.push(["logout", ""])
     
     app_list = ["twitter_f", "twitter_h", "tumblr", "instagram", "hatena", "evernote", "flickr"]
     rand_app = app_list.sample     
@@ -1386,10 +1386,10 @@ end
 post "/individual" do
 
   @menu = Array.new
-  @menu.push(["about", "c"])
-  @menu.push(["main", "d"])
-  @menu.push(["settings", "c"])
-  @menu.push(["logout", "c"])
+  @menu.push(["about", ""])
+  @menu.push(["main", "pure-menu-selected"])
+  @menu.push(["settings", ""])
+  @menu.push(["logout", ""])
 
   @relates_array = Array.new
   
@@ -1432,10 +1432,10 @@ get "/tagsearch" do
     redirect to ("/")
   else
     @menu = Array.new
-  	@menu.push(["about", "c"])
-    @menu.push(["main", "d"])
-    @menu.push(["settings", "c"])
-    @menu.push(["logout", "c"])
+  	@menu.push(["about", ""])
+    @menu.push(["main", "pure-menu-selected"])
+    @menu.push(["settings", ""])
+    @menu.push(["logout", ""])
 
   
     @tagname = params[:tagname]
@@ -1535,14 +1535,14 @@ get "/about" do
  @menu = Array.new
  
   if request.env["warden"].user.nil?
-  	@menu.push(["about", "d"])
-    @menu.push(["login", "c"])
-    @menu.push(["register", "c"])
+  	@menu.push(["about", "pure-menu-selected"])
+    @menu.push(["login", ""])
+    @menu.push(["register", ""])
   else
-  	@menu.push(["about", "d"])
-    @menu.push(["main", "c"])
-    @menu.push(["settings", "c"])
-    @menu.push(["logout", "c"])
+  	@menu.push(["about", "pure-menu-selected"])
+    @menu.push(["main", ""])
+    @menu.push(["settings", ""])
+    @menu.push(["logout", ""])
   end
 
   haml :about

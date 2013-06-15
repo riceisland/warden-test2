@@ -1,8 +1,6 @@
 %div{:id => @content[:id], :class =>"pin hatena"}
-	=haml :individual_form
 	=haml :ref_and_remove
 	%a{:href => @content[:bb_url], :target => "_blank"}= @content[:bb_title]
 	%div{:class => "description"}= @content[:bb_description]
 	%span{:class => "time"}= @content[:bb_issued]
-	%span{:class => "submit_individual"}= "詳細を見る"
 	= haml :tag

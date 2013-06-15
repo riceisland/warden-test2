@@ -1,4 +1,10 @@
 jQuery(function($) {
+	
+	$(document).ready(function(){
+    	//$('#columns').BlocksIt();
+    	$('#columns').vgrid();
+	})
+	
 //スニペットを作ろう編, evernote関連 
     $('#plain').each(function() {
         var $target = $(this);
@@ -136,7 +142,7 @@ jQuery(function($) {
   	total_id = "div#comment_total_" + id;
     len = $(comments_id + " > div.comment").length;
     newlen = len + 1;
-    msg = newlen.toString() + " Comments"; 
+    msg = "Comment (" + newlen.toString() + ")"; 
     //alert(msg);
     
     comment = $(form_id).find("input[name='comment']").val();
@@ -159,7 +165,8 @@ jQuery(function($) {
   	      "</div>",
   	    ].join(""));
         
-        $(form_id).find("input[name='comment']").val("");  	    
+        $(form_id).find("input[name='comment']").val("");
+        $('#columns').vgrid();  	    
 
       }
     });  
@@ -202,7 +209,8 @@ jQuery(function($) {
         error: function(){alert('ERROR');},
         success: function(obj){
           alert("削除しました");
-          $(div_id).remove();    
+          $(div_id).remove();
+          $('#columns').vgrid();      
         }
       });
       
@@ -241,23 +249,23 @@ jQuery(function($) {
   	location.reload();
   }
 
-  $(".ui-checkbox :checkbox").change(function() {
+  $("#checkbox-a:checkbox").change(function() {
     var isChecked = $(this).attr("checked");
     
-    if (location.pathname == "/main") {
-    
     if(isChecked == "checked"){
+    	if (location.pathname == "/main") {
     	timer = setTimeout(function(){ page_reload(); }, 60000);
+    	}
     } else {
+
     	clearTimeout(timer);
     }
     
-    }
   })
   
-  $(".menu").click(function(){
-    $("#toggle_menu").toggleClass("toggle_menu");
-  })
+  //$(".menu").click(function(){
+  //  $("#toggle_menu").toggleClass("toggle_menu");
+  //})
   
   $('form').submit(function() {
     //$(this).submit(function () {
@@ -274,7 +282,6 @@ jQuery(function($) {
         });
   });
 
-   $('#columns').BlocksIt();
    
    $('#exptab a').click(function (e) {
      e.preventDefault();
@@ -298,3 +305,17 @@ jQuery(function($) {
 
 
 });
+
+   YUI().use('node-base', 'node-event-delegate', function (Y) {
+
+        var menuButton = Y.one('.nav-menu-button'),
+            nav        = Y.one('#nav');
+
+        // Setting the active class name expands the menu vertically on small screens.
+        menuButton.on('click', function (e) {
+            nav.toggleClass('active');
+        });
+
+        // Your application code goes here...
+
+    });
