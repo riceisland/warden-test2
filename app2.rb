@@ -838,7 +838,7 @@ get "/twitter_set" do
     })
   end
      
-  Resque.enqueue(DataCreate, current_user.id, session[:twitter_access_token],session[:twitter_access_token_secret])
+  Resque.enqueue(DataCreate, current_user.id, "twitter",session[:twitter_access_token],session[:twitter_access_token_secret])
   
   session.delete(:twitter_access_token)
   session.delete(:twitter_access_token_secret)
@@ -971,7 +971,7 @@ get '/flickr_set' do
       :flickr_access_token_secret => session[:flickr_access_token_secret], 
     })
 
-    Resque.enqueue(DataCreate, current_user.id, session[:flickr_access_token], session[:flickr_access_token_secret])
+    Resque.enqueue(DataCreate, current_user.id, "flickr", session[:flickr_access_token], session[:flickr_access_token_secret])
     
     session.delete(:flickr_access_token)
     session.delete(:flickr_access_token_secret) 
@@ -1196,8 +1196,11 @@ get '/main' do
     
       end
       
-      @contents_array.push(data_hash)
-      
+      p data_hash
+      unless data_hash == ""
+        @contents_array.push(data_hash)
+      end
+          
     }
     
     ids = ""

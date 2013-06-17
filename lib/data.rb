@@ -24,10 +24,41 @@ module AllData
   def rand_id_sample(uid, app)
 
     content_ids = Array.new()
+
+    case app
+      when "twitter_f"
+        ids = Twitter_favorites.select(:id).filter(:user_id => uid).all
+
+      when "twitter_h"
+        ids = Tweets.select(:id).filter(:user_id => uid).all
+    
+      when "tumblr"
+        ids = Tumblr_posts.select(:id).filter(:user_id => uid).all
+    
+      when "instagram"
+        ids = Instagram_photos.select(:id).filter(:user_id => uid).all
+
+      when "flickr"
+        ids = Flickr_photos.select(:id).filter(:user_id => uid).all
+    
+      when "hatena"
+        ids = Hatena_bookmarks.select(:id).filter(:user_id => uid).all   
+      
+      when "evernote"
+        ids = Evernote_notes.select(:id).filter(:user_id => uid).all
+    
+      when "rss"    
+        ids = Rss_user_relate.select(:id).filter(:user_id => uid).all
+      
+      when "browser_bookmarks"    
+        ids = Browser_bookmarks.select(:id).filter(:user_id => uid).all
+      else
+    end
+
+    if ids.count > 0
     
     begin
-    
-    case app
+      case app
       when "twitter_f"
         ids = Twitter_favorites.select(:id).filter(:user_id => uid, :shuffle => 0).all
 
@@ -55,49 +86,47 @@ module AllData
       when "browser_bookmarks"    
         ids = Browser_bookmarks.select(:id).filter(:user_id => uid, :shuffle => 0).all
       else
-    end
-
-    ids.each do |id|
-	  content_ids.push(id.id)
-    end
-      
-    if content_ids.length > 0
-	
-      rand_id = content_ids.sample
-      
-      
-      case app
-      when "twitter_f"
-        Twitter_favorites.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
-
-      when "twitter_h"
-        ids = Tweets.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
-            
-      when "tumblr"
-        ids = Tumblr_posts.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+      end
     
-      when "instagram"
-        ids = Instagram_photos.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
-
-      when "flickr"
-        ids = Flickr_photos.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
-    
-      when "hatena"
-        ids = Hatena_bookmarks.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
-      
-      when "evernote"
-        ids = Evernote_notes.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
-    
-      when "rss"    
-        ids = Rss_user_relate.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
-      
-      when "browser_bookmarks"    
-        ids = Browser_bookmarks.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
-      else
+      ids.each do |id|
+	    content_ids.push(id.id)
       end
       
+      if content_ids.length > 0
+	
+        rand_id = content_ids.sample
+      
+        case app
+        when "twitter_f"
+          Twitter_favorites.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+
+        when "twitter_h"
+          ids = Tweets.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+            
+        when "tumblr"
+          ids = Tumblr_posts.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
     
-    else
+        when "instagram"
+          ids = Instagram_photos.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+
+        when "flickr"
+          ids = Flickr_photos.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+    
+        when "hatena"
+          ids = Hatena_bookmarks.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+      
+        when "evernote"
+          ids = Evernote_notes.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+    
+        when "rss"    
+          ids = Rss_user_relate.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+      
+        when "browser_bookmarks"    
+          ids = Browser_bookmarks.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+        else
+        end
+    
+      else
       
       case app
       when "twitter_f"
@@ -140,6 +169,12 @@ module AllData
         retry
       
       end
+    
+    end
+    
+    else
+    
+      rand_id = ""
     
     end  
       
@@ -319,6 +354,12 @@ module AllData
       
     end
 
+    if id == ""
+    
+      data_hash = ""
+      
+    else
+    
     case app
       when "twitter_f"
       
@@ -373,6 +414,8 @@ module AllData
       else
           
     end
+    end
+    
     return data_hash
 
   end
