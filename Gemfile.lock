@@ -10,11 +10,7 @@ GEM
     feed-normalizer (1.5.2)
       hpricot (>= 0.6)
       simple-rss (>= 1.1)
-    flickr-objects (0.2.0)
-      faraday (>= 0.7.6)
-      faraday_middleware (>= 0.8)
-      multi_xml (~> 0.4)
-      simple_oauth (~> 0.1)
+    flickraw (0.9.6)
     haml (4.0.2)
       tilt
     hashie (2.0.3)
@@ -26,7 +22,6 @@ GEM
       multi_json (~> 1.0, >= 1.0.3)
     mono_logger (1.0.1)
     multi_json (1.7.2)
-    multi_xml (0.5.3)
     multipart-post (1.2.0)
     nokogiri (1.5.9)
     oauth (0.4.7)
@@ -75,7 +70,7 @@ PLATFORMS
 DEPENDENCIES
   daemon-spawn
   feed-normalizer
-  flickr-objects
+  flickraw
   haml
   instagram
   multi_json

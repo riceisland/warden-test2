@@ -133,6 +133,19 @@ class Flickr_photos < Sequel::Model
   end
 end
 
+class Flickr_favorites < Sequel::Model
+  unless table_exists?
+    set_schema do
+      primary_key :id
+      integer :user_id
+      varchar :data_id
+      integer :refrection
+      integer :shuffle
+    end
+    create_table
+  end
+end
+
 class Hatena_oauth < Sequel::Model
   unless table_exists?
     set_schema do

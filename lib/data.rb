@@ -15,7 +15,7 @@ require 'feed-normalizer'
 require 'kconv'
 require 'json'
 require 'yaml'
-require 'flickr-objects'
+require 'flickraw'
 
 require "./evernote_config"
 
@@ -40,6 +40,9 @@ module AllData
 
       when "flickr"
         ids = Flickr_photos.select(:id).filter(:user_id => uid).all
+      
+      when "flickr_f"
+        ids = Flickr_favorites.select(:id).filter(:user_id => uid).all
     
       when "hatena"
         ids = Hatena_bookmarks.select(:id).filter(:user_id => uid).all   
@@ -73,6 +76,9 @@ module AllData
 
       when "flickr"
         ids = Flickr_photos.select(:id).filter(:user_id => uid, :shuffle => 0).all
+
+      when "flickr_f"
+        ids = Flickr_favorites.select(:id).filter(:user_id => uid, :shuffle => 0).all
     
       when "hatena"
         ids = Hatena_bookmarks.select(:id).filter(:user_id => uid, :shuffle => 0).all   
@@ -111,6 +117,9 @@ module AllData
 
         when "flickr"
           ids = Flickr_photos.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+
+        when "flickr_f"
+          ids = Flickr_favorites.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
     
         when "hatena"
           ids = Hatena_bookmarks.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
@@ -143,6 +152,9 @@ module AllData
 
       when "flickr"
         ids = Flickr_photos.filter(:user_id => uid).update(:shuffle => 0)
+
+      when "flickr_f"
+        ids = Flickr_favorites.filter(:user_id => uid).update(:shuffle => 0)
     
       when "hatena"
         ids = Hatena_bookmarks.filter(:user_id => uid).update(:shuffle => 0)
@@ -199,6 +211,9 @@ module AllData
 
       when "flickr"
         ref_sql = Flickr_photos.select(:refrection).filter(:id => id)
+
+      when "flickr_f"
+        ref_sql = Flickr_favorites.select(:refrection).filter(:id => id)
     
       when "hatena"
         ref_sql = Hatena_bookmarks.select(:refrection).filter(:id => id)
@@ -293,6 +308,13 @@ module AllData
            :refrection => 0,
            :shuffle => 0,
          })       	      
+       when "flickr_f"
+         Flickr_favorites.create({
+           :user_id => uid,
+           :data_id => id,
+           :refrection => 0,
+           :shuffle => 0,
+         }) 
        when "evernote"	 
          Evernote_notes.create({
            :user_id => uid,
@@ -326,7 +348,9 @@ module AllData
       when "flickr"
 	    Flickr_oauth.where(:uid => uid).delete
 	    Flickr_photos.where(:user_id => uid).delete
+	    Flickr_favorites.where(:user_id => uid).delete
 	    Tags.where(:user_id => uid, :app => "flickr").delete
+	    Tags.where(:user_id => uid, :app => "flickr_f").delete
 	   
 	  when "hatena"
 	    Hatena_oauth.where(:uid => uid).delete
@@ -391,6 +415,12 @@ module AllData
 	    flickr_data = FlickrData::FlickrData.new(uid, flickr_oauth.flickr_access_token, flickr_oauth.flickr_access_token_secret)      
         data_hash = flickr_data.flickr_data_create(id)
       
+	  when "flickr_f"
+	  
+	    flickr_oauth = Flickr_oauth.where(:uid => uid).first	  
+	    flickr_data = FlickrData::FlickrData.new(uid, flickr_oauth.flickr_access_token, flickr_oauth.flickr_access_token_secret)      
+        data_hash = flickr_data.flickr_favs_data_create(id)
+
       when "hatena"
 
         hatena_bookmarks_data = HatenaData::HatenaData.new(uid)
@@ -697,7 +727,7 @@ module TumblrData
           
           past_post = Tumblr_posts.select(:id).filter(:user_id => @user_id, :data_id => post.id).first
       
-	      p past_post
+	      #p past_post
           if past_post
             throw :tumblr_exit
             
@@ -816,21 +846,26 @@ module FlickrData
 
     @conf = YAML.load_file("config.yaml")
 	
-	Flickr.configure do |config|
-      config.api_key = @conf["flickr_config"]["key"]
-      config.shared_secret = @conf["flickr_config"]["secret"]
-    end
+	#Flickr.configure do |config|
+    #  config.api_key = @conf["flickr_config"]["key"]
+    #  config.shared_secret = @conf["flickr_config"]["secret"] 
+    #end
+    
+    FlickRaw.api_key = @conf["flickr_config"]["key"]
+    FlickRaw.shared_secret = @conf["flickr_config"]["secret"]
+    flickr.access_token = token
+    flickr.access_secret = secret
+    
+    @login = flickr.test.login
+   # p user
 
-
-    @flickr = Flickr.new(token, secret)
+    #@flickr = Flickr.new(token, secret)
     
   end
   
   def flickr_db_create()
 
-    user = @flickr.test_login
-
-    list = @flickr.photos.search(:user_id => user["user"]["id"])
+    list = flickr.photos.search(:user_id => @login.id)
 
     list.each do |photo|
   
@@ -842,11 +877,23 @@ module FlickrData
 	    db_row_create(@user_id,"flickr", photo.id)  
       end   
     end
+    
+    fav_list = flickr.favorites.getList(:user_id => @login.id)
+    
+    fav_list.each do |photo|
+  
+      past_fphoto = Flickr_favorites.select(:id).filter(:user_id => @user_id, :data_id => photo.id).first
+
+      if past_fphoto
+		break
+      else
+	    db_row_create(@user_id,"flickr_f", photo.id)  
+      end   
+    end   
+    
   end
 
   def flickr_data_create(id)
-
-    u = @flickr.test_login
 
 	
     ref_count = ref_counter("flickr", id)
@@ -854,20 +901,53 @@ module FlickrData
     new_id = "flickr-" + id.to_s
   
     begin
-      photo = @flickr.photos.find(photo_id.data_id)
-      photo.small!(320)
-      photo.get_sizes!
-      photo.get_info!
-	  
-	  #p photo.
-	  
-	  url = 'http://www.flickr.com/photos/'+ u["user"]["id"] +'/' + photo_id.data_id.to_s
+      info = flickr.photos.getInfo(:photo_id => photo_id.data_id)
+      
+      sizes = flickr.photos.getSizes(:photo_id => photo_id.data_id)
+      
+      small_size = sizes.find{|s| s.label == "Small 320"}
+      
+	  url = 'http://www.flickr.com/photos/'+ @login.id + '/' + photo_id.data_id.to_s
     
       comment = ref_comment("flickr", id)
       tag_c = tag_concat("flickr", id)
       tag_a = tag_a_concat("flickr", id) 
+      
+      #p photo.title
         
-      data_hash = {:app => "flickr", :flickr_img_url => photo.source_url, :flickr_time => photo.taken_at, :flickr_text => photo.description, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment , :url => url }
+      data_hash = {:app => "flickr", :flickr_img_url => small_size.source, :filickr_owner => info.owner.username, :flickr_time => info.dates.taken, :flickr_title => info.title, :flickr_text => info.description, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment , :url => url }
+
+      return data_hash
+    
+    end
+
+  end
+
+  def flickr_favs_data_create(id)
+
+	
+    ref_count = ref_counter("flickr_f", id)
+    photo_id = Flickr_favorites.select(:data_id).filter(:id => id).first
+    
+    p photo_id.data_id
+    new_id = "flickr_f-" + id.to_s
+  
+    begin
+      info = flickr.photos.getInfo(:photo_id => photo_id.data_id)
+      
+      sizes = flickr.photos.getSizes(:photo_id => photo_id.data_id)
+      
+      small_size = sizes.find{|s| s.label == "Small 320"}
+	  
+	  url = 'http://www.flickr.com/photos/'+ @login.id + '/' + photo_id.data_id.to_s
+    
+      comment = ref_comment("flickr_f", id)
+      tag_c = tag_concat("flickr_f", id)
+      tag_a = tag_a_concat("flickr_f", id) 
+      
+      #p photo.title
+        
+      data_hash = {:app => "flickr_f", :flickr_img_url => small_size.source,  :filickr_owner => info.owner.username,  :flickr_time => info.dates.taken, :flickr_title => info.title, :flickr_text => info.description, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment , :url => url }
 
       return data_hash
     

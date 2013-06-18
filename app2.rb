@@ -22,7 +22,7 @@ require 'parallel'
 require 'resque'
 require 'yaml'
 require 'redis'
-require 'flickr-objects'
+require 'flickraw'
 
 #require "sinatra/reloader" if development?
 
@@ -76,10 +76,12 @@ before do
   CALLBACK_URL = "http://localhost:4567/instagram_callback"
   #CALLBACK_URL = "http://java.slis.tsukuba.ac.jp/log-ref/instagram_callback"
   
-  Flickr.configure do |config|
-    config.api_key = @conf["flickr_config"]["key"]
-    config.shared_secret = @conf["flickr_config"]["secret"]
-  end
+  FlickRaw.api_key = @conf["flickr_config"]["key"]
+  FlickRaw.shared_secret = @conf["flickr_config"]["secret"]
+  #Flickr.configure do |config|
+  #  config.api_key = @conf["flickr_config"]["key"]
+  #  config.shared_secret = @conf["flickr_config"]["secret"]
+  #end
 
 end
 
@@ -937,21 +939,24 @@ get "/instagram_set" do
 end
 
 get '/flickr_request_token' do
-  authenticate_url = "http://localhost:4567/check"
-  request_token = Flickr::OAuth.get_request_token(:callback_url => authenticate_url)
-  
-  session[:flickr_request_token] = request_token.to_a
-
-  redirect request_token.authorize_url
+  token = flickr.get_request_token(:oauth_callback => to('check'))
+  session[:token] = token
+  redirect flickr.get_authorize_url(token['oauth_token'], :perms => 'delete')
 end
 
 get '/check' do
-  request_token = Flickr::OAuth::RequestToken.new(*session[:flickr_request_token])
+  #request_token = Flickr::OAuth::RequestToken.new(*session[:flickr_request_token])
   #p request_token
-  access_token = request_token.get_access_token(params[:oauth_verifier])
+  token = session.delete :token
+ # access_token = request_token.get_access_token(params[:oauth_verifier])
+  flickr.get_access_token(token["oauth_token"], token['oauth_token_secret'], params[:oauth_verifier])
   
-  session[:flickr_access_token] = access_token.token
-  session[:flickr_access_token_secret] = access_token.secret
+  #p flickr
+  session[:flickr_access_token] = flickr.access_token
+  #p flickr.token
+  
+  session[:flickr_access_token_secret] = flickr.access_secret
+  #p flickr.secret
   
   session.delete(:flickr_request_token)
 
@@ -1134,6 +1139,7 @@ get '/main' do
     flickr_oauth = Flickr_oauth.where(:uid => current_user.id).first
     if flickr_oauth
       apps.push("flickr")
+      apps.push("flickr_f")
     end
         
     hatena_oauth = Hatena_oauth.where(:uid => current_user.id).first
@@ -1159,7 +1165,7 @@ get '/main' do
     
     #logref_data = LogRef::LogRefData.new   
     
-    Parallel.each(apps, in_threads:8){|app|
+    Parallel.each(apps, in_threads:9){|app|
      
       begin
         data_hash = AllData.one_data_create(current_user.id,app, "")
@@ -1196,7 +1202,7 @@ get '/main' do
     
       end
       
-      p data_hash
+     # p data_hash
       unless data_hash == ""
         @contents_array.push(data_hash)
       end

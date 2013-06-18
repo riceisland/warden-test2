@@ -17,7 +17,7 @@ gem 'will_paginate'
 gem 'resque'
 gem 'rake'
 gem 'parallel'
-gem 'flickr-objects'
+gem 'flickraw'
 gem 'daemon-spawn', :require => 'daemon_spawn'  
 
 #group :development do

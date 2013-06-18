@@ -1,6 +1,6 @@
 #! ruby -Ku
 # -*- coding: utf-8 -*-
-require 'resque'
+require 'resque/errors'
 require 'nokogiri'
 #require 'net/https'
 require 'parallel'
