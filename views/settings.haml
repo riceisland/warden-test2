@@ -28,7 +28,7 @@
 		-if @browser_bookmarks
 			%div{:class => "bb_msg"}
 				%span 登録済みです
-				%a{:href => "/reject/browser_bookmarks/", :class => "reject pure-button"}解除する			
+				%a{:href => "/reject/browser_bookmarks", :class => "reject pure-button"}解除する			
 		-else
 			%form{:action => "/upload", :method => "POST", :enctype => "multipart/form-data", :id => "bookmark_upload", :'data-ajax' => "false"}
 				%input{:type => "file", :name => "file"}

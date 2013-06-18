@@ -3,6 +3,7 @@ Bundler.require(:default)
 require "resque/tasks"
 require "./app2"
 require "./job"
+require 'resque_scheduler/tasks'
 
 task "resque:setup" do
     ENV['QUEUE'] = '*'

@@ -1,0 +1,6 @@
+queue_documents_for_indexing:
+  #cron: "0 0 * * *"
+  every: 3h   
+  class: DataRefresh
+  args:
+  description: "This job queues all content for indexing in solr"

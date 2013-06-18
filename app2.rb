@@ -20,6 +20,7 @@ require 'kconv'
 require 'json'
 require 'parallel'
 require 'resque'
+require 'resque_scheduler'
 require 'yaml'
 require 'redis'
 require 'flickraw'
@@ -47,6 +48,7 @@ use Rack::Session::Cookie, :secret => Digest::SHA1.hexdigest(rand.to_s)
 #Setup redis for resque
 #Resque.redis = Redis.new
 Resque.redis = 'localhost:6379'
+Resque.schedule = YAML.load_file("resque_schedule.yaml")
 
 helpers do
   include Rack::Utils
@@ -198,8 +200,8 @@ post "/login" do
 
   if params[:name] != "" || params[:password] != ""
     request.env["warden"].authenticate!
-    redirect to ("/data_refresh")
-    #redirect to ("/main")
+    #redirect to ("/data_refresh")
+    redirect to ("/main")
   else
     redirect to ("/unauthenticated")
   end
@@ -722,6 +724,11 @@ get "/settings" do
     browser_bookmarks = Browser_bookmarks.where(:user_id => current_user.id).first
     if browser_bookmarks
       @browser_bookmarks = ""
+    
+    elsif  params[:bm]
+      @browser_bookmarks = ""
+    
+    else
     end
     
     haml :"settings"
@@ -781,13 +788,13 @@ post "/rss_register" do
   
 end
 
-get "/data_refresh" do
+#get "/data_refresh" do
 
-  Resque.enqueue(DataRefresh, current_user.id)
+#  Resque.enqueue(DataRefresh, current_user.id)
 
-  redirect to ("/settings")
+#  redirect to ("/settings")
   
-end  
+#end  
 
 #twitter OAuth認証
 get '/twitter_request_token' do
@@ -1497,7 +1504,7 @@ put "/upload" do
     Resque.enqueue(BookmarkDataCreate, current_user.id, file)
     
     
-    redirect to ("/settings")
+    redirect to ("/settings?bm=create")
 
   end 
 end

@@ -11,8 +11,14 @@ module DataRefresh
 
   @queue = :data_refresh
  
-  def self.perform(user_id)
-
+ # def self.perform(user_id)
+   def self.perform()
+   
+    users = User.all
+    
+    users.each do |user|
+    
+    user_id = user.id
 #twitter
  
     twitter_oauth = Twitter_oauth.where(:uid => user_id).first
@@ -93,6 +99,9 @@ module DataRefresh
     }
   end
 =end  
+
+  end
+  
   end
 
 end
