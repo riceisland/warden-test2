@@ -233,7 +233,9 @@ post "/unauthenticated" do
   @menu.push(["about", ""])
   @menu.push(["login", "pure-menu-selected"])
   @menu.push(["register", ""])
-  #erb :fail_login
+  
+  @msg = "ログインできませんでした。やり直してください。"
+
   haml :fail_login
 end
 
@@ -243,7 +245,8 @@ get "/unauthenticated" do
   @menu.push(["about", ""])
   @menu.push(["login", "pure-menu-selected"])
   @menu.push(["register", ""])
-  #erb :fail_login
+  @msg = "ログインできませんでした。やり直してください。"
+  
   haml :fail_login
 end
 
@@ -270,12 +273,22 @@ end
 
 get "/register/error" do
   if request.env["warden"].user.nil?
-    @menu = Array.new
-    @menu.push(["about", ""])
-    @menu.push(["login", ""])
-    @menu.push(["register", "pure-menu-selected"])
+  
+    if session[:msg]
+      @menu = Array.new
+      @menu.push(["about", ""])
+      @menu.push(["login", ""])
+      @menu.push(["register", "pure-menu-selected"])
+      @msg = session[:msg]
+    
+      session.delete(:msg)
 
-    haml :fail_register
+      haml :fail_register
+  
+    else
+      redirect to ("/")
+    end
+  
   else
     redirect to ("/main")
   end
@@ -283,20 +296,33 @@ end
 
 post "/register" do
   if params[:name] != "" && params[:password] != "" && params[:re_password] != "" && params[:mail] != ""
-    if params[:password] == params[:re_password]
-      hexpass = OpenSSL::Digest::SHA1.hexdigest(params["password"])
-      User.create({
-	    :name => params[:name],
-       :password => hexpass,
-	  })
-	  #登録と同時にログイン処理をしておく
-	  request.env["warden"].authenticate!
-      #redirect to("/settings")
-      redirect to ("/ques")
-    else
-      redirect to ("/register/error")
+    u = User.where(:name => params[:name]).first
+    
+    if u
+      session[:msg] = "そのユーザ名は使用済みです。別の名前に変更して下さい。"
+      redirect to ("/register/error") 
+    
+    else   
+    
+      if params[:password] == params[:re_password]
+        hexpass = OpenSSL::Digest::SHA1.hexdigest(params["password"])
+        User.create({
+	      :name => params[:name],
+         :password => hexpass,
+	    })
+	    #登録と同時にログイン処理をしておく
+	    request.env["warden"].authenticate!
+        #redirect to("/settings")
+        redirect to ("/ques")
+      else
+        session[:msg] = "パスワードが一致しませんでした。もう一度入力して下さい。"
+        redirect to ("/register/error")
+      end
+      
     end
+    
   else
+    session[:msg] = "記入漏れがあります。"
     redirect to ("/register/error")
   end
 end
@@ -329,6 +355,26 @@ post "/b_ques" do
 
 end
 
+get "/b_ques" do
+ 
+  if request.env["warden"].user.nil?
+    redirect to ("/")
+  else
+  
+    sql = User.select(:b_ques).where(:id => current_user.id).first
+    
+    if sql.b_ques = 0
+
+      haml :b_ques, :layout => false
+    
+    else
+      redirect to ("/")
+    end
+    
+  end 
+
+end
+
 post "/b_ques_end" do
 
   device = params[:device]
@@ -343,7 +389,7 @@ post "/b_ques_end" do
   time = Time.now.to_s
   
   B_User.create({
-    :uid => params[:uid],
+    :uid => current_user.id,
     :time => time,
     :usingTime => params[:usingTime],
     :useBrowser => params[:useBrowser],
@@ -354,7 +400,7 @@ post "/b_ques_end" do
     :device_b_s => device["bs"],
   })
   
-  sql = B_User.select(:id).where(:uid => params[:uid]).first
+  sql = B_User.select(:id).where(:uid => current_user.id).first
   id = sql.id
   p id
   
@@ -484,7 +530,7 @@ post "/b_ques_end" do
 
   User.filter(:id => params[:user]).update(:b_ques => 1)
 
-  p "回答を登録しました。"
+  haml :end_ques
   
 end
 
@@ -493,6 +539,26 @@ post "/a_ques" do
   @uid = current_user.id
 
   haml :a_ques, :layout => false
+
+end
+
+get "/a_ques" do
+ 
+  if request.env["warden"].user.nil?
+    redirect to ("/")
+  else
+  
+    sql = User.select(:a_ques).where(:id => current_user.id).first
+    
+    if sql.a_ques = 0
+
+     # haml :a_ques, :layout => false
+      redirect to ("/")
+    else
+      redirect to ("/")
+    end
+    
+  end 
 
 end
 
@@ -509,7 +575,7 @@ post "/a_ques_end" do
   time = Time.now.to_s
 
   A_User.create({
-    :uid => params[:uid],
+    :uid => current_user.id,
     :time => time,
     :usingFreq => params[:usingFreq],
     :useful => params[:useful],
@@ -517,7 +583,7 @@ post "/a_ques_end" do
     :free => params[:free],
   })
 
-  sql = A_User.select(:id).where(:uid => params[:uid]).first
+  sql = A_User.select(:id).where(:uid => current_user.id).first
   id = sql.id
   p id
 
@@ -647,7 +713,7 @@ post "/a_ques_end" do
   
   User.filter(:id => params[:user]).update(:a_ques => 1)
   
-  p "回答を登録しました。"
+  haml :end_ques
 
 end
 
@@ -952,20 +1018,12 @@ get '/flickr_request_token' do
 end
 
 get '/check' do
-  #request_token = Flickr::OAuth::RequestToken.new(*session[:flickr_request_token])
-  #p request_token
+
   token = session.delete :token
- # access_token = request_token.get_access_token(params[:oauth_verifier])
   flickr.get_access_token(token["oauth_token"], token['oauth_token_secret'], params[:oauth_verifier])
-  
-  #p flickr
-  session[:flickr_access_token] = flickr.access_token
-  #p flickr.token
-  
+
+  session[:flickr_access_token] = flickr.access_token  
   session[:flickr_access_token_secret] = flickr.access_secret
-  #p flickr.secret
-  
-  session.delete(:flickr_request_token)
 
   redirect to('/flickr_set')
 end
@@ -1204,7 +1262,14 @@ get '/main' do
       rescue => e
       #もし認証が切れた場合は強制reject操作しておく
         if e.message == "token_rejected"
-          reject("hatena")      
+          reject("hatena")
+          
+        elsif e.message ==  "'flickr.photos.search' - Invalied API Key"
+          reject("flickr")
+        
+        elsif e.message ==  "'flickr.favorites.getList' - Invalied API Key"
+          reject("flickr")  
+              
         end
     
       end

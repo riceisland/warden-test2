@@ -865,36 +865,49 @@ module FlickrData
   
   def flickr_db_create()
 
-    list = flickr.photos.search(:user_id => @login.id)
+    begin
+    
+      list = flickr.photos.search(:user_id => @login.id, :per_page => 500)
 
-    list.each do |photo|
+      list.each do |photo|
   
-      past_photo = Flickr_photos.select(:id).filter(:user_id => @user_id, :data_id => photo.id).first
+        past_photo = Flickr_photos.select(:id).filter(:user_id => @user_id, :data_id => photo.id).first
 
-      if past_photo
-		break
-      else
-	    db_row_create(@user_id,"flickr", photo.id)  
+        if past_photo
+		  break
+        else
+	      db_row_create(@user_id,"flickr", photo.id)  
+        end   
+      end
+    
+      fav_list = flickr.favorites.getList(:user_id => @login.id)
+    
+      fav_list.each do |photo|
+  
+        past_fphoto = Flickr_favorites.select(:id).filter(:user_id => @user_id, :data_id => photo.id).first
+
+        if past_fphoto
+		  break
+        else
+	      db_row_create(@user_id,"flickr_f", photo.id)  
+        end   
       end   
+    
+    rescue => e
+ 	  
+ 	  if e.message ==  "'flickr.photos.search' - Invalied API Key"
+        reject("flickr")
+        
+      elsif e.message ==  "'flickr.favorites.getList' - Invalied API Key"
+        reject("flickr")
+      else
+      end   
+    
     end
-    
-    fav_list = flickr.favorites.getList(:user_id => @login.id)
-    
-    fav_list.each do |photo|
-  
-      past_fphoto = Flickr_favorites.select(:id).filter(:user_id => @user_id, :data_id => photo.id).first
-
-      if past_fphoto
-		break
-      else
-	    db_row_create(@user_id,"flickr_f", photo.id)  
-      end   
-    end   
     
   end
 
   def flickr_data_create(id)
-
 	
     ref_count = ref_counter("flickr", id)
     photo_id = Flickr_photos.select(:data_id).filter(:id => id).first
