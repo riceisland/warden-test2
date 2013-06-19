@@ -1,5 +1,4 @@
 %div{:id => @content[:id], :class =>"pin evernote"}
-	=haml :individual_form
 	=haml :ref_and_remove
 	%div{:id => "snippet"}
 		%div{:id => "title"}= @content[:note_title]
@@ -7,7 +6,7 @@
 			= @content[:snippet]
 	%p{:id => "viewall"} ViewAll→
 	%span{:class => "time"}= @content[:evernote_time]
-	%span{:class => "submit_individual"}= "詳細を見る"
+	%a{:href => @content[:url], :target => "_blank", :class => "detail"}= "詳細を見る"
 	%div{:class => "modal hide fade", :id => "allcontent" , :tabindex => "-1", :role => "dialog", :'aria-labelledby' => "ModalLabel", :'aria-hidden' => "true"}
 		%div{:class => "modal-header"}
 			%button{:type =>"button", :class =>"close", :'data-dismiss' => "modal", :'aria-hidden' => "true"}x
@@ -15,6 +14,6 @@
 		%div{:class => "modal-body"}
 			%div= @content[:content]
 		%div{:class => "modal-footer"}
-			%a{:href => @link, :class =>"btn", :target => "_blank"}Edit
+			%a{:href => @content[:url], :class =>"btn", :target => "_blank"}Edit
 			%button{:class =>"btn", :'data-dismiss' => "modal", :'aria-hidden' => "true"}Close
 	= haml :tag

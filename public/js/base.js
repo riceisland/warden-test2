@@ -1,9 +1,76 @@
 jQuery(function($) {
+
+    $('#columns').vgrid({
+    	easing: "easeOutQuint",
+		useLoadImageEvent: true,
+		useFontSizeListener: true,
+		time: 400,
+		delay: 20,
+		wait: 500,
+		fadeIn: {
+			time: 500,
+			delay: 50
+		}
+    		
+    });
 	
-	$(document).ready(function(){
-    	//$('#columns').BlocksIt();
-    	$('#columns').vgrid();
-	})
+    $(function(){
+    	setInterval(function(){
+    		$("div.pin:first").fadeOut(3000).queue(
+    		  function(){
+    		  	this.remove();
+
+			    $.ajax({
+			      url: "/individual",
+			      type: 'GET',
+			      timeout: 10000,
+			      data: $(this).serialize(),
+			      error: function(){
+			      	alert("error")
+			      	  $('#columns').vgrid({
+    	                easing: "easeOutQuint",
+		                useLoadImageEvent: true,
+		                useFontSizeListener: true,
+		                time: 400,
+		                delay: 20,
+		                wait: 500,
+		                fadeIn: {
+			              time: 500,
+			              delay: 50
+		                }
+    		          });
+			      },
+			      success: function(str){
+			      	//alert(str)
+			      	//var dataset = JSON.parse(str);
+			        if(str == "logout"){
+			          location.href = ("/")
+			        }
+			        else{
+			      
+			          $("#columns").append(str);
+			          
+			          $('#columns').vgrid({
+    	                easing: "easeOutQuint",
+		                useLoadImageEvent: true,
+		                useFontSizeListener: true,
+		                time: 400,
+		                delay: 20,
+		                wait: 500,
+		                fadeIn: {
+			              time: 500,
+			              delay: 50
+		                }
+    		          });
+			        }
+			      }
+			    });
+    		  	
+
+    		    
+    		  });
+    	}, 20000);
+    });
 	
 //スニペットを作ろう編, evernote関連 
     $('#plain').each(function() {
@@ -135,7 +202,7 @@ jQuery(function($) {
     return false;
   });
 
-  $("form.comment_form").submit(function(){
+  $(document).on('submit', "form.comment_form", function(){
   	id = $(this).closest("div.pin").attr("id")
   	comments_id = "div#comments_" + id;
   	form_id = "div#comment_form_" + id;
@@ -174,7 +241,7 @@ jQuery(function($) {
     return false;
   });
       
-  $("form.ref_form").submit(function(){
+  $(document).on('submit', "form.ref_form", function(){
   	id = $(this).closest("div.pin").attr("id")
   	val_id = "#ref_val_" + id
   	count_id = "#ref_count_" + id
@@ -195,7 +262,7 @@ jQuery(function($) {
     return false;
   });
   
-  $("form.remove").submit(function(){
+  $(document).on('submit', "form.remove", function(){
   	id = $(this).closest("div.pin").attr("id")
   	div_id = "#" + id
     
@@ -241,27 +308,27 @@ jQuery(function($) {
   });
   
   
-  if (location.pathname == "/main") {
-    timer = setTimeout(function(){ page_reload(); }, 60000);
-  }
+  //if (location.pathname == "/main") {
+  //  timer = setTimeout(function(){ page_reload(); }, 60000);
+  //}
   
-  function page_reload(){
-  	location.reload();
-  }
+  //function page_reload(){
+  // 	location.reload();
+  //}
 
-  $("#checkbox-a:checkbox").change(function() {
-    var isChecked = $(this).attr("checked");
+  //$("#checkbox-a:checkbox").change(function() {
+  //  var isChecked = $(this).attr("checked");
     
-    if(isChecked == "checked"){
-    	if (location.pathname == "/main") {
-    	timer = setTimeout(function(){ page_reload(); }, 60000);
-    	}
-    } else {
+  //  if(isChecked == "checked"){
+  //  	if (location.pathname == "/main") {
+  //  	timer = setTimeout(function(){ page_reload(); }, 60000);
+  //  	}
+  //  } else {
 
-    	clearTimeout(timer);
-    }
+  //  	clearTimeout(timer);
+  //  }
     
-  })
+  //})
   
   //$(".menu").click(function(){
   //  $("#toggle_menu").toggleClass("toggle_menu");

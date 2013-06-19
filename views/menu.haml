@@ -5,7 +5,3 @@
 			-@menu.each do |elem|
 				%li{:class => elem[1]}
 					%a{:href => "/" + elem[0]}= elem[0]
-			-if @main
-				%li	
-					%label{:for => "checkbox-a"}
-						%input{:type => "checkbox", :name => "checkbox-a", :id => "checkbox-a", :checked => "checked"}自動更新

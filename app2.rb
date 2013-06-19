@@ -182,16 +182,16 @@ end
 # ログインしていないときは、ログインフォームを表示。
 # ログインしているときは、ログイン済ページを表示。
 get "/" do
-  if request.env["warden"].user.nil?
+  #if request.env["warden"].user.nil?
   	@menu = Array.new
   	@menu.push(["about", ""])
     @menu.push(["login", ""])
     @menu.push(["register", ""])
     #erb :login
     haml :top
-  else
-    redirect to ('/main')
-  end
+  #else
+  #  redirect to ('/main')
+  #end
 end
 
 # 認証を実行する。
@@ -218,8 +218,9 @@ get "/login" do
     @menu.push(["register", ""])
 
     haml :login
-  else   
-	redirect to ("/main")
+  else
+    redirect to ("/data_refresh")   
+	#redirect to ("/main")
   end
 end
 
@@ -799,6 +800,13 @@ get "/settings" do
     
     haml :"settings"
   end
+end
+
+get "/data_refresh" do
+
+  Resque.enqueue(DataRefresh, current_user.id)
+  redirect to ("/settings")
+
 end
 
 post "/rss_register" do
@@ -1434,20 +1442,38 @@ end
 get "/individual" do
 
   if request.env["warden"].user.nil?
-    redirect to ("/")
+    #redirect to ("/")
+    str = "logout"
+   
   else
-  
+=begin  
   	@menu = Array.new
   	@menu.push(["about", ""])
     @menu.push(["main", ""])
     @menu.push(["settings", ""])
     @menu.push(["logout", ""])
-    
-    app_list = ["twitter_f", "twitter_h", "tumblr", "instagram", "hatena", "evernote", "flickr"]
-    rand_app = app_list.sample     
+=end 
+   
+    begin
+      app_list = ["twitter_f", "twitter_h", "tumblr", "instagram", "hatena", "evernote", "flickr", "flickr_f"]
+      rand_app = app_list.sample     
 
-    @content = AllData.one_data_create(current_user.id,rand_app, "")     
+      @content = AllData.one_data_create(current_user.id,rand_app, "")     
+      p @content
+      
+      if @content == ""
+        raise "NoContent"
+      end
     
+    rescue
+      retry
+      
+    end
+    
+    str = AllData.data_to_html(@content)
+
+    #p @content
+=begin    
     this_id = @content[:id]
     time = Time.now
   
@@ -1456,10 +1482,27 @@ get "/individual" do
       :id => this_id,
       :time => time,
     })
+=end  
+
+#str = "<div class='pin hatena' id='hatena-39'><div class='ref_and_remove'><div class='remove'><form class='remove' data-ajax='false'><input name='data_id' type='hidden' value='hatena-39'><input name='app' type='hidden' value='hatena'><button class='ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext' data-corners='true' data-icon='flat-cross' data-iconpos='notext' data-iconshadow='true' data-inline='true' data-role='button' data-shadow='true' data-theme='b' data-wrapperels='span' title='Cross' type='submit'><span class='ui-btn-inner'><span class='ui-btn-text'>Cross</span><span class='ui-icon ui-icon-flat-cross ui-icon-shadow'></span></span></button></form></div><div class='reflection'><form class='ref_form' data-ajax='false'><input name='data_id' type='hidden' value='hatena-39'><input id='ref_val_hatena-39' name='ref_count' type='hidden' value='0'><button class='ui-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext' data-corners='true' data-icon='flat-checkround' data-iconpos='notext' data-iconshadow='true' data-inline='true' data-role='button' data-shadow='true' data-theme='e' data-wrapperels='span' title='Checkround' type='submit'><span class='ui-btn-inner'><span class='ui-btn-text'>Chrckround</span><span class='ui-icon ui-icon-flat-checkround ui-icon-shadow'></span></span></button></form></div></div><span class='ref_count' id='ref_count_hatena-39'>0</span><a href='http://www.youtube.com/' target='_blank'>YouTube</a><br><span class='time'>2012-12-20T23:50:36</span><div class='tags clear' id='comments_hatena-39'><hr><div class='comment_total' id='comment_total_hatena-39'>Comment (0)</div></div><div class='comment_form' id='comment_form_hatena-39'><form class='comment_form pure-form' data-ajax='false'><input name='comment' placeholder='コメントはこちらに入力してください' type='text'><input name='data_id' type='hidden' value='hatena-39'><button class='pure-button notice' type='submit'>保存!</button></form></div></div>"
+
+
+
+
+
+
+
+
+
+
+
+  
     
-    haml :individual
+    #haml :individual
 
   end
+  
+  return str
 
 end
 

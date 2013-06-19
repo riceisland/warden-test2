@@ -449,7 +449,6 @@ module AllData
     return data_hash
 
   end
-  
 
   def db_tag_create(uid, app, id, tag)
     time = Time.now.to_s
@@ -492,6 +491,354 @@ module AllData
       AllData.db_tag_create(uid,app, id, elem)
     end
   end
+  
+  def data_to_html(content)
+    
+    html = ""
+    p content
+  
+    case content[:app]
+      when "twitter_f"
+        html << "<div id = '" + content[:id] + "' class = 'pin twitter'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        
+        html << ref_rem
+        
+        html << "<div class='twitter_user'>"
+        html << "<img src='" + content[:twitter_img_url] + "' class = 'icon'>"
+        html << "<p class ='username'>" + content[:twitter_user_name] + "</p>"
+        html << "<p class ='screenname'>@" + content[:twitter_screen_name] + "</p>"
+        html << "</div>"
+        html << "<div class='tweet'>"
+        html << "<p class ='text'>" + content[:twitter_text] + "</p>"
+        html << "<span class ='time'>" + content[:twitter_time].to_s + "</span>"
+        html << "<a href='" + content[:url] + "' target = '_blank' class = 'detail'>詳細を見る</a>"
+        html << "</div>"
+        
+        comment = comment_html(content[:id], content[:comment])
+        
+        html << comment
+        html << "</div>"
+          
+      when "twitter_h"
+
+        html << "<div id = '" + content[:id] + "' class = 'pin twitter'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        
+        html << ref_rem
+        
+        html << "<div class='twitter_user'>"
+        html << "<img src='" + content[:twitter_img_url] + "' class = 'icon'>"
+        html << "<p class ='username'>" + content[:twitter_user_name] + "</p>"
+        html << "<p class ='screenname'>@" + content[:twitter_screen_name] + "</p>"
+        html << "</div>"
+        html << "<div class='tweet'>"
+        html << "<p class ='text'>" + content[:twitter_text] + "</p>"
+        html << "<span class ='time'>" + content[:twitter_time].to_s + "</span>"
+        html << "<a href='" + content[:url] + "' target = '_blank' class = 'detail'>詳細を見る</a>"
+        html << "</div>"
+        
+        comment = comment_html(content[:id], content[:comment])
+        
+        html << comment
+        html << "</div>"
+      
+      when "tumblr"
+      
+        html << "<div id = '" + content[:id] + "' class = 'pin tumblr'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        
+        html << ref_rem
+        
+        case content[:type]
+          when "text"
+            if content[:post_title]
+              html << "<p>" + content[:post_title] + "</p>"   
+            end
+            
+            html << "<p>" + content[:body] + "</p>"
+          
+          when "photo"
+            if content[:layouts]
+              html << "<div id = 'photoset'>"
+              
+              i = 0
+              content[:layout].each do |num|
+			    html << "<div class = 'row'" + num + ">"
+				
+				j = 0
+				while j < num.to_i
+				  j = j + 1
+				  html << "<img src = " + content[:imgarr][i].alt_sizes[0].url + " class = 'photo" + num + " line"+ num + j.to_s + ">"
+				end
+				
+				i = i + 1      
+              end
+            
+            else
+              html << "<div id = 'photo'>"
+		      html << "<img src = " + content[:imgarr][0].alt_sizes[1].url + " class = 'photo'>"
+		    end
+		    
+		    html << "<p>" + content[:caption] + "</p>" 
+		  
+		  when "quote"
+            html << "<p>" + content[:text] + "</p>"   
+            html << "<p>" + content[:source] + "</p>"
+          
+          when "link"
+            html << "<p>" + content[:post_title] + "</p>"   
+            html << "<p>" + content[:url] + "</p>" 
+            html << "<p>" + content[:description] + "</p>"
+          
+          when "chat"
+            html << "<p>" + content[:post_title] + "</p>" 
+            html << "<div id = 'chat'>"
+            html << "<table><tbody>"
+            
+            content[:dialogue].each do |post|
+            
+              html << "<tr>"
+              html << "<td>" + post.phrase + "</td>"
+              html << "</tr>"
+            
+            end
+            
+            html << "</tbody></table></div>"
+            
+          when "audio"
+            html << "<div id = 'code'>" + content[:code] + "</div>"
+            html << "<div id = 'caption'>" + content[:caption] + "</div>"
+
+          when "video"
+          
+            if content[:blogtitle]
+              html << "<div id = 'title'>" + content[:blogtitle] + "</div>"
+            end
+            html << "<div id = 'code'>" + content[:code] + "</div>"
+            html << "<div id = 'caption'>" + content[:caption] + "</div>"
+          
+          else 
+        end          
+
+        html << "<span class ='time'>" + content[:tumblr_time].to_s + "</span>"
+        html << "<a href='" + content[:url] + "' target = '_blank' class = 'detail'>詳細を見る</a>"
+
+        comment = comment_html(content[:id], content[:comment])
+        
+        html << comment
+        html << "</div>"
+
+
+      when "instagram"
+        
+        html << "<div id = '" + content[:id] + "' class = 'pin instagram'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        
+        html << ref_rem
+        
+        html << "<img src ='" + content[:instagram_img_url] + "' id = 'instagram_img'>"
+        
+        if content[:instagram_text]
+          html << "<p>" + content[:instagram_text] + "</p>" 
+        else
+          content[:instagram_text] = ""
+          html << "<p>" + content[:instagram_text] + "</p>" 
+        end
+        
+             
+        html << "<span class ='time'>" + content[:instagram_time].to_s + "</span>"
+        html << "<a href='" + content[:url] + "' target = '_blank' class = 'detail'>詳細を見る</a>" 
+        
+        comment = comment_html(content[:id], content[:comment])
+        
+        html << comment     
+	    html << "</div>"
+	  
+	  when "flickr"
+	    
+	    html << "<div id = '" + content[:id] + "' class = 'pin instagram'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        
+        html << ref_rem
+        
+        html << "<img src ='" + content[:flickr_img_url] + "' id = 'flickr_img'>"
+        html << "<p>" + content[:flickr_title] + "</p>"      
+        html << "<div class = 'description'>" + content[:flickr_text] + "</div>"
+        
+        html << "<span class ='time'>" + content[:flickr_time].to_s + "</span>"
+        html << "<a href='" + content[:url] + "' target = '_blank' class = 'detail'>詳細を見る</a>" 
+        
+        comment = comment_html(content[:id], content[:comment])
+        
+        html << comment   
+	    html << "</div>"
+
+	  when "flickr_f"
+
+	    html << "<div id = '" + content[:id] + "' class = 'pin instagram'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        html << ref_rem
+        
+        html << "<img src ='" + content[:flickr_img_url] + "' id = 'flickr_img'>"
+        html << "<p>" + content[:flickr_title] + "</p>"      
+        html << "<div class = 'description'>" + content[:flickr_text] + "</div>"
+        
+        html << "<span class ='time'>" + content[:flickr_time].to_s + "</span>"
+        html << "<a href='" + content[:url] + "' target = '_blank' class = 'detail'>詳細を見る</a>" 
+        
+        comment = comment_html(content[:id], content[:comment])
+        
+        html << comment   
+	    html << "</div>"
+
+
+      when "hatena"
+        html << "<div id = '" + content[:id] + "' class = 'pin hatena'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        html << ref_rem
+        
+        html << "<a href=" + content[:hatena_url] +" target='_blank'>" + content[:hatena_title] + "</a><br>"
+        html << "<span class='time'>" + content[:hatena_issued].to_s + "</span>"
+
+
+        comment = comment_html(content[:id], content[:comment])
+        html << comment   
+	    html << "</div>"
+      
+      when "evernote"
+        html << "<div id = '" + content[:id] + "' class = 'pin evernote'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        html << ref_rem
+        
+        html << "<div id='snippet'>"
+        html << "<div id = 'title'>" + content[:note_title] + "</div>"
+        html << "<div id = 'body'>" + content[:snippet] + "</div>"
+        html << "</div>"
+        
+        html << "<p id = 'viewall'>ViewAll→</p>"
+        html << "<span class = 'time'>" + content[:evernote_time].to_s + "</span>"
+        html << "<a href='" + content[:url] + "' target = '_blank' class = 'detail'>詳細を見る</a>" 
+        
+        html << "<div class = 'modal hide fade' id = 'allcontent' tabindex = '-1' role = 'dialog' aria-labelledby = 'ModalLabel' aria-hidden = 'true'>"
+        
+        html << "<div class = 'modal-header'>"
+        html << "<button type = 'button' class = 'close' data-dismiss = 'modal' aria-hidden = 'true'>x"
+        html << "<h3 id = 'ModalLabel'>" + content[:note_title] + "</h3>"
+        html << "</div>"
+        
+        html << "<div class = 'modal-body'>"
+        html << "<div>" + content[:content] + "</div>"
+        html << "</div>"
+        
+        html << "<div class = 'modal-footer'>"
+        html << "<a href = " + content[:url] + " class = 'btn' target = '_blank'>Edit</a>"
+        html << "<button class = 'btn' data-dismiss = 'modal' aria-hidden = 'true'>Close"
+        html << "</div>"
+              
+        comment = comment_html(content[:id], content[:comment])
+        
+        html << comment   
+	    html << "</div>"
+      
+      when "rss"
+        
+        html << "<div id = '" + content[:id] + "' class = 'pin rss'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        html << ref_rem
+        
+        html << "<a href=" + content[:rss_url] +" target='_blank'>" + content[:rss_title] + "</a>"
+        html << "<p>" + content[:rss_description] + "</p>"
+        html << "<span class='time'>" + content[:rss_date].to_s + "</span>"
+
+
+        comment = comment_html(content[:id], content[:comment])
+        html << comment   
+	    html << "</div>"
+      
+      when "browser_bookmarks"
+
+        html << "<div id = '" + content[:id] + "' class = 'pin hatena'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        html << ref_rem
+        
+        html << "<a href=" + content[:hatena_url] +" target='_blank'>" + content[:bb_title] + "</a><br>"
+        html << "<div class = 'description'>" + content[:bb_description] + "</div>"
+        html << "<span class='time'>" + content[:bb_issued].to_s + "</span>"
+
+
+        comment = comment_html(content[:id], content[:comment])
+        html << comment   
+	    html << "</div>"
+          
+      else
+          
+    end
+
+  
+    return html
+  
+  end
+  
+  def ref_and_remove(app, id, count)
+  
+    html = "<div class='ref_and_remove'>"
+    
+    html << "<div class ='remove'>"
+    html << "<form class = 'remove'>"
+    html << "<input type ='hidden' name = 'data_id' value = '" + id +"'>"
+    html << "<input type ='hidden' name = 'app' value = '" + app +"'>"
+    html << "<button class='ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext' data-corners='true' data-icon='flat-cross' data-iconpos='notext' data-iconshadow='true' data-inline='true' data-role='button' data-shadow='true' data-theme='b' data-wrapperels='span' title='Cross' type='submit'><span class='ui-btn-inner'><span class='ui-btn-text'>Cross</span><span class='ui-icon ui-icon-flat-cross ui-icon-shadow'></span></span></button></form></div>"
+    
+    html << "<div class='reflection'>"
+    html << "<form class='ref_form'>"
+    html << "<input name='data_id' type='hidden' value='" + id + "'>"
+    html << "<input id='ref_val_" + id + "' name='ref_count' type='hidden' value='" + count.to_s + "'>"
+    html << "<button class='ui-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext' data-corners='true' data-icon='flat-checkround' data-iconpos='notext' data-iconshadow='true' data-inline='true' data-role='button' data-shadow='true' data-theme='e' data-wrapperels='span' title='Checkround' type='submit'><span class='ui-btn-inner'><span class='ui-btn-text'>Chrckround</span><span class='ui-icon ui-icon-flat-checkround ui-icon-shadow'></span></span></button></form></div>"
+    
+    html << "</div>" #ref_and_remove
+    
+    html << "<span class='ref_count' id='ref_count_" + id + "'>" + count.to_s + "</span>"
+    
+    return html
+  
+  end
+  
+  
+  
+  def comment_html(id, comment)
+  
+    html = "<div class='tags clear' id='comments_" + id + "'>"    
+    html << "<hr>"
+    html << "<div class='comment_total' id='comment_total_" + id + "'>Comment (" + comment.length.to_s + ")</div>"
+    
+    comment.each do |elem|
+    
+      html << "<div class='comment'>"
+      html << "<div class='comment_text'>" + elem[:comment] + "</div>"
+      html << "<div class='comment_time'>" + elem[:time] + "</div>"
+      html << "</div>"
+    
+    end
+
+    html << "</div>"    
+    html << "<div class='comment_form' id='comment_form_" + id +"'>"
+    html << "<form class='comment_form pure-form'>"
+    html << "<input name='comment' placeholder='コメントはこちらに入力してください' type='text'>"
+    html << "<input name='data_id' type='hidden' value='" + id +"'>"
+    html << "<button class='pure-button notice' type='submit'>保存!</button></form></div>"
+  
+  end
 
   module_function :tag_recreate
   module_function :db_row_create
@@ -500,6 +847,9 @@ module AllData
   module_function :rand_id_sample
   module_function :one_data_create
   module_function :reject
+  module_function :data_to_html
+  module_function :ref_and_remove
+  module_function :comment_html
 
 end
 
