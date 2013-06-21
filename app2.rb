@@ -182,11 +182,20 @@ end
 # ログインしていないときは、ログインフォームを表示。
 # ログインしているときは、ログイン済ページを表示。
 get "/" do
-  #if request.env["warden"].user.nil?
+  
   	@menu = Array.new
+  	@menu.push(["top", "pure-menu-selected"])
   	@menu.push(["about", ""])
+  	
+  if request.env["warden"].user.nil?
     @menu.push(["login", ""])
     @menu.push(["register", ""])
+  else
+    @menu.push(["main", ""])
+    @menu.push(["settings", ""])
+    @menu.push(["logout", ""])
+  
+  end
     #erb :login
     haml :top
   #else
@@ -213,6 +222,7 @@ get "/login" do
   if request.env["warden"].user.nil?
   
     @menu = Array.new
+    @menu.push(["top", ""])
     @menu.push(["about", ""])
     @menu.push(["login", "pure-menu-selected"])
     @menu.push(["register", ""])
@@ -230,7 +240,8 @@ end
 #redirectで吹っ飛ばす推奨
 post "/unauthenticated" do
   
-  @menu = Array.new
+  @menu = Array.new 
+  @menu.push(["top", ""])
   @menu.push(["about", ""])
   @menu.push(["login", "pure-menu-selected"])
   @menu.push(["register", ""])
@@ -243,6 +254,7 @@ end
 get "/unauthenticated" do
   
   @menu = Array.new
+  @menu.push(["top", ""])
   @menu.push(["about", ""])
   @menu.push(["login", "pure-menu-selected"])
   @menu.push(["register", ""])
@@ -262,6 +274,7 @@ end
 get "/register" do
   if request.env["warden"].user.nil?
     @menu = Array.new
+    @menu.push(["top", ""]) 
     @menu.push(["about", ""])
     @menu.push(["login", ""])
     @menu.push(["register", "pure-menu-selected"])
@@ -277,6 +290,7 @@ get "/register/error" do
   
     if session[:msg]
       @menu = Array.new
+      @menu.push(["top", ""])
       @menu.push(["about", ""])
       @menu.push(["login", ""])
       @menu.push(["register", "pure-menu-selected"])
@@ -336,7 +350,7 @@ get "/ques" do
   
     sql = User.select(:b_ques).where(:id => current_user.id).first
     
-    if sql.b_ques = 0
+    if sql.b_ques == 0
     
       haml :ques, :layout => false
     
@@ -364,10 +378,10 @@ get "/b_ques" do
   
     sql = User.select(:b_ques).where(:id => current_user.id).first
     
-    if sql.b_ques = 0
+    if sql.b_ques == 0
 
       haml :b_ques, :layout => false
-    
+
     else
       redirect to ("/")
     end
@@ -377,6 +391,13 @@ get "/b_ques" do
 end
 
 post "/b_ques_end" do
+
+	@menu = Array.new
+    @menu.push(["top", ""])
+  	@menu.push(["about", ""])
+    @menu.push(["main", ""])
+    @menu.push(["settings", "pure-menu-selected"])
+    @menu.push(["logout", ""])
 
   device = params[:device]
   rrq = params[:rrq]
@@ -529,7 +550,7 @@ post "/b_ques_end" do
   	:tv_b_12 => tv_b["12"],
   })
 
-  User.filter(:id => params[:user]).update(:b_ques => 1)
+  User.where(:id => current_user.id).update(:b_ques => 1)
 
   haml :end_ques
   
@@ -565,6 +586,13 @@ end
 
 post "/a_ques_end" do
 
+	@menu = Array.new
+    @menu.push(["top", ""])	
+  	@menu.push(["about", ""])
+    @menu.push(["main", ""])
+    @menu.push(["settings", "pure-menu-selected"])
+    @menu.push(["logout", ""])
+    
   rrq = params[:rrq]
   iact_t = params[:iact_t]
   iact_f = params[:iact_f]
@@ -724,6 +752,7 @@ get "/settings" do
     redirect to ("/")
   else
 	@menu = Array.new
+    @menu.push(["top", ""])	
   	@menu.push(["about", ""])
     @menu.push(["main", ""])
     @menu.push(["settings", "pure-menu-selected"])
@@ -1185,6 +1214,7 @@ get '/main' do
     @main = ""
   
     @menu = Array.new
+    @menu.push(["top", ""])
   	@menu.push(["about", ""])
     @menu.push(["main", "pure-menu-selected"])
     @menu.push(["settings", ""])
@@ -1438,21 +1468,14 @@ post "/refrection" do
   return new_count
 end
 
-#getで来られたときはとりあえずランダムで対応
+#ふわっと更新時にajaxで呼び出されるページ
 get "/individual" do
 
   if request.env["warden"].user.nil?
-    #redirect to ("/")
+
     str = "logout"
    
   else
-=begin  
-  	@menu = Array.new
-  	@menu.push(["about", ""])
-    @menu.push(["main", ""])
-    @menu.push(["settings", ""])
-    @menu.push(["logout", ""])
-=end 
    
     begin
       app_list = ["twitter_f", "twitter_h", "tumblr", "instagram", "hatena", "evernote", "flickr", "flickr_f"]
@@ -1471,9 +1494,7 @@ get "/individual" do
     end
     
     str = AllData.data_to_html(@content)
-
-    #p @content
-=begin    
+   
     this_id = @content[:id]
     time = Time.now
   
@@ -1482,23 +1503,6 @@ get "/individual" do
       :id => this_id,
       :time => time,
     })
-=end  
-
-#str = "<div class='pin hatena' id='hatena-39'><div class='ref_and_remove'><div class='remove'><form class='remove' data-ajax='false'><input name='data_id' type='hidden' value='hatena-39'><input name='app' type='hidden' value='hatena'><button class='ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext' data-corners='true' data-icon='flat-cross' data-iconpos='notext' data-iconshadow='true' data-inline='true' data-role='button' data-shadow='true' data-theme='b' data-wrapperels='span' title='Cross' type='submit'><span class='ui-btn-inner'><span class='ui-btn-text'>Cross</span><span class='ui-icon ui-icon-flat-cross ui-icon-shadow'></span></span></button></form></div><div class='reflection'><form class='ref_form' data-ajax='false'><input name='data_id' type='hidden' value='hatena-39'><input id='ref_val_hatena-39' name='ref_count' type='hidden' value='0'><button class='ui-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext' data-corners='true' data-icon='flat-checkround' data-iconpos='notext' data-iconshadow='true' data-inline='true' data-role='button' data-shadow='true' data-theme='e' data-wrapperels='span' title='Checkround' type='submit'><span class='ui-btn-inner'><span class='ui-btn-text'>Chrckround</span><span class='ui-icon ui-icon-flat-checkround ui-icon-shadow'></span></span></button></form></div></div><span class='ref_count' id='ref_count_hatena-39'>0</span><a href='http://www.youtube.com/' target='_blank'>YouTube</a><br><span class='time'>2012-12-20T23:50:36</span><div class='tags clear' id='comments_hatena-39'><hr><div class='comment_total' id='comment_total_hatena-39'>Comment (0)</div></div><div class='comment_form' id='comment_form_hatena-39'><form class='comment_form pure-form' data-ajax='false'><input name='comment' placeholder='コメントはこちらに入力してください' type='text'><input name='data_id' type='hidden' value='hatena-39'><button class='pure-button notice' type='submit'>保存!</button></form></div></div>"
-
-
-
-
-
-
-
-
-
-
-
-  
-    
-    #haml :individual
 
   end
   
@@ -1510,6 +1514,7 @@ end
 post "/individual" do
 
   @menu = Array.new
+  @menu.push(["top", ""]) 
   @menu.push(["about", ""])
   @menu.push(["main", "pure-menu-selected"])
   @menu.push(["settings", ""])
@@ -1556,6 +1561,7 @@ get "/tagsearch" do
     redirect to ("/")
   else
     @menu = Array.new
+    @menu.push(["top", ""])
   	@menu.push(["about", ""])
     @menu.push(["main", "pure-menu-selected"])
     @menu.push(["settings", ""])
@@ -1656,14 +1662,14 @@ post "/remove" do
 end
 
 get "/about" do
- @menu = Array.new
- 
+  @menu = Array.new
+  @menu.push(["top", ""])
+  @menu.push(["about", "pure-menu-selected"])
+  
   if request.env["warden"].user.nil?
-  	@menu.push(["about", "pure-menu-selected"])
     @menu.push(["login", ""])
     @menu.push(["register", ""])
   else
-  	@menu.push(["about", "pure-menu-selected"])
     @menu.push(["main", ""])
     @menu.push(["settings", ""])
     @menu.push(["logout", ""])
@@ -1694,4 +1700,10 @@ post '/recruit' do
 
   p "ご応募ありがとうございます。後ほど実験担当者よりメールにて連絡致します。"
 
+end
+
+get '/top' do
+
+  redirect ("/")
+ 
 end

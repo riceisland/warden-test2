@@ -23,6 +23,7 @@ jQuery(function($) {
 			    $.ajax({
 			      url: "/individual",
 			      type: 'GET',
+			      cache: 'false',
 			      timeout: 10000,
 			      data: $(this).serialize(),
 			      error: function(){

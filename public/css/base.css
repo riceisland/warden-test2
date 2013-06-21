@@ -178,6 +178,7 @@ form.userform input {
 
 /* div css */
 
+/*
 div.twitter {
   border-color: #00BFFF;
   background-color: #FFFFFF;
@@ -208,6 +209,7 @@ div.rss {
   border-color: #FF6633;
   background-color: #FFFFFF;
 }
+*/
 
 /* evernote css */
 div#snippet {
@@ -440,6 +442,7 @@ span.ref_count {
  
 #columns {
     /*margin: 50px auto;*/
+    margin-top :-20px;
     position :relative;
 }
 
@@ -467,6 +470,8 @@ span.ref_count {
     border-radius: 5px;        /* CSS3草案 */  
     -webkit-border-radius: 5px;    /* Safari,Google Chrome用 */  
     -moz-border-radius: 5px;   /* Firefox用 */ 
+    
+    border-color: #708090;
 }
 
 .pin img {
@@ -519,7 +524,7 @@ form#bookmark_upload{
 
 /* related css */
 div#main {
-  margin: 10px 20px 10px 30px;
+  margin: 30px 20px 10px 30px;
   width: 95%;
 }
 
@@ -596,6 +601,10 @@ p.red {
 
 img.imgflow {
 	max-width :100%;
+}
+
+img.imgele {
+	max-width :60%;
 }
 
 /*recruit css*/

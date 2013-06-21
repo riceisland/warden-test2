@@ -772,7 +772,7 @@ module AllData
         ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
         html << ref_rem
         
-        html << "<a href=" + content[:hatena_url] +" target='_blank'>" + content[:bb_title] + "</a><br>"
+        html << "<a href=" + content[:bb_url] +" target='_blank'>" + content[:bb_title] + "</a><br>"
         html << "<div class = 'description'>" + content[:bb_description] + "</div>"
         html << "<span class='time'>" + content[:bb_issued].to_s + "</span>"
 
@@ -906,8 +906,10 @@ module TwitterData
 	  if error.to_s.index("Invalid or expired token")
         reject("twitter")
       end
-	  
-    rescue Twitter::Error::Forbidden => error	    
+	    
+    rescue Twitter::Error::Forbidden => error
+    
+    rescue Twitter::Error::ClientError => error	    
 	
     end
   end
