@@ -346,6 +346,9 @@ class B_User < Sequel::Model
 	  primary_key :id
 	  varchar :uid
 	  varchar :time
+	  varchar :twitter
+	  varchar :flickr
+	  varchar :bookmark
 	  varchar :usingTime
 	  varchar :useBrowser
 	  varcahr :device_t

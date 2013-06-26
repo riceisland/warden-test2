@@ -590,7 +590,10 @@ module AllData
             html << "<p>" + content[:source] + "</p>"
           
           when "link"
-            html << "<p>" + content[:post_title] + "</p>"   
+            if content[:post_title]
+              html << "<p>" + content[:post_title] + "</p>"   
+            end
+            
             html << "<p>" + content[:url] + "</p>" 
             html << "<p>" + content[:description] + "</p>"
           
@@ -798,17 +801,17 @@ module AllData
     html << "<form class = 'remove'>"
     html << "<input type ='hidden' name = 'data_id' value = '" + id +"'>"
     html << "<input type ='hidden' name = 'app' value = '" + app +"'>"
-    html << "<button class='ui-btn ui-btn-up-b ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext' data-corners='true' data-icon='flat-cross' data-iconpos='notext' data-iconshadow='true' data-inline='true' data-role='button' data-shadow='true' data-theme='b' data-wrapperels='span' title='Cross' type='submit'><span class='ui-btn-inner'><span class='ui-btn-text'>Cross</span><span class='ui-icon ui-icon-flat-cross ui-icon-shadow'></span></span></button></form></div>"
+    html << "<button type='submit' class='cancel'><i class='icon-cancel' id='cancel_" + id + "'></i></button></form></div>"
     
-    html << "<div class='reflection'>"
-    html << "<form class='ref_form'>"
-    html << "<input name='data_id' type='hidden' value='" + id + "'>"
-    html << "<input id='ref_val_" + id + "' name='ref_count' type='hidden' value='" + count.to_s + "'>"
-    html << "<button class='ui-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext' data-corners='true' data-icon='flat-checkround' data-iconpos='notext' data-iconshadow='true' data-inline='true' data-role='button' data-shadow='true' data-theme='e' data-wrapperels='span' title='Checkround' type='submit'><span class='ui-btn-inner'><span class='ui-btn-text'>Chrckround</span><span class='ui-icon ui-icon-flat-checkround ui-icon-shadow'></span></span></button></form></div>"
+    #html << "<div class='reflection'>"
+    #html << "<form class='ref_form'>"
+    #html << "<input name='data_id' type='hidden' value='" + id + "'>"
+    #html << "<input id='ref_val_" + id + "' name='ref_count' type='hidden' value='" + count.to_s + "'>"
+    #html << "<button class='ui-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext' data-corners='true' data-icon='flat-checkround' data-iconpos='notext' data-iconshadow='true' data-inline='true' data-role='button' data-shadow='true' data-theme='e' data-wrapperels='span' title='Checkround' type='submit'><span class='ui-btn-inner'><span class='ui-btn-text'>Chrckround</span><span class='ui-icon ui-icon-flat-checkround ui-icon-shadow'></span></span></button></form></div>"
     
     html << "</div>" #ref_and_remove
     
-    html << "<span class='ref_count' id='ref_count_" + id + "'>" + count.to_s + "</span>"
+    #html << "<span class='ref_count' id='ref_count_" + id + "'>" + count.to_s + "</span>"
     
     return html
   
@@ -820,7 +823,7 @@ module AllData
   
     html = "<div class='tags clear' id='comments_" + id + "'>"    
     html << "<hr>"
-    html << "<div class='comment_total' id='comment_total_" + id + "'>Comment (" + comment.length.to_s + ")</div>"
+    html << "<div class='comment_total' id='comment_total_" + id + "'>発見&コメント (" + comment.length.to_s + ")</div>"
     
     comment.each do |elem|
     
@@ -834,9 +837,9 @@ module AllData
     html << "</div>"    
     html << "<div class='comment_form' id='comment_form_" + id +"'>"
     html << "<form class='comment_form pure-form'>"
-    html << "<input name='comment' placeholder='コメントはこちらに入力してください' type='text'>"
+    html << "<input name='comment' placeholder='コメントがあればこちらに入力してください' type='text'>"
     html << "<input name='data_id' type='hidden' value='" + id +"'>"
-    html << "<button class='pure-button notice' type='submit'>保存!</button></form></div>"
+    html << "<button class='pure-button notice' type='submit'>発見!</button></form></div>"
   
   end
 

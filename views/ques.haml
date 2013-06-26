@@ -4,9 +4,37 @@
 	%head
 		%title= @title
 		%meta{:"http-equiv"=>"Content-Type", :content=>"text/html", :charset=>"utf-8"}
+		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/bootstrap.css"}
+		%link{:rel=>"stylesheet", :type=>"text/css", :href=>"/css/ques.css"}
 		%link{:rel=>"shortcut icon", :type=>"image/vnd.microsoft.icon", :href=>"/img/favicon.ico"}   
 		%script{:type => 'text/javascript', :src => "/js/jquery-1.8.3.min.js"}
+		%script{:type => 'text/javascript', :src => "/js/ques.js"}
 	%body
-		%a{:href => "/b_ques"} 事前アンケートに回答する
-		%a{:href => "/settings"} 設定ページヘ
-		-# %a{:href => "/b_ques"} 事後アンケートに回答する
+		%div{:id => "main"}
+			%h3 事前アンケート
+			%form{:id => "ques", :action => "/b_ques", :method => "POST", :class => "userform", :'data-ajax' => "false"}
+				%div
+					%label Q1. あなたはTwitterのアカウントを持っていますか<br />
+					%label{:class => "radio"}
+						%input{:type => "radio", :name => "twitter", :value => "0"}はい
+					%label{:class => "radio"}
+						%input{:type => "radio", :name => "twitter", :value => "1"}いいえ	
+				%div
+					%label Q2. あなたはFlickrのアカウントを持っていますか
+					%label{:class => "radio"}
+						%input{:type => "radio", :name => "flickr", :value => "0"}はい
+					%label{:class => "radio"}
+						%input{:type => "radio", :name => "flickr", :value => "2"}実験のために取得した	
+					%label{:class => "radio"}
+						%input{:type => "radio", :name => "flickr", :value => "1"}いいえ
+				%div
+					%label Q3. あなたは現在ブックマークを利用していますか
+					%label{:class => "radio"}
+						%input{:type => "radio", :name => "bkm", :value => "0"}はい
+					%label{:class => "radio"}
+						%input{:type => "radio", :name => "bkm", :value => "1"}いいえ	
+				%div
+					%button{:type => "submit", :class => "btn"} 次のページへ				
+			-# %a{:href => "/b_ques"} 事前アンケートに回答する
+			-# %a{:href => "/settings"} 設定ページヘ
+			-# %a{:href => "/b_ques"} 事後アンケートに回答する

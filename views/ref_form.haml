@@ -2,7 +2,5 @@
 	%form{:class => "ref_form", :'data-ajax' => "false"}
 		%input{:type => "hidden", :name => "data_id", :value => @content[:id]}
 		%input{:type => "hidden", :id => "ref_val_"+@content[:id], :name => "ref_count", :value => @content[:ref_count]}
-		%button{:type => "submit",:'data-role' => "button", :'data-icon' => "flat-checkround", :'data-iconpos'=>"notext", :'data-theme'=>"e", :'data-inline'=>"true", :'data-corners'=>"true", :'data-shadow'=>"true", :'data-iconshadow'=>"true", :'data-wrapperels'=>"span", :title=>"Checkround", :class=>"ui-btn ui-btn-up-e ui-shadow ui-btn-corner-all ui-btn-inline ui-btn-icon-notext"}
-			%span{:class => "ui-btn-inner"}
-				%span{:class => "ui-btn-text"}Chrckround
-				%span{:class=>"ui-icon ui-icon-flat-checkround ui-icon-shadow"}
+		%button{:type => "submit", :class => "cancel"}
+			%i{:class => "icon-attention-alt"}
