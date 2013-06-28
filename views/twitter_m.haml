@@ -1,0 +1,6 @@
+%div{:id => @content[:id], :class =>"pin twitter"}
+	=haml :ref_and_remove
+	%img{:src => @content[:twitter_media_url], :class => "twitter_img", :width => @content[:width], :height => @content[:height]}
+	%span{:class => "time"}= @content[:twitter_issued]
+	%a{:href => @content[:twitter_url], :target => "_blank", :class => "detail"}= "詳細を見る"
+	= haml :tag

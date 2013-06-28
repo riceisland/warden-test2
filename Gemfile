@@ -20,6 +20,7 @@ gem 'parallel'
 gem 'flickraw'
 gem 'daemon-spawn', :require => 'daemon_spawn'
 gem 'resque-scheduler', :require => 'resque_scheduler'
+gem 'mechanize'
 
 #group :development do
 #  gem 'sinatra-contrib', gem: 'sinatra/reloader'

@@ -62,6 +62,41 @@ class Twitter_favorites < Sequel::Model
   end
 end
 
+class Twitter_urls < Sequel::Model
+  unless table_exists?
+    set_schema do
+      primary_key :id  
+      integer :user_id
+      varchar :title
+      varchar :url
+      varchar :issued
+      varchar :description
+      integer :default
+      integer :refrection
+      integer :shuffle
+ 	end
+	create_table
+  end
+end  
+     
+class Twitter_media < Sequel::Model
+  unless table_exists?
+    set_schema do
+      primary_key :id  
+      integer :user_id
+      varchar :url
+      varchar :media_url
+      varchar :issued
+      integer :width
+      integer :height
+      integer :refrection
+      integer :shuffle
+ 	end
+	create_table
+  end
+end  
+     
+
 class Tumblr_oauth < Sequel::Model
   unless table_exists?
     set_schema do

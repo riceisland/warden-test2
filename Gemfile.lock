@@ -3,6 +3,8 @@ GEM
   remote: http://rubygems.org/
   specs:
     daemon-spawn (0.4.2)
+    domain_name (0.5.4)
+      unf (~> 0.0.3)
     faraday (0.8.7)
       multipart-post (~> 1.1)
     faraday_middleware (0.9.0)
@@ -20,10 +22,22 @@ GEM
       faraday_middleware (~> 0.8)
       hashie (>= 0.4.0)
       multi_json (~> 1.0, >= 1.0.3)
+    mechanize (2.5.1)
+      domain_name (~> 0.5, >= 0.5.1)
+      mime-types (~> 1.17, >= 1.17.2)
+      net-http-digest_auth (~> 1.1, >= 1.1.1)
+      net-http-persistent (~> 2.5, >= 2.5.2)
+      nokogiri (~> 1.4)
+      ntlm-http (~> 0.1, >= 0.1.1)
+      webrobots (~> 0.0, >= 0.0.9)
+    mime-types (1.23)
     mono_logger (1.0.1)
     multi_json (1.7.2)
     multipart-post (1.2.0)
+    net-http-digest_auth (1.2.1)
+    net-http-persistent (2.7)
     nokogiri (1.5.9)
+    ntlm-http (0.1.1)
     oauth (0.4.7)
     parallel (0.6.4)
     rack (1.5.2)
@@ -65,10 +79,14 @@ GEM
       multi_json (~> 1.0)
       simple_oauth (~> 0.2)
     tzinfo (1.0.0)
+    unf (0.0.5)
+      unf_ext
+    unf_ext (0.0.5)
     vegas (0.1.11)
       rack (>= 1.0.0)
     warden (1.2.1)
       rack (>= 1.0)
+    webrobots (0.0.13)
     will_paginate (3.0.4)
 
 PLATFORMS
@@ -80,6 +98,7 @@ DEPENDENCIES
   flickraw
   haml
   instagram
+  mechanize
   multi_json
   nokogiri
   oauth (= 0.4.7)

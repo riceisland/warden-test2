@@ -16,8 +16,10 @@ require 'kconv'
 require 'json'
 require 'yaml'
 require 'flickraw'
+require 'mechanize'
 
 require "./evernote_config"
+require "./extract"
 
 module AllData
 
@@ -31,6 +33,12 @@ module AllData
 
       when "twitter_h"
         ids = Tweets.select(:id).filter(:user_id => uid).all
+
+      when "twitter_m"
+        ids = Twitter_media.select(:id).filter(:user_id => uid).all
+
+      when "twitter_u"
+        ids = Twitter_urls.select(:id).filter(:user_id => uid).all
     
       when "tumblr"
         ids = Tumblr_posts.select(:id).filter(:user_id => uid).all
@@ -68,6 +76,12 @@ module AllData
       when "twitter_h"
         ids = Tweets.select(:id).filter(:user_id => uid, :shuffle => 0).all
     
+      when "twitter_m"
+        ids = Twitter_media.select(:id).filter(:user_id => uid, :shuffle => 0).all
+
+      when "twitter_u"
+        ids = Twitter_urls.select(:id).filter(:user_id => uid, :shuffle => 0).all
+
       when "tumblr"
         ids = Tumblr_posts.select(:id).filter(:user_id => uid, :shuffle => 0).all
     
@@ -108,6 +122,12 @@ module AllData
 
         when "twitter_h"
           ids = Tweets.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+
+        when "twitter_m"
+          ids = Twitter_media.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+
+        when "twitter_u"
+          ids = Twitter_urls.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
             
         when "tumblr"
           ids = Tumblr_posts.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
@@ -143,6 +163,12 @@ module AllData
 
       when "twitter_h"
         ids = Tweets.filter(:user_id => uid).update(:shuffle => 0)
+
+      when "twitter_m"
+        ids = Twitter_media.filter(:user_id => uid).update(:shuffle => 0)
+
+      when "twitter_u"
+        ids = Twitter_urls.filter(:user_id => uid).update(:shuffle => 0)
                     
       when "tumblr"
         ids = Tumblr_posts.filter(:user_id => uid).update(:shuffle => 0)
@@ -202,6 +228,12 @@ module AllData
     
       when "twitter_h"
         ref_sql = Tweets.select(:refrection).filter(:id => id)
+        
+      when "twitter_m"
+        ref_sql = Twitter_media.select(:refrection).filter(:id => id)
+
+      when "twitter_u"
+        ref_sql = Twitter_urls.select(:refrection).filter(:id => id)
     
       when "tumblr"
         ref_sql = Tumblr_posts.select(:refrection).filter(:id => id)
@@ -331,9 +363,13 @@ module AllData
       when "twitter"
         Twitter_oauth.where(:uid => uid).delete
         Twitter_favorites.where(:user_id => uid).delete
-        Tweets.where(:user_id => current_user.id).delete
+        Tweets.where(:user_id => uid).delete
+		Twitter_urls.where(:user_id => uid).delete
+		Twitter_media.where(:user_id => uid).delete
         Tags.where(:user_id => uid, :app => "twitter_f").delete
         Tags.where(:user_id => uid, :app => "twitter_h").delete
+        Tags.where(:user_id => uid, :app => "twitter_u").delete
+        Tags.where(:user_id => uid, :app => "twitter_m").delete
       
 	  when "tumblr"
 	    Tumblr_oauth.where(:uid => uid).delete
@@ -396,7 +432,19 @@ module AllData
         twitter_oauth = Twitter_oauth.where(:uid => uid).first
         twitter_data = TwitterData::TwitterData.new(uid, twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)       
         data_hash = twitter_data.twitter_home_data_create(id)
+
+      when "twitter_m"
       
+        twitter_oauth = Twitter_oauth.where(:uid => uid).first
+        twitter_data = TwitterData::TwitterData.new(uid, twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)       
+        data_hash = twitter_data.twitter_media_data_create(id)
+
+
+      when "twitter_u"
+        twitter_oauth = Twitter_oauth.where(:uid => uid).first
+        twitter_data = TwitterData::TwitterData.new(uid, twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)    
+        data_hash = twitter_data.twitter_url_data_create(id)
+              
       when "tumblr"
       
         tumblr_oauth = Tumblr_oauth.where(:uid => uid).first
@@ -544,6 +592,41 @@ module AllData
         
         html << comment
         html << "</div>"
+        
+      when "twitter_m"
+
+        html << "<div id = '" + content[:id] + "' class = 'pin twitter'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        
+        html << ref_rem
+        
+        html << "<img src='" + content[:twitter_media_url] + "' class = 'twitter_img' width = " + @width  +" height="+ @height  +" >"      
+        html << "<span class ='time'>" + content[:twitter_issued].to_s + "</span>"
+        html << "<a href='" + content[:twitter_url] + "' target = '_blank' class = 'detail'>詳細を見る</a>"
+        html << "</div>"      
+      
+        comment = comment_html(content[:id], content[:comment])
+        
+        html << comment
+        html << "</div>"
+      
+      when "twitter_u"
+      
+        html << "<div id = '" + content[:id] + "' class = 'pin twitter'>"
+        
+        ref_rem = ref_and_remove(content[:app],content[:id], content[:ref_count])
+        
+        html << ref_rem      
+      
+        html << "<a href=" + content[:url] +" target='_blank'>" + content[:twitter_title] + "</a><br>"
+        html << "<div class = 'description'>" + content[:twitter_description] + "</div>"
+        html << "<span class='time'>" + content[:twitter_issued].to_s + "</span>"
+		html << "<a href='" + content[:default_url] + "' target = '_blank' class = 'detail'>詳細を見る</a>"
+
+        comment = comment_html(content[:id], content[:comment])
+        html << comment   
+	    html << "</div>"      
       
       when "tumblr"
       
@@ -873,6 +956,8 @@ module TwitterData
      :oauth_token => token,
      :oauth_token_secret => secret
    )
+   
+   @agent = Mechanize.new
 
   end
   
@@ -900,6 +985,78 @@ module TwitterData
           break
         else
 	      db_row_create(@user_id,"twitter_h", twit.id)
+	      
+	      if twit.media != []
+
+			twit.media.each do |elem|
+			
+	       		Twitter_media.create({
+		      	  :user_id => @user_id,
+			  	  :media_url => elem.media_url,
+			  	  :url => elem.url,
+			  	  :issued => twit.created_at,
+			  	  :width => elem.sizes[:small][:w],
+			  	  :height => elem.sizes[:small][:h],
+		  	  	  :refrection => 0,
+		  	  	  :shuffle => 0,
+	    		})	      
+	        end
+	      	      
+	      end
+	      
+	      if twit.urls != []
+	      	
+	      	twit.urls.each do |elem|
+	      	
+	      		url = elem.expanded_url
+	      		p url
+	      		
+	      		if url =~ /\Ahttps?\:\/\//
+		      		page = @agent.get(url)
+		      		title = page.title
+			
+					extractor = ExtractContent::Extractor.new
+					p extractor
+			
+			        begin
+			          description = extractor.analyse(open(url).read)[0]    
+			          p description
+			          
+			        rescue
+			          description = ""
+			        
+			        end
+			      
+			        unless description == ""
+			       
+			          str =  description.split(//)
+			          len = str.length
+			        
+			          if len > 200
+			            new_str = str.slice(0, 200)
+			            description = new_str.join("")
+			          end
+			        
+			        end
+
+		      	
+		       		Twitter_urls.create({
+			      	  :user_id => @user_id,
+			      	  :title => title,
+				  	  :url => url,
+				  	  :issued => twit.created_at,
+				  	  :description => description,
+				  	  :default => twit.id,
+			  	  	  :refrection => 0,
+			  	  	  :shuffle => 0,
+		    		})	      
+	        	
+	        	
+	        	end
+	        end
+	      	      
+	      end
+	      	      
 	    end
 	        
       end  #--each do
@@ -923,16 +1080,15 @@ module TwitterData
     twit_id = Tweets.select(:data_id).filter(:id => id).first
     new_id = "twitter_h-" + id.to_s
 
-    @twitter.user_timeline(:count=> 1, :max_id => twit_id.data_id).each do |fav|
+    fav = @twitter.status(twit_id.data_id)
     
-      @twitter_img_url = fav.user.profile_image_url 
-      @twitter_user_name = fav.user.name
-      @twitter_screen_name = fav.user.screen_name
-      @twitter_text = fav.text
-      @twitter_time = fav.created_at
-	  @twitter_url = 'https://twitter.com/_/status/' + fav.id.to_s
-      p @twitter_url
-    end
+    @twitter_img_url = fav.user.profile_image_url 
+    @twitter_user_name = fav.user.name
+    @twitter_screen_name = fav.user.screen_name
+    @twitter_text = fav.text
+    @twitter_time = fav.created_at
+	@twitter_url = 'https://twitter.com/_/status/' + fav.id.to_s
+
    
     comment = ref_comment("twitter_h", id)
     tag_c = tag_concat("twitter_h", id)
@@ -952,16 +1108,15 @@ module TwitterData
     twit_id = Twitter_favorites.select(:data_id).filter(:id => id).first
     new_id = "twitter_f-" + id.to_s
 	 
-    @twitter.favorites(:count=> 1, :max_id => twit_id.data_id).each do |fav|
+    fav = @twitter.status(twit_id.data_id)
+    
+    @twitter_img_url = fav.user.profile_image_url 
+    @twitter_user_name = fav.user.name
+    @twitter_screen_name = fav.user.screen_name
+    @twitter_text = fav.text
+    @twitter_time = fav.created_at
+	@twitter_url = 'https://twitter.com/_/status/' + fav.id.to_s
 
-      @twitter_img_url = fav.user.profile_image_url 
-      @twitter_user_name = fav.user.name
-      @twitter_screen_name = fav.user.screen_name
-      @twitter_text = fav.text
-      @twitter_time = fav.created_at
-	  @twitter_url = 'https://twitter.com/_/status/' + fav.id.to_s
-	  
-    end
   
     comment = ref_comment("twitter_f", id)
     tag_c = tag_concat("twitter_f", id)
@@ -972,7 +1127,61 @@ module TwitterData
     return data_hash
 
   end
+  
+  def twitter_media_data_create(id)
 
+    ref_count = ref_counter("twitter_m", id)
+    
+    media = Twitter_media.filter(:id => id)
+    new_id = "twitter_m-" + id.to_s
+    
+    media.each do |elem|
+     # p elem
+      @twitter_media_url = elem.media_url
+      @twitter_url = elem.url
+      @twitter_issued = elem.issued
+      @width = elem.width
+      @height = elem.height
+    end 
+  
+    comment = ref_comment("twitter_m", id)
+    tag_c = tag_concat("twitter_m", id)
+    tag_a = tag_a_concat("twitter_m", id) 
+  
+    data_hash = {:app => "twitter_m", :twitter_media_url => @twitter_media_url, :twitter_url => @twitter_url, :twitter_issued => @twitter_issued, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment, :width => @width, :height => @height }
+  
+    return data_hash
+  
+  
+  end
+
+
+  def twitter_url_data_create(id)
+
+    ref_count = ref_counter("twitter_u", id)
+    
+    media = Twitter_urls.filter(:id => id)
+    p media
+    new_id = "twitter_u-" + id.to_s
+    
+    media.each do |elem|
+      @twitter_title = elem.title
+      @twitter_url = elem.url
+      @twitter_issued = elem.issued
+      @twitter_description = elem.description
+      @twitter_default_url = 'https://twitter.com/_/status/' + elem.default.to_s
+    end 
+  
+    comment = ref_comment("twitter_u", id)
+    tag_c = tag_concat("twitter_u", id)
+    tag_a = tag_a_concat("twitter_u", id) 
+  
+    data_hash = {:app => "twitter_u", :twitter_title => @twitter_title, :twitter_url => @twitter_url, :twitter_issued => @twitter_issued, :twitter_description => @twitter_description, :url => @twitter_url, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment, :default_url => @twitter_default_url }
+  
+    return data_hash
+
+  end
+  
   end
 end
 

@@ -1249,27 +1249,42 @@ get '/main' do
     if twitter_oauth
       apps.push("twitter_f")
       apps.push("twitter_h")
+      
+      twitter_m = Twitter_media.where(:user_id => current_user.id).first
+      if twitter_m
+	      apps.push("twitter_m")
+      end
+    
+      twitter_u = Twitter_urls.where(:user_id => current_user.id).first
+      if twitter_u
+    	  apps.push("twitter_u")
+      end
+      
     end
     
     tumblr_oauth = Tumblr_oauth.where(:uid => current_user.id).first
     if tumblr_oauth
-      apps.push("tumblr")
+     # apps.push("tumblr")
     end
   
     instagram_oauth = Instagram_oauth.where(:uid => current_user.id).first
     if instagram_oauth
-      apps.push("instagram")
+    #  apps.push("instagram")
     end
 
     flickr_oauth = Flickr_oauth.where(:uid => current_user.id).first
     if flickr_oauth
-      apps.push("flickr")
-      apps.push("flickr_f")
+     # apps.push("flickr")
+    
+      flickr_f = Flickr_favorites.where(:user_id => current_user.id).first
+      if flickr_f
+       # apps.push("flickr_f")
+      end
     end
         
     hatena_oauth = Hatena_oauth.where(:uid => current_user.id).first
     if hatena_oauth
-      apps.push("hatena")
+      #apps.push("hatena")
     end
     
     @evernote_oauth = Evernote_oauth.where(:uid => current_user.id).first
@@ -1288,7 +1303,30 @@ get '/main' do
       apps.push("browser_bookmarks")
     end
     
-    #logref_data = LogRef::LogRefData.new   
+    #logref_data = LogRef::LogRefData.new
+    
+    if apps.length < 5
+      
+      begin
+        
+        odd = 5 - apps.length
+        p odd
+      
+        app2 = ""
+        app2 = apps.sample(odd)
+        p app2
+        
+        app2.each do |elem|
+          apps.push(elem)
+        end
+        
+        p apps
+      
+      
+      end while apps.length < 5
+    
+    end
+       
     
     Parallel.each(apps, in_threads:9){|app|
      
@@ -1500,7 +1538,7 @@ get "/individual" do
   else
    
     begin
-      app_list = ["twitter_f", "twitter_h", "tumblr", "instagram", "hatena", "evernote", "flickr", "flickr_f"]
+      app_list = ["twitter_f", "twitter_h", "tumblr", "instagram", "hatena", "evernote", "flickr", "flickr_f", "twitter_u", "twitter_m"]
       rand_app = app_list.sample     
 
       @content = AllData.one_data_create(current_user.id,rand_app, "")     

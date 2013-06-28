@@ -786,3 +786,7 @@ i.icon-cancel {
 button.notice {
     margin-left: 3px;
 }
+
+.twitter_img {
+	display: block;
+}
