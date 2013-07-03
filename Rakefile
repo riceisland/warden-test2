@@ -1,6 +1,3 @@
-#! ruby -Ku
-# -*- coding: utf-8 -*-
-
 require "bundler/setup"
 Bundler.require(:default)
 require "resque/tasks"
@@ -10,6 +7,8 @@ require 'resque_scheduler/tasks'
 
 task "resque:setup" do
     ENV['QUEUE'] = '*'
+    
+    #Ç±ÇÃÇ÷ÇÒÇ…ÉfÅ[ÉÇÉì
     
       log_file = ENV['RESQUE_LOG_PATH']
   Resque.logger = Logger.new(log_file) unless log_file.nil?

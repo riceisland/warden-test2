@@ -371,17 +371,24 @@ jQuery(function($) {
 
   })
 
+
   $(document).on('mouseenter', ".pin", function(){
+
         id = $(this).closest("div.pin").attr("id");
-        val_id = "#cancel_" + id;   
+        val_id = "#cancel_" + id;    
+    
         $(val_id).css('display', 'block');
+
     }
   );
-
+  
   $(document).on('mouseleave', ".pin", function(){
+
         id = $(this).closest("div.pin").attr("id");
-        val_id = "#cancel_" + id;   
+        val_id = "#cancel_" + id;    
+    
         $(val_id).css('display', 'none');
+
     }
   );
 
