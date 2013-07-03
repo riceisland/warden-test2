@@ -1,0 +1,25 @@
+twitter_config:
+  key : "kKw2qK1VOmPvycg6RVTiA"
+  secret : "LTSCjG2Fkj5TUbsFIaFeEcDDIjDQwuBzHem9BLlk"
+  
+tumblr_config:
+  key : "m3xpQIIzuPbPAZzKzQv1pl0E7ATiSLTLewckRjWC7J9VAqDGSu"
+  secret : "vkUqBAN8YtzR8T7VtEKpYQQb4GI55ZtGqnqHVru5EjzociJUov"
+
+instagram_config:  
+  key : "46e304415ae2408e85bd2ca3b78d4903"
+  secret : "db8c0297bb4b4a2db278134a4892ffb9"
+  
+flickr_config:
+  key : "d90febfdc3abe6644e14514777e7acf2"
+  secret : "7e6b02eb8cfec06b"
+  
+dbname:
+  twitter_f : "Twitter_favorites"
+  twitter_h : "Tweets"
+  tumblr : "Tumblr_posts"
+  instagram : "Instagram_photos"
+  evernote : "Evernote_notes"
+  rss : "Rss_user_relate"
+  hatena : "Hatena_bookmarks"
+  browser_bookmarks : "Browser_bookmarks"

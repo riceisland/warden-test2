@@ -5,9 +5,9 @@ require 'nokogiri'
 #require 'net/https'
 require 'parallel'
 require './app2'
-require "./extract"
+require "../extract"
 
-module DataRefresh
+class DataRefresh
 
   @queue = :data_refresh
  
@@ -107,7 +107,7 @@ module DataRefresh
 end
 
 
-module DataCreate
+class DataCreate
 
   @queue = :data_create
   
@@ -130,7 +130,7 @@ module DataCreate
   
 end
 
-module BookmarkDataCreate
+class BookmarkDataCreate
 
   @queue = :bookmark_data_create
   

@@ -18,8 +18,8 @@ require 'yaml'
 require 'flickraw'
 require 'mechanize'
 
-require "./evernote_config"
-require "./extract"
+require "../evernote_config"
+require "../extract"
 
 module AllData
 
@@ -601,7 +601,7 @@ module AllData
         
         html << ref_rem
         
-        html << "<img src='" + content[:twitter_media_url] + "' class = 'twitter_img' width = " + @width  +" height="+ @height  +" >"      
+        html << "<img src='" + content[:twitter_media_url] + "' class = 'twitter_img' width = " + content[:width]  + " height=" + content[:height]  +" >"      
         html << "<span class ='time'>" + content[:twitter_issued].to_s + "</span>"
         html << "<a href='" + content[:twitter_url] + "' target = '_blank' class = 'detail'>詳細を見る</a>"
         html << "</div>"      
@@ -948,7 +948,7 @@ module TwitterData
   
    @user_id = uid
 
-   @conf = YAML.load_file("config.yaml")
+   @conf = YAML.load_file("../config.yaml")
    
    @twitter = Twitter::Client.new(
      :consumer_key => @conf["twitter_config"]["key"],
@@ -961,11 +961,83 @@ module TwitterData
 
   end
   
+  def twitter_media_db_create(user_id, elem,time)
+
+    Twitter_media.create({
+	  :user_id => user_id,
+	  :media_url => elem.media_url,
+	  :url => elem.url,
+	  :issued => time,
+	  :width => elem.sizes[:small][:w],
+	  :height => elem.sizes[:small][:h],
+	  :refrection => 0,
+	  :shuffle => 0,
+	})	
+  
+  end
+  
+  def twitter_url_db_create(user_id, elem, time, default_id)
+
+    url = elem.expanded_url
+	p url
+	      		
+	if url =~ /\Ahttps?\:\/\//
+	  
+	  begin
+	    page = @agent.get(url)
+	  
+	  rescue
+	  
+	  else
+	  
+		  title = page.title
+				
+		  extractor = ExtractContent::Extractor.new
+		  p extractor
+				
+		  begin
+			description = extractor.analyse(open(url).read)[0]    
+			p description
+				          
+		  rescue
+			description = ""
+				        
+	      end
+				      
+		  unless description == ""
+				       
+			str =  description.split(//)
+			len = str.length
+				        
+			if len > 200
+			  new_str = str.slice(0, 200)
+			  description = new_str.join("")
+			end
+				        
+		  end
+		      	
+		  Twitter_urls.create({
+		  	:user_id => @user_id,
+		  	:title => title,
+		  	:url => url,
+		  	:issued => time,
+		  	:description => description,
+		  	:default => default_id,
+		  	:refrection => 0,
+		  	:shuffle => 0,
+		  })	        	
+	  
+	   end     	
+	end
+  
+  
+  end
+  
   def twitter_db_create() 
 
     begin
       
-      @twitter.favorites(:count => 100).each do |twit|
+      @twitter.favorites({:count => 100, :include_entities => "1"}).each do |twit|
   
         past_fav = Twitter_favorites.select(:id).filter(:user_id => @user_id, :data_id => twit.id).first
 
@@ -973,6 +1045,27 @@ module TwitterData
           break
 	    else
           db_row_create(@user_id,"twitter_f", twit.id)
+
+	      if twit.media != []
+
+			twit.media.each do |elem|
+			
+              twitter_media_db_create(@user_id, elem, twit.created_at)
+              
+	        end
+	      	      
+	      end
+	      
+	      if twit.urls != []
+	      	
+	      	twit.urls.each do |elem|
+	      	  
+	      	  twitter_url_db_create(@user_id, elem, twit.created_at, twit.id)
+	      	
+	        end
+	      	      
+	      end
+
 	    end
 	        
       end  #--each do
@@ -990,16 +1083,8 @@ module TwitterData
 
 			twit.media.each do |elem|
 			
-	       		Twitter_media.create({
-		      	  :user_id => @user_id,
-			  	  :media_url => elem.media_url,
-			  	  :url => elem.url,
-			  	  :issued => twit.created_at,
-			  	  :width => elem.sizes[:small][:w],
-			  	  :height => elem.sizes[:small][:h],
-		  	  	  :refrection => 0,
-		  	  	  :shuffle => 0,
-	    		})	      
+              twitter_media_db_create(@user_id, elem, twit.created_at)
+              
 	        end
 	      	      
 	      end
@@ -1007,52 +1092,9 @@ module TwitterData
 	      if twit.urls != []
 	      	
 	      	twit.urls.each do |elem|
+	      	  
+	      	  twitter_url_db_create(@user_id, elem, twit.created_at, twit.id)
 	      	
-	      		url = elem.expanded_url
-	      		p url
-	      		
-	      		if url =~ /\Ahttps?\:\/\//
-		      		page = @agent.get(url)
-		      		title = page.title
-			
-					extractor = ExtractContent::Extractor.new
-					p extractor
-			
-			        begin
-			          description = extractor.analyse(open(url).read)[0]    
-			          p description
-			          
-			        rescue
-			          description = ""
-			        
-			        end
-			      
-			        unless description == ""
-			       
-			          str =  description.split(//)
-			          len = str.length
-			        
-			          if len > 200
-			            new_str = str.slice(0, 200)
-			            description = new_str.join("")
-			          end
-			        
-			        end
-
-		      	
-		       		Twitter_urls.create({
-			      	  :user_id => @user_id,
-			      	  :title => title,
-				  	  :url => url,
-				  	  :issued => twit.created_at,
-				  	  :description => description,
-				  	  :default => twit.id,
-			  	  	  :refrection => 0,
-			  	  	  :shuffle => 0,
-		    		})	      
-	        	
-	        	
-	        	end
 	        end
 	      	      
 	      end
@@ -1148,7 +1190,7 @@ module TwitterData
     tag_c = tag_concat("twitter_m", id)
     tag_a = tag_a_concat("twitter_m", id) 
   
-    data_hash = {:app => "twitter_m", :twitter_media_url => @twitter_media_url, :twitter_url => @twitter_url, :twitter_issued => @twitter_issued, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment, :width => @width, :height => @height }
+    data_hash = {:app => "twitter_m", :twitter_media_url => @twitter_media_url, :twitter_url => @twitter_url, :twitter_issued => @twitter_issued, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment, :width => @width.to_s, :height => @height.to_s }
   
     return data_hash
   
@@ -1194,7 +1236,7 @@ module TumblrData
   
    @user_id = uid
 
-   @conf = YAML.load_file("config.yaml")
+   @conf = YAML.load_file("../config.yaml")
    
    Tumblife.configure do |config|
      config.consumer_key = @conf["tumblr_config"]["key"]
@@ -1327,7 +1369,7 @@ module InstagramData
   
     @user_id = uid
 
-    @conf = YAML.load_file("config.yaml")
+    @conf = YAML.load_file("../config.yaml")
   
     @instagram = Instagram.client(:access_token => token)
 
@@ -1408,7 +1450,7 @@ module FlickrData
   
     @user_id = uid
 
-    @conf = YAML.load_file("config.yaml")
+    @conf = YAML.load_file("../config.yaml")
 	
 	#Flickr.configure do |config|
     #  config.api_key = @conf["flickr_config"]["key"]
