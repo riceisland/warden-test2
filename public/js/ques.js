@@ -69,7 +69,13 @@ jQuery(function($) {
   })
 
   $("form#a_ques").submit(function(){
-  		
+
+      uid = $("#uid").val()
+      twitter_use = $("#twitter_use").val();
+      flickr_use = $("#flickr_use").val();
+      bkm_use = $("#bkm_use").val();  	
+      
+      alert(twitter_use);
 
       var sum = 0;
       $("input:radio:checked").each(function(i){
@@ -78,15 +84,41 @@ jQuery(function($) {
       });
 
       alert(sum)
+      
+      if ((twitter_use == "0") && (flickr_use == "0") && (bkm_use == "0")){
+			count = 107;
+	      
+      } else if ((twitter_use == "0") && (bkm_use == "0")) {
 
-      if (sum == 108) {
-        return true;
-      }
+			count = 79;
+      	
+      } else if (((twitter_use == "0") && (flickr_use == "0")) || ((bkm_use == "0") && (flickr_use == "0"))) {
 
-      else {
-      	alert('回答していない項目があります。')
-        return false;
+	      	count = 79;
+	      	
+      }  else if ((bkm_use == "0") || (flickr_use == "0")) {
+
+			count = 51;
+      	
+      }  else if (twitter_use == "0") {
+
+	      	count = 51;	
+      	
       }
+      
+      alert(count)
+      
+      
+	  if (sum == count) {
+	        //alert("ok");
+            //return false;
+            return true;
+	  } else {
+	      	alert('回答していない項目があります。')
+	        return false;
+	  }
+
+
 
   })
 

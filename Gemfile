@@ -21,6 +21,7 @@ gem 'flickraw'
 gem 'daemon-spawn', :require => 'daemon_spawn'
 gem 'resque-scheduler', :require => 'resque_scheduler'
 gem 'mechanize'
+gem 'ruby-mysql'
 
 #group :development do
 #  gem 'sinatra-contrib', gem: 'sinatra/reloader'

@@ -127,6 +127,11 @@ class Oauth_register < Sinatra::Base
 	  end
 	     
 	  Resque.enqueue(DataCreate, current_user.id, "twitter",session[:twitter_access_token],session[:twitter_access_token_secret])
+
+	  session[:apps].push("twitter_f")
+	  session[:apps].push("twitter_h")
+	  session[:apps].push("twitter_u")
+	  session[:apps].push("twitter_m")	  
 	  
 	  session.delete(:twitter_access_token)
 	  session.delete(:twitter_access_token_secret)
@@ -255,6 +260,9 @@ class Oauth_register < Sinatra::Base
 	    })
 	
 	    Resque.enqueue(DataCreate, current_user.id, "flickr", session[:flickr_access_token], session[:flickr_access_token_secret])
+
+		session[:apps].push("flickr")
+		session[:apps].push("flickr_f")
 	    
 	    session.delete(:flickr_access_token)
 	    session.delete(:flickr_access_token_secret) 

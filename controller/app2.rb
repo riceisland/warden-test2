@@ -25,6 +25,7 @@ require 'resque_scheduler'
 require 'yaml'
 require 'redis'
 require 'flickraw'
+#require 'mysql2'
 
 #require "sinatra/reloader" if development?
 
@@ -34,8 +35,8 @@ require 'flickraw'
 require "../model.rb"
 load './job.rb'
 
-require_relative '../lib/data.rb'
-require_relative '../lib/oauth.rb'
+#require_relative '../lib/data.rb'
+require_relative './data.rb'
 require "../extract.rb"
 
 load '../controller/login.rb'
@@ -45,8 +46,6 @@ load '../controller/oauth.rb'
 module Logref
 
 	class WebApp < Sinatra::Base
-	
-		include Oauth
 		
 		set :public_folder, File.join(File.dirname(__FILE__) , %w{ .. public })
 		enable :sessions
@@ -121,6 +120,8 @@ module Logref
 		  if request.env["warden"].user.nil?
 		    redirect to ("/")
 		  else
+		    p session[:apps]
+		  
 			@menu = Array.new
 		    @menu.push(["top", ""])	
 		  	@menu.push(["about", ""])
@@ -203,7 +204,48 @@ module Logref
 		
 		get "/data_refresh" do
 		
-		  Resque.enqueue(DataRefresh, current_user.id)
+		  apps = Array.new
+		  
+		  twitter_h = Tweets.select(:id).filter(:user_id => current_user.id).first
+		  if twitter_h
+		    apps.push("twitter_h")
+		  end
+		  
+		  twitter_f = Twitter_favorites.select(:id).filter(:user_id => current_user.id).first
+		  if twitter_f
+		    apps.push("twitter_f")
+		  end
+		  
+		  twitter_m = Twitter_media.select(:id).filter(:user_id => current_user.id).first
+		  if twitter_m
+		    apps.push("twitter_m")
+		  end		  
+
+		  twitter_u = Twitter_urls.select(:id).filter(:user_id => current_user.id).first
+		  if twitter_u
+		    apps.push("twitter_u")
+		  end
+		  
+		  flickr = Flickr_photos.select(:id).filter(:user_id => current_user.id).first
+		  if flickr
+		    apps.push("flickr")
+		  end
+		  
+		  flickr_f = Flickr_favorites.select(:id).filter(:user_id => current_user.id).first
+		  if flickr_f
+		    apps.push("flickr_f")
+		  end
+		  
+		  bb = Browser_bookmarks.select(:id).filter(:user_id => current_user.id).first
+		  if bb
+		    apps.push("browser_bookmarks")
+		  end						  		  		  
+		
+		  session[:apps] = apps
+		
+		  p session[:apps]
+		
+		  Resque.enqueue(DataRefresh_login, current_user.id)
 		  redirect to ("/settings")
 		
 		end
@@ -261,14 +303,6 @@ module Logref
 		  
 		end
 		
-		get "/data_refresh" do
-		
-		  Resque.enqueue(DataRefresh, current_user.id)
-		
-		  redirect to ("/settings")
-		  
-		end  
-		
 		get '/main' do
 		
 		  if request.env["warden"].user.nil?
@@ -282,8 +316,23 @@ module Logref
 		    @menu.push(["main", "pure-menu-selected"])
 		    @menu.push(["settings", ""])
 		    @menu.push(["logout", ""])
+				  
+			haml :main	   
+		   #haml :main2
+		 end
+		end
 		
-		    @contents_array = Array.new
+		get '/test' do
+		
+		
+		  sql = Tweets.select(:data_id).filter(:user_id => current_user.id).min(:shuffle)
+		
+		  p sql
+		
+		end
+		
+		get '/whole' do
+			@contents_array = Array.new
 		    apps = Array.new
 		
 		    twitter_oauth = Twitter_oauth.where(:uid => current_user.id).first
@@ -308,11 +357,11 @@ module Logref
 		
 		    flickr_oauth = Flickr_oauth.where(:uid => current_user.id).first
 		    if flickr_oauth
-		      apps.push("flickr")
+		     # apps.push("flickr")
 		    
 		      flickr_f = Flickr_favorites.where(:user_id => current_user.id).first
 		      if flickr_f
-		        apps.push("flickr_f")
+		      #  apps.push("flickr_f")
 		      end
 		    end
 		        
@@ -339,7 +388,7 @@ module Logref
 		    
 		    p apps
 		    #logref_data = LogRef::LogRefData.new
-		    
+=begin		    
 		    if apps.length < 5
 		      
 		      begin
@@ -361,7 +410,7 @@ module Logref
 		      end while apps.length < 5
 		    
 		    end
-		       
+=end		       
 		    
 		    Parallel.each(apps, in_threads:9){|app|
 		     
@@ -434,9 +483,8 @@ module Logref
 		      :dataset => ids,
 		      :time => time,
 		    })
-		   
-		   haml :main2
-		 end
+
+		
 		end
 		
 		post "/tagedit" do
@@ -573,34 +621,47 @@ module Logref
 		  else
 		   
 		    begin
-		      app_list = ["twitter_f", "twitter_h", "tumblr", "instagram", "hatena", "evernote", "flickr", "flickr_f", "twitter_u", "twitter_m"]
-		      rand_app = app_list.sample     
+		      #app_list = ["twitter_f", "twitter_h", "tumblr", "instagram", "hatena", "evernote", "flickr", "flickr_f", "twitter_u", "twitter_m"]
+		      app_list = ["rss"]
+			  #app_list = session[:apps]
+			  rand_app = app_list.sample
+			  #p rand_app     
 		
 		      @content = AllData.one_data_create(current_user.id,rand_app, "")     
-		      p @content
+		      #p @content
 		      
 		      if @content == ""
 		        raise "NoContent"
 		      end
-		    
-		    rescue
-		      retry
+			  
+			  @content.each do |key, value|
+			    p value.class
+			    if value.class == "String"
+			  
+			      value.force_encoding("UTF-8")
+			    
+				end
+			  end
+			  
+			  str = AllData.data_to_html(@content)
 		      
-		    end
+		      this_id = @content[:id]
+		      time = Time.now
+		      
+		      Individual_log.create({
+		        :user_id => current_user.id,
+		        :id => this_id,
+		        :time => time,
+		      })
 		    
-		    str = AllData.data_to_html(@content)
-		   
-		    this_id = @content[:id]
-		    time = Time.now
-		  
-		    Individual_log.create({
-		      :user_id => current_user.id,
-		      :id => this_id,
-		      :time => time,
-		    })
+		    rescue => e
+			  p e
+		      str = ""
+		    end
 		
 		  end
 		  
+		  #p str
 		  return str
 		
 		end
@@ -636,7 +697,23 @@ module Logref
 		get "/reject/:app" do
 		
 		  AllData.reject(current_user.id,params[:app])
-		  redirect "/settings"
+		  
+		  case params[:app]
+			when "twitter"
+				session[:apps].delete("twitter_f")
+				session[:apps].delete("twitter_h")
+				session[:apps].delete("twitter_u")
+				session[:apps].delete("twitter_m")
+			when "flickr"
+				session[:apps].delete("flickr")
+				session[:apps].delete("flickr_f")
+			when "browser_bookmarks"
+				session[:apps].delete("browser_bookmarks")
+		  end
+		  
+		  p session[:apps]
+		
+		  redirect to ("/settings")
 		
 		end
 		
@@ -766,6 +843,9 @@ module Logref
 		    
 		        
 		    Resque.enqueue(BookmarkDataCreate, current_user.id, file)
+			
+			session[:apps].push("browser_bookmarks")
+			p session[:apps]
 		    
 		    
 		    redirect to ("/settings?bm=create")

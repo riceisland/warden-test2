@@ -13,6 +13,67 @@ jQuery(function($) {
 		}
     		
     });
+
+  if (location.pathname == "/main") {   
+    if($("div.pin").size() == 0) {
+
+    	timer = setInterval(function(){
+
+			    $.ajax({
+			      url: "/individual",
+			      type: 'GET',
+			      cache: 'false',
+			      timeout: 10000,
+			      data: $(this).serialize(),
+			      error: function(){
+			      	alert("error")
+			      	  $('#columns').vgrid({
+    	                easing: "easeOutQuint",
+		                useLoadImageEvent: true,
+		                useFontSizeListener: true,
+		                time: 20000,
+		                delay: 20,
+		                wait: 500,
+		                fadeIn: {
+			              time: 500,
+			              delay: 50
+		                }
+    		          });
+			      },
+			      success: function(str){
+			      	
+			      	$("img#loading").fadeOut(300).queue( function() {this.remove()});
+			      	
+			        if(str == "logout"){
+			          location.href = ("/")
+			        }
+			        else{
+			      
+			          $("#columns").append(str);
+			          
+			          $('#columns').vgrid({
+    	                easing: "easeOutQuint",
+		                useLoadImageEvent: true,
+		                useFontSizeListener: true,
+		                time: 400,
+		                delay: 20,
+		                wait: 500,
+		                fadeIn: {
+			              time: 500,
+			              delay: 50
+		                }
+    		          });
+			        }
+			      }
+			    });
+    		  	
+    		  	if($("div.pin").size() > 6) {
+    		  		clearInterval(timer)
+    		  	}
+   	
+    	},15000);	
+    } 
+  }
 	
     $(function(){
     	setInterval(function(){
@@ -23,6 +84,7 @@ jQuery(function($) {
 			    $.ajax({
 			      url: "/individual",
 			      type: 'GET',
+			      data: 'count=1',
 			      cache: 'false',
 			      timeout: 10000,
 			      data: $(this).serialize(),
@@ -251,7 +313,7 @@ jQuery(function($) {
     $.ajax({
       url: "/refrection",
       type: 'POST',
-      timeout: 1000,
+      timeout: 10000,
       data: $(this).serialize(),
       error: function(){alert('ERROR');},
       success: function(obj){

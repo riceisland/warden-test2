@@ -9,6 +9,7 @@ li.underline {
 
 a {
   color: black;
+  line-height: 100%;
 }
 
 a.select_3_button{
@@ -444,7 +445,9 @@ span.ref_count {
     /*margin: 50px auto;*/
     margin-top :-20px;
     position :relative;
+
 }
+
 
 .pin {
     /* display: inline-block; */
@@ -785,4 +788,10 @@ i.icon-cancel {
 
 button.notice {
     margin-left: 3px;
+}
+
+img#loading {
+    margin-top :10%;
+    margin-left :40%;
+
 }

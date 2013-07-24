@@ -29,45 +29,154 @@ module AllData
 
     case app
       when "twitter_f"
-        ids = Twitter_favorites.min(:shuffle).select(:id).filter(:user_id => uid).all
+        ids = Twitter_favorites.select(:id, :shuffle).filter(:user_id => uid).all
 
       when "twitter_h"
-        ids = Tweets.min(:shuffle).select(:id).filter(:user_id => uid).all
+        ids = Tweets.select(:id, :shuffle).filter(:user_id => uid).all
 
       when "twitter_m"
-        ids = Twitter_media.select(:id).filter(:user_id => uid).all
+        ids = Twitter_media.select(:id, :shuffle).filter(:user_id => uid).all
 
       when "twitter_u"
-        ids = Twitter_urls.select(:id).filter(:user_id => uid).all
+        ids = Twitter_urls.select(:id, :shuffle).filter(:user_id => uid).all
     
       when "tumblr"
-        ids = Tumblr_posts.select(:id).filter(:user_id => uid).all
+        ids = Tumblr_posts.select(:id, :shuffle).filter(:user_id => uid).all
     
       when "instagram"
-        ids = Instagram_photos.select(:id).filter(:user_id => uid).all
+        ids = Instagram_photos.select(:id, :shuffle).filter(:user_id => uid).all
 
       when "flickr"
-        ids = Flickr_photos.select(:id).filter(:user_id => uid).all
+        ids = Flickr_photos.select(:id, :shuffle).filter(:user_id => uid).all
       
       when "flickr_f"
-        ids = Flickr_favorites.select(:id).filter(:user_id => uid).all
+        ids = Flickr_favorites.select(:id, :shuffle).filter(:user_id => uid).all
     
       when "hatena"
-        ids = Hatena_bookmarks.select(:id).filter(:user_id => uid).all   
+        ids = Hatena_bookmarks.select(:id, :shuffle).filter(:user_id => uid).all   
       
       when "evernote"
-        ids = Evernote_notes.select(:id).filter(:user_id => uid).all
+        ids = Evernote_notes.select(:id, :shuffle).filter(:user_id => uid).all
     
       when "rss"    
-        ids = Rss_user_relate.select(:id).filter(:user_id => uid).all
+        ids = Rss_user_relate.select(:id, :shuffle).filter(:user_id => uid).all
       
       when "browser_bookmarks"    
-        ids = Browser_bookmarks.select(:id).filter(:user_id => uid).all
+        ids = Browser_bookmarks.select(:id, :shuffle).filter(:user_id => uid).all
       else
     end
+    
+    if ids
+      
+      ids0 = Array.new
+      ids1 = Array.new
+      
+      ids.each do |elem|
+        case elem.shuffle
+          when 0
+            ids0.push(elem.id)
 
-    p ids
+          when 1
+            ids1.push(elem.id)      
+          end
+      end
+      
+      if ids0.length > 0
+        rand_id = ids0.sample
+        
+        case app
+        when "twitter_f"
+          Twitter_favorites.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
 
+        when "twitter_h"
+          Tweets.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+
+        when "twitter_m"
+          Twitter_media.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+
+        when "twitter_u"
+          Twitter_urls.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+            
+        when "tumblr"
+          Tumblr_posts.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+    
+        when "instagram"
+          Instagram_photos.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+
+        when "flickr"
+          Flickr_photos.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+
+        when "flickr_f"
+          Flickr_favorites.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+    
+        when "hatena"
+          Hatena_bookmarks.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+      
+        when "evernote"
+          Evernote_notes.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+    
+        when "rss"    
+          Rss_user_relate.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+      
+        when "browser_bookmarks"    
+          Browser_bookmarks.filter(:user_id => uid, :id => rand_id).update(:shuffle => 1)
+        else
+        end
+        
+      else
+        rand_id = ids1.sample
+        
+        #sql0 = "update twitter_favorites set shuffle = 0 where user_id = "  + uid.to_s + " and not id = " + rand_id
+        sql =  "user_id = "  + uid.to_s + " and not id = " + rand_id.to_s
+
+        case app
+        when "twitter_f"
+          Twitter_favorites.filter(sql).update(:shuffle => 0)
+
+        when "twitter_h"
+          Tweets.filter(sql).update(:shuffle => 0)
+          
+        when "twitter_m"
+          Twitter_media.filter(sql).update(:shuffle => 0)
+
+        when "twitter_u"
+          Twitter_urls.filter(sql).update(:shuffle => 0)
+            
+        when "tumblr"
+          Tumblr_posts.filter(sql).update(:shuffle => 0)
+    
+        when "instagram"
+          Instagram_photos.filter(sql).update(:shuffle => 0)
+
+        when "flickr"
+          Flickr_photos.filter(sql).update(:shuffle => 0)
+
+        when "flickr_f"
+          Flickr_favorites.filter(sql).update(:shuffle => 0)
+    
+        when "hatena"
+          Hatena_bookmarks.filter(sql).update(:shuffle => 0)
+      
+        when "evernote"
+          Evernote_notes.filter(sql).update(:shuffle => 0)
+    
+        when "rss"    
+          Rss_user_relate.filter(sql).update(:shuffle => 0)
+      
+        when "browser_bookmarks"    
+          Browser_bookmarks.filter(sql).update(:shuffle => 0)
+        else
+        end
+
+        
+      end
+      
+    else 
+      rand_id = ""
+      
+    end
+    
+    p rand_id  
     return rand_id
 
   end
@@ -263,7 +372,6 @@ module AllData
   
     if id == ""
       id = AllData.rand_id_sample(uid,app)
-      
     end
 
     if id == ""
@@ -278,6 +386,7 @@ module AllData
         twitter_oauth = Twitter_oauth.where(:uid => uid).first
         twitter_data = TwitterData::TwitterData.new(uid, twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
         data_hash = twitter_data.twitter_favs_data_create(id)
+        p data_hash
           
       when "twitter_h"
       
@@ -346,6 +455,8 @@ module AllData
     end
     end
     
+    p data_hash
+    
     return data_hash
 
   end
@@ -395,6 +506,7 @@ module AllData
   def data_to_html(content)
     
     html = ""
+    
     p content
   
     case content[:app]
@@ -413,7 +525,7 @@ module AllData
         html << "<div class='tweet'>"
         html << "<p class ='text'>" + content[:twitter_text] + "</p>"
         html << "<span class ='time'>" + content[:twitter_time].to_s + "</span>"
-        html << "<a href='" + content[:url] + "' target = '_blank' class = 'detail'>詳細を見る</a>"
+        html << 	"<a href='" + content[:url] + "' target = '_blank' class = 'detail'>詳細を見る</a>"
         html << "</div>"
         
         comment = comment_html(content[:id], content[:comment])
@@ -479,7 +591,7 @@ module AllData
         comment = comment_html(content[:id], content[:comment])
         html << comment   
 	    html << "</div>"      
-      
+     
       when "tumblr"
       
         html << "<div id = '" + content[:id] + "' class = 'pin tumblr'>"
@@ -569,7 +681,6 @@ module AllData
         
         html << comment
         html << "</div>"
-
 
       when "instagram"
         
@@ -716,6 +827,8 @@ module AllData
 
 
         comment = comment_html(content[:id], content[:comment])
+        html.force_encoding("UTF-8")
+        comment.force_encoding("UTF-8")
         html << comment   
 	    html << "</div>"
           
@@ -892,13 +1005,15 @@ module TwitterData
     begin
       
       @twitter.favorites({:count => 100, :include_entities => "1"}).each do |twit|
+        
+        p twit.id
   
-        past_fav = Twitter_favorites.select(:id).filter(:user_id => @user_id, :data_id => twit.id).first
+        past_fav = Twitter_favorites.select(:id).filter(:user_id => @user_id, :data_id => twit.id.to_s).first
 
         if past_fav
           break
 	    else
-          db_row_create(@user_id,"twitter_f", twit.id)
+          db_row_create(@user_id,"twitter_f", twit.id.to_s)
 
 	      if twit.media != []
 
@@ -914,7 +1029,7 @@ module TwitterData
 	      	
 	      	twit.urls.each do |elem|
 	      	  
-	      	  twitter_url_db_create(@user_id, elem, twit.created_at, twit.id)
+	      	  twitter_url_db_create(@user_id, elem, twit.created_at, twit.id.to_s)
 	      	
 	        end
 	      	      
@@ -926,12 +1041,12 @@ module TwitterData
      
       @twitter.user_timeline(:count => 200).each do |twit|
    
-        past_tweet = Tweets.select(:id).filter(:user_id => @user_id, :data_id => twit.id).first
+        past_tweet = Tweets.select(:id).filter(:user_id => @user_id, :data_id => twit.id.to_s).first
 
         if past_tweet
           break
         else
-	      db_row_create(@user_id,"twitter_h", twit.id)
+	      db_row_create(@user_id,"twitter_h", twit.id.to_s)
 	      
 	      if twit.media != []
 
@@ -947,7 +1062,7 @@ module TwitterData
 	      	
 	      	twit.urls.each do |elem|
 	      	  
-	      	  twitter_url_db_create(@user_id, elem, twit.created_at, twit.id)
+	      	  twitter_url_db_create(@user_id, elem, twit.created_at, twit.id.to_s)
 	      	
 	        end
 	      	      
@@ -999,10 +1114,14 @@ module TwitterData
   end
 
   def twitter_favs_data_create(id)
+  
+    #p id
 
     ref_count = ref_counter("twitter_f", id)
     twit_id = Twitter_favorites.select(:data_id).filter(:id => id).first
     new_id = "twitter_f-" + id.to_s
+    
+    p twit_id.data_id
 	 
     fav = @twitter.status(twit_id.data_id)
     
@@ -1012,13 +1131,14 @@ module TwitterData
     @twitter_text = fav.text
     @twitter_time = fav.created_at
 	@twitter_url = 'https://twitter.com/_/status/' + fav.id.to_s
-
   
     comment = ref_comment("twitter_f", id)
     tag_c = tag_concat("twitter_f", id)
     tag_a = tag_a_concat("twitter_f", id) 
         
     data_hash = {:app => "twitter_f", :twitter_img_url => @twitter_img_url, :twitter_user_name => @twitter_user_name, :twitter_screen_name => @twitter_screen_name, :twitter_text => @twitter_text, :twitter_time => @twitter_time, :tag_concat => tag_c, :tag_a_concat => tag_a, :id => new_id, :ref_count => ref_count, :comment => comment , :url => @twitter_url }
+   
+    p @twitter_url
    
     return data_hash
 
@@ -1339,6 +1459,10 @@ module FlickrData
 	      db_row_create(@user_id,"flickr", photo.id)  
         end   
       end
+      
+      if list.length > 0 && !session[:apps].index("flickr")
+        session[:apps].push("flickr")      
+      end
     
       fav_list = flickr.favorites.getList(:user_id => @login.id)
     
@@ -1352,6 +1476,10 @@ module FlickrData
 	      db_row_create(@user_id,"flickr_f", photo.id)  
         end   
       end   
+
+      if fav_list.length > 0 && !session[:apps].index("flickr_f")
+        session[:apps].push("flickr_f")      
+      end
     
     rescue => e
  	  
@@ -1411,8 +1539,12 @@ module FlickrData
       sizes = flickr.photos.getSizes(:photo_id => photo_id.data_id)
       
       small_size = sizes.find{|s| s.label == "Small 320"}
+      
+      owner = info.owner.nsid
 	  
-	  url = 'http://www.flickr.com/photos/'+ @login.id + '/' + photo_id.data_id.to_s
+	  p owner
+	  
+	  url = 'http://www.flickr.com/photos/'+ owner + '/' + photo_id.data_id.to_s
     
       comment = ref_comment("flickr_f", id)
       tag_c = tag_concat("flickr_f", id)

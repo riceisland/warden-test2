@@ -3,7 +3,10 @@ require 'sequel'
 #sequel使えるようにする
 Sequel::Model.plugin(:schema)
 Sequel.extension :pagination
-Sequel.connect("sqlite://user.db")
+#Sequel.connect("sqlite://user.db")
+#opt = {:user => "yonejima", :password => "redbook6", :database => "user"}
+opt = {}
+Sequel.connect("mysql://yonejima:redbook6@localhost/user", {:compress => false, :encoding => "utf8"})
 
 class User < Sequel::Model
   plugin :validation_helpers
@@ -12,6 +15,8 @@ class User < Sequel::Model
 	  primary_key :id
 	  varchar :name
 	  varchar :password
+	  varchar :b_ques
+	  varchar :a_ques
 	end
 	create_table
   end
@@ -41,7 +46,7 @@ class Tweets < Sequel::Model
     set_schema do
 	  primary_key :id
 	  integer :user_id
-	  integer :data_id
+	  varchar :data_id
 	  integer :refrection
 	  integer :shuffle
 	end
@@ -54,7 +59,7 @@ class Twitter_favorites < Sequel::Model
     set_schema do
 	  primary_key :id
 	  integer :user_id
-	  integer :data_id
+	  varchar :data_id
 	  integer :refrection
 	  integer :shuffle
 	end
@@ -71,7 +76,7 @@ class Twitter_urls < Sequel::Model
       varchar :url
       varchar :issued
       varchar :description
-      integer :default
+      varchar :default
       integer :refrection
       integer :shuffle
  	end
@@ -245,19 +250,6 @@ class Rss_channel < Sequel::Model
   end
 end
 
-class Rss_user_relate < Sequel::Model
-  unless table_exists?
-    set_schema do
-      integer :user_id
-      foreign_key :id, :table => :Rss_items
-      varchar :refrection
-      foreign_key :channel_id, :table => :Rss_channels
-      integer :shuffle
-    end
-    create_table
-  end
-end
-
 class Rss_item < Sequel::Model
   unless table_exists?
     set_schema do
@@ -267,6 +259,19 @@ class Rss_item < Sequel::Model
       varchar :url
       varchar :date
       varchar :description
+    end
+    create_table
+  end
+end
+
+class Rss_user_relate < Sequel::Model
+  unless table_exists?
+    set_schema do
+      integer :user_id
+      foreign_key :id, :table => :Rss_items
+      varchar :refrection
+      foreign_key :channel_id, :table => :Rss_channels
+      integer :shuffle
     end
     create_table
   end
@@ -367,13 +372,6 @@ class Search_log < Sequel::Model
   end
 end
 
-require 'sequel'
-
-#sequel使えるようにする
-Sequel::Model.plugin(:schema)
-Sequel.extension :pagination
-Sequel.connect("sqlite://user.db")
-
 class B_User < Sequel::Model
  
   unless table_exists?
@@ -386,11 +384,11 @@ class B_User < Sequel::Model
 	  varchar :bookmark
 	  varchar :usingTime
 	  varchar :useBrowser
-	  varcahr :device_t
-	  varcahr :device_f_r
-	  varcahr :device_f_s
-	  varcahr :device_b_r
-	  varcahr :device_b_s
+	  varchar :device_t
+	  varchar :device_f_r
+	  varchar :device_f_s
+	  varchar :device_b_r
+	  varchar :device_b_s
 	end
 	create_table
   end
@@ -417,7 +415,7 @@ end
 class B_RRQ < Sequel::Model
   unless table_exists?
     set_schema do
-      foreign_key :id, :table => :B_User
+      foreign_key :id, :table => :B_Users
       integer :rrq_1
       integer :rrq_2
       integer :rrq_3
@@ -438,7 +436,7 @@ end
 class A_RRQ < Sequel::Model
   unless table_exists?
     set_schema do
-      foreign_key :id, :table => :A_User
+      foreign_key :id, :table => :A_Users
       integer :rrq_1
       integer :rrq_2
       integer :rrq_3
@@ -459,7 +457,7 @@ end
 class B_iact_t < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :B_User
+	  foreign_key :id, :table => :B_Users
 	  integer :iact_t_1
       integer :iact_t_2
       integer :iact_t_3
@@ -484,7 +482,7 @@ end
 class A_iact_t < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :A_User
+	  foreign_key :id, :table => :A_Users
 	  integer :iact_t_1
       integer :iact_t_2
       integer :iact_t_3
@@ -510,7 +508,7 @@ end
 class B_iact_f < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :B_User
+	  foreign_key :id, :table => :B_Users
 	  integer :iact_f_1
       integer :iact_f_2
       integer :iact_f_3
@@ -535,7 +533,7 @@ end
 class A_iact_f < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :A_User
+	  foreign_key :id, :table => :A_Users
 	  integer :iact_f_1
       integer :iact_f_2
       integer :iact_f_3
@@ -560,7 +558,7 @@ end
 class B_iact_b < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :B_User
+	  foreign_key :id, :table => :B_Users
 	  integer :iact_b_1
       integer :iact_b_2
       integer :iact_b_3
@@ -585,7 +583,7 @@ end
 class A_iact_b < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :A_User
+	  foreign_key :id, :table => :A_Users
 	  integer :iact_b_1
       integer :iact_b_2
       integer :iact_b_3
@@ -610,7 +608,7 @@ end
 class B_tv_t < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :B_User
+	  foreign_key :id, :table => :B_Users
 	  integer :tv_t_1
       integer :tv_t_2
       integer :tv_t_3
@@ -631,7 +629,7 @@ end
 class A_tv_t < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :A_User
+	  foreign_key :id, :table => :A_Users
 	  integer :tv_t_1
       integer :tv_t_2
       integer :tv_t_3
@@ -652,7 +650,7 @@ end
 class B_tv_f < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :B_User
+	  foreign_key :id, :table => :B_Users
 	  integer :tv_f_1
       integer :tv_f_2
       integer :tv_f_3
@@ -677,7 +675,7 @@ end
 class A_tv_f < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :A_User
+	  foreign_key :id, :table => :A_Users
 	  integer :tv_f_1
       integer :tv_f_2
       integer :tv_f_3
@@ -699,7 +697,7 @@ end
 class B_tv_b < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :B_User
+	  foreign_key :id, :table => :B_Users
 	  integer :tv_b_1
       integer :tv_b_2
       integer :tv_b_3
@@ -720,7 +718,7 @@ end
 class A_tv_b < Sequel::Model
   unless table_exists?
     set_schema do
-	  foreign_key :id, :table => :A_User
+	  foreign_key :id, :table => :A_Users
 	  integer :tv_b_1
       integer :tv_b_2
       integer :tv_b_3
@@ -742,7 +740,7 @@ end
 class A_SUS < Sequel::Model
   unless table_exists?
     set_schema do
-      foreign_key :id, :table => :A_User
+      foreign_key :id, :table => :A_Users
       integer :sus_1
       integer :sus_2
       integer :sus_3

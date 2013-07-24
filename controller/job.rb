@@ -24,8 +24,27 @@ class DataRefresh
     twitter_oauth = Twitter_oauth.where(:uid => user_id).first
 	
 	if twitter_oauth
-      twitter_data = TwitterData::TwitterData.new(user_id, twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
-      twitter_data.twitter_db_create()
+        begin
+          twitter_data = TwitterData::TwitterData.new(user_id, twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
+          twitter_data.twitter_db_create()
+
+        rescue Twitter::Error::Unauthorized => error
+
+          if error.to_s.index("Invalid or expired token")
+            AllData.reject("twitter")
+          end
+
+        rescue Twitter::Error::BadRequest => error
+
+          if error.to_s.index("Bad authentication data")
+            AllData.reject("twitter")
+          end
+
+        rescue Twitter::Error::TooManyRequests => error
+
+        rescue Twitter::Error::Forbidden => error
+
+        end
     end
 #tumblr
     
@@ -107,6 +126,83 @@ class DataRefresh
 end
 
 
+class DataRefresh_login
+
+  @queue = :data_refresh_login
+ 
+  def self.perform(user_id)
+ 
+    twitter_oauth = Twitter_oauth.where(:uid => user_id).first
+	
+	if twitter_oauth
+        begin
+          twitter_data = TwitterData::TwitterData.new(user_id, twitter_oauth.twitter_access_token, twitter_oauth.twitter_access_token_secret)
+          twitter_data.twitter_db_create()
+
+        rescue Twitter::Error::Unauthorized => error
+
+          if error.to_s.index("Invalid or expired token")
+            AllData.reject("twitter")
+          end
+
+        rescue Twitter::Error::BadRequest => error
+
+          if error.to_s.index("Bad authentication data")
+            AllData.reject("twitter")
+          end
+
+        rescue Twitter::Error::TooManyRequests => error
+
+        rescue Twitter::Error::Forbidden => error
+
+        end
+    end
+#tumblr
+    
+    tumblr_oauth = Tumblr_oauth.where(:uid => user_id).first
+    
+	if tumblr_oauth
+   	  tumblr_data = TumblrData::TumblrData.new(user_id, tumblr_oauth.tumblr_access_token, tumblr_oauth.tumblr_access_token_secret)
+      tumblr_data.tumblr_db_create()
+    end
+	  
+#flickr
+    flickr_oauth = Flickr_oauth.where(:uid => user_id).first
+    
+	if flickr_oauth
+  	  flickr_data = FlickrData::FlickrData.new(user_id, flickr_oauth.flickr_access_token, flickr_oauth.flickr_access_token_secret)
+      flickr_data.flickr_db_create() 
+    end
+	
+#instagram
+
+    instagram_oauth = Instagram_oauth.where(:uid => user_id).first
+
+    if instagram_oauth
+      instagram_data = InstagramData::InstagramData.new(user_id, instagram_oauth.instagram_access_token)
+      instagram_data.instagram_db_create()
+    end
+	
+#hatena
+
+    hatena_oauth = Hatena_oauth.where(:uid => user_id).first
+    
+	if  hatena_oauth
+      hatena_data = HatenaData::HatenaData.new(user_id)
+      hatena_data.hatena_db_create(hatena_oauth.hatena_access_token,hatena_oauth.hatena_access_token_secret)
+    end
+#evernote
+
+    evernote_data = EvernoteData::EvernoteData.new(user_id)
+    #evernote_data.evernote_db_create()
+ 
+    puts "Processed a job!"  
+
+  end
+
+end
+
+
 class DataCreate
 
   @queue = :data_create
@@ -140,14 +236,16 @@ class BookmarkDataCreate
 
     extractor = ExtractContent::Extractor.new
   
-    Parallel.each(doc.css("a"), in_threads:8){|elem| 
-     
+    #Parallel.each(doc.css("a"), in_threads:8){|elem| 
+     doc.css("a").each do |elem|
       if elem["href"] =~ /\Ahttps?\:\/\//
       
+        description = ""
         begin
-          description = extractor.analyse(open(elem["href"]).read)[0]    
-          #p description
-          
+          timeout(10){
+          	description = extractor.analyse(open(elem["href"]).read)[0]    
+          	#p description
+          }
         rescue
           description = ""
         
@@ -176,8 +274,10 @@ class BookmarkDataCreate
         })
     
       end
+   end
+   #}
 
-   }
+   p "ok"
 
   end
 

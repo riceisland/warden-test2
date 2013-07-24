@@ -13,7 +13,7 @@ class Login < Sinatra::Base
 	
 	  # 認証
 	  def authenticate!
-	  p params["password"]
+	 # p params["password"]
 	    hexpass = OpenSSL::Digest::SHA1.hexdigest(params["password"])
 	    user = User.authenticate(params["name"], hexpass)
 	    
@@ -49,8 +49,9 @@ class Login < Sinatra::Base
 	
 	  if params[:name] != "" || params[:password] != ""
 	    request.env["warden"].authenticate!
-	    #redirect to ("/data_refresh")
-	    redirect to ("/main")
+	    redirect to ("/data_refresh")
+	    #redirect to ("/main")
+		#redirect to ("/test")
 	  else
 	    redirect to ("/unauthenticated")
 	  end
